@@ -25,6 +25,15 @@ namespace Anet.Job
         /// <summary>
         /// 开启新的任务调度
         /// </summary>
+        /// <param name="intervel">任务间隔秒数</param>
+        public static Task StartNew<T>(int seconds) where T : IJob
+        {
+            return StartNew<T>(TimeSpan.FromSeconds(seconds));
+        }
+
+        /// <summary>
+        /// 开启新的任务调度
+        /// </summary>
         /// <param name="intervel">任务间隔</param>
         public static Task StartNew<T>(TimeSpan intervel) where T : IJob
         {
