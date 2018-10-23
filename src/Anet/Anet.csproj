@@ -3,11 +3,11 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>Anet</PackageId>
-    <PackageTags>netcore;aspnet;common;csharp</PackageTags>
+    <PackageTags>netcore,aspnetcore,common,lib,framework,boilerplate</PackageTags>
     <Title>Anet</Title>
-    <Description>A common library for .net core app.</Description>
-    <Authors>Liam Wang</Authors>
-    <Version>0.1.1</Version>
+    <Description>A .NET Core Common Lib, Framework and Boilerplate.</Description>
+    <Authors>liamwang</Authors>
+    <Version>0.1.2</Version>
     <PackageProjectUrl>https://github.com/liamwang/anet</PackageProjectUrl>
   </PropertyGroup>
 
