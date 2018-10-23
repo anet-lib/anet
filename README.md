@@ -1,3 +1,4 @@
-# anet
+# Anet
 
-A .NET Core Common Lib, Framwork and Boilerplate. (Developing...)
+> A .NET Core Common Lib, Framework and Boilerplate. (Developing...)
+
