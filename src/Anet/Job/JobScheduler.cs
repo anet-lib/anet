@@ -25,7 +25,7 @@ namespace Anet.Job
         /// <summary>
         /// 开启新的任务调度
         /// </summary>
-        /// <param name="intervel">任务间隔秒数</param>
+        /// <param name="seconds">任务间隔秒数</param>
         public static Task StartNew<T>(int seconds) where T : IJob
         {
             return StartNew<T>(TimeSpan.FromSeconds(seconds));

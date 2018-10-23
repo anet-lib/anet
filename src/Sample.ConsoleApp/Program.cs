@@ -34,12 +34,13 @@ namespace Sample.ConsoleApp
                 logger.LogInformation("程序已启动。");
 
                 // 1. 简单任务调度示例
-                JobScheduler.StartNew<MessageJob>(TimeSpan.FromSeconds(Settings.JobIntervalSeconds));
+                JobScheduler.StartNew<MessageJob>(Settings.JobIntervalSeconds);
                 logger.LogInformation("已启动消息发送任务处理程序。");
 
                 // todo: 其它例子
             }
 
+            // 等待程序关闭
             JobScheduler.WaitForShutdown();
         }
     }
