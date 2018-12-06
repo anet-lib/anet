@@ -5,30 +5,44 @@ namespace Anet
 {
     public static class TypeExtensions
     {
-        private static bool IsSimpleType(this Type type)
+        /// <summary>
+        /// Returns true if the type is one of the built in simple types.
+        /// </summary>
+        public static bool IsSimpleType(this Type type)
         {
-            var typeInfo = type.GetTypeInfo();
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                type = type.GetGenericArguments()[0]; // or  Nullable.GetUnderlyingType(type)
 
-            return typeInfo.IsPrimitive ||
-                   typeInfo.IsEnum ||
-                   type.Equals(typeof(string)) ||
-                   type.Equals(typeof(DateTime)) ||
-                   type.Equals(typeof(Decimal)) ||
-                   type.Equals(typeof(Guid)) ||
-                   type.Equals(typeof(DateTimeOffset)) ||
-                   type.Equals(typeof(TimeSpan));
-        }
+            if (type.IsEnum)
+                return true;
 
-        private static bool IsSimpleUnderlyingType(this Type type)
-        {
-            Type underlyingType = Nullable.GetUnderlyingType(type);
+            if (type == typeof(Guid))
+                return true;
 
-            if (underlyingType != null)
+            TypeCode tc = Type.GetTypeCode(type);
+            switch (tc)
             {
-                type = underlyingType;
+                case TypeCode.Byte:
+                case TypeCode.SByte:
+                case TypeCode.Int16:
+                case TypeCode.Int32:
+                case TypeCode.Int64:
+                case TypeCode.UInt16:
+                case TypeCode.UInt32:
+                case TypeCode.UInt64:
+                case TypeCode.Single:
+                case TypeCode.Double:
+                case TypeCode.Decimal:
+                case TypeCode.Char:
+                case TypeCode.String:
+                case TypeCode.Boolean:
+                case TypeCode.DateTime:
+                    return true;
+                case TypeCode.Object:
+                    return (typeof(TimeSpan) == type) || (typeof(DateTimeOffset) == type);
+                default:
+                    return false;
             }
-
-            return IsSimpleType(type);
         }
     }
 }
