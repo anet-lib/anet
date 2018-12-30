@@ -18,7 +18,7 @@ namespace System.Collections
             }
         }
 
-        public static IQueryable<T> Page<T>(this IQueryable<T> query, int page, int size)
+        public static IQueryable<T> Paged<T>(this IQueryable<T> query, int page, int size)
         {
             return query.Skip((page - 1) * size).Take(size);
         }
