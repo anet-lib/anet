@@ -4,28 +4,19 @@ using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using System;
 
-namespace Anet
+namespace Anet.JobApp
 {
-    public class AnetGlobal
+    public class App
     {
         public static IServiceProvider ServiceProvider { get; internal set; }
         public static IConfiguration Configuration { get; internal set; }
 
         /// <summary>
-        /// 初始化 ASP.NET CORE 应用
-        /// </summary>
-        /// <param name="serviceProvider"></param>
-        public static void InitAspNetApp(IServiceProvider serviceProvider)
-        {
-            ServiceProvider = serviceProvider;
-            Configuration = serviceProvider.GetRequiredService<IConfiguration>();
-        }
-
-        /// <summary>
-        /// 初始化 Console 应用
+        /// 初始化 Console 应用。
+        /// 项目下必须包含 appsettings.json 和 nlog.config 文件。
         /// </summary>
         /// <param name="setup"></param>
-        public static void InitConsoleApp(Action<IConfiguration, ServiceCollection> setup)
+        public static void Init(Action<IConfiguration, ServiceCollection> setup)
         {
             // 1、Load Configurations
             // Console App 没有 ASPNETCORE_ENVIRONMENT 变量

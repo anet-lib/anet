@@ -1,7 +1,4 @@
-﻿using System;
-using System.Reflection;
-
-namespace Anet
+﻿namespace System
 {
     public static class TypeExtensions
     {

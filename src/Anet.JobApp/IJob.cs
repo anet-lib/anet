@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Anet.Job
+namespace Anet.JobApp
 {
     public interface IJob
     {

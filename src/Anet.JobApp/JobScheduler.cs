@@ -4,7 +4,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Anet.Job
+namespace Anet.JobApp
 {
     public class JobScheduler
     {
@@ -44,7 +44,7 @@ namespace Anet.Job
                     if (IsStopping) break;
                     IncreTaskCount();
 
-                    var scope = AnetGlobal.ServiceProvider.CreateScope();
+                    var scope = App.ServiceProvider.CreateScope();
                     var job = scope.ServiceProvider.GetRequiredService<T>();
                     try
                     {

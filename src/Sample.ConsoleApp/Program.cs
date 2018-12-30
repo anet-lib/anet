@@ -1,5 +1,4 @@
-﻿using Anet;
-using Anet.Job;
+﻿using Anet.JobApp;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -17,7 +16,7 @@ namespace Sample.ConsoleApp
             System.Net.ServicePointManager.DefaultConnectionLimit = 10;
 
             // 初始化应用
-            AnetGlobal.InitConsoleApp((config, services) =>
+            App.Init((config, services) =>
             {
                 // 绑定配置
                 Settings = new SettingsModel();
@@ -27,7 +26,7 @@ namespace Sample.ConsoleApp
                 services.AddTransient<MessageJob>();
             });
 
-            using (var scope = AnetGlobal.ServiceProvider.CreateScope())
+            using (var scope = App.ServiceProvider.CreateScope())
             {
                 var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 

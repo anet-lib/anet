@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Anet.Security
 {
-    public class MD5
+    public abstract class MD5
     {
         public static string Compute(string input)
         {
