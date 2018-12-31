@@ -7,7 +7,7 @@ namespace Anet.Data
 {
     public static partial class SqlMapper
     {
-        private sealed class DapperRow
+        internal sealed class DapperRow
             : System.Dynamic.IDynamicMetaObjectProvider
             , IDictionary<string, object>
             , IReadOnlyDictionary<string, object>

@@ -5,7 +5,7 @@ namespace Anet.Data
 {
     public static partial class SqlMapper
     {
-        private sealed class DapperTable
+        internal sealed class DapperTable
         {
             private string[] fieldNames;
             private readonly Dictionary<string, int> fieldNameLookup;

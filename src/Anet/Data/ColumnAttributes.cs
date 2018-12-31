@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Anet.Data.MySQL
+namespace Anet.Data
 {
     public class VarcharAttribute : ColumnAttribute
     {
