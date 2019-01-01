@@ -1,4 +1,4 @@
-﻿using Anet.JobApp;
+﻿using Anet.Job;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;

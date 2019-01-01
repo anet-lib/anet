@@ -1,4 +1,4 @@
-﻿using Anet.JobApp;
+﻿using Anet.Job;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -33,14 +33,14 @@ namespace Sample.ConsoleApp
                 logger.LogInformation("程序已启动。");
 
                 // 1. 简单任务调度示例
-                JobScheduler.StartNew<MessageJob>(Settings.JobIntervalSeconds);
+                Scheduler.StartNew<MessageJob>(Settings.JobIntervalSeconds);
                 logger.LogInformation("已启动消息发送任务处理程序。");
 
                 // todo: 其它例子
             }
 
             // 等待程序关闭
-            JobScheduler.WaitForShutdown();
+            Scheduler.WaitForShutdown();
         }
     }
 }

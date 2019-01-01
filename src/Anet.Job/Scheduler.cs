@@ -4,9 +4,9 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Anet.JobApp
+namespace Anet.Job
 {
-    public class JobScheduler
+    public class Scheduler
     {
         public static bool IsStopping { get; private set; }
 
@@ -58,7 +58,7 @@ namespace Anet.JobApp
                         }
                         catch (Exception innerEx)
                         {
-                            var logger = scope.ServiceProvider.GetService<ILogger<JobScheduler>>();
+                            var logger = scope.ServiceProvider.GetService<ILogger<Scheduler>>();
                             logger?.LogError(innerEx, "任务内部处理执行异常。");
                         }
                     }

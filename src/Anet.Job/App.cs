@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using System;
 
-namespace Anet.JobApp
+namespace Anet.Job
 {
     public class App
     {
