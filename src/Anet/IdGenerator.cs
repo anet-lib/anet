@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Threading;
 
-namespace Anet.Data
+namespace Anet
 {
     /// <summary>
     /// 基于Twitter Snowflake算法的Id生成器。
@@ -93,7 +93,7 @@ namespace Anet.Data
         }
 
         /// <summary>
-        /// 创建新的ID
+        /// 生成新的ID
         /// </summary>
         /// <returns>ID</returns>
         public static long NewId()

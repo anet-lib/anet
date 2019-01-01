@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Anet.Utils
+namespace Anet
 {
     public static class StringUtil
     {
