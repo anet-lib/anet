@@ -6,7 +6,7 @@ using static Anet.Data.SqlMapper;
 
 namespace Anet.Data
 {
-    public static class DbExtensions
+    public static class DatabaseExtensions
     {
         #region Excute
 
@@ -19,7 +19,7 @@ namespace Anet.Data
         /// <param name="commandTimeout">Number of seconds before command execution timeout.</param>
         /// <param name="commandType">Is it a stored proc or a batch?</param>
         /// <returns>The number of rows affected.</returns>
-        public static int Execute(this Db db, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
+        public static int Execute(this Database db, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             var command = new CommandDefinition(sql, param, db.Transaction, commandTimeout, commandType, CommandFlags.Buffered);
             return SqlMapper.ExecuteImpl(db.Connection, ref command);
@@ -31,7 +31,7 @@ namespace Anet.Data
         /// <param name="db">The DB to execute on.</param>
         /// <param name="command">The command to execute on this connection.</param>
         /// <returns>The number of rows affected.</returns>
-        public static int Execute(this Db db, CommandDefinition command) => SqlMapper.ExecuteImpl(db.Connection, ref command);
+        public static int Execute(this Database db, CommandDefinition command) => SqlMapper.ExecuteImpl(db.Connection, ref command);
 
         /// <summary>
         /// Execute parameterized SQL that selects a single value.
@@ -42,7 +42,7 @@ namespace Anet.Data
         /// <param name="commandTimeout">Number of seconds before command execution timeout.</param>
         /// <param name="commandType">Is it a stored proc or a batch?</param>
         /// <returns>The first cell selected as <see cref="object"/>.</returns>
-        public static object ExecuteScalar(this Db db, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
+        public static object ExecuteScalar(this Database db, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             var command = new CommandDefinition(sql, param, db.Transaction, commandTimeout, commandType, CommandFlags.Buffered);
             return ExecuteScalarImpl<object>(db.Connection, ref command);
@@ -58,7 +58,7 @@ namespace Anet.Data
         /// <param name="commandTimeout">Number of seconds before command execution timeout.</param>
         /// <param name="commandType">Is it a stored proc or a batch?</param>
         /// <returns>The first cell returned, as <typeparamref name="T"/>.</returns>
-        public static T ExecuteScalar<T>(this Db db, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
+        public static T ExecuteScalar<T>(this Database db, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             var command = new CommandDefinition(sql, param, db.Transaction, commandTimeout, commandType, CommandFlags.Buffered);
             return ExecuteScalarImpl<T>(db.Connection, ref command);
@@ -70,7 +70,7 @@ namespace Anet.Data
         /// <param name="db">The DB to execute on.</param>
         /// <param name="command">The command to execute.</param>
         /// <returns>The first cell selected as <see cref="object"/>.</returns>
-        public static object ExecuteScalar(this Db db, CommandDefinition command) =>
+        public static object ExecuteScalar(this Database db, CommandDefinition command) =>
             ExecuteScalarImpl<object>(db.Connection, ref command);
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace Anet.Data
         /// <param name="db">The DB to execute on.</param>
         /// <param name="command">The command to execute.</param>
         /// <returns>The first cell selected as <typeparamref name="T"/>.</returns>
-        public static T ExecuteScalar<T>(this Db db, CommandDefinition command) => 
+        public static T ExecuteScalar<T>(this Database db, CommandDefinition command) => 
             ExecuteScalarImpl<T>(db.Connection, ref command);
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace Anet.Data
         /// ]]>
         /// </code>
         /// </example>
-        public static IDataReader ExecuteReader(this Db db, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
+        public static IDataReader ExecuteReader(this Database db, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             var command = new CommandDefinition(sql, param, db.Transaction, commandTimeout, commandType, CommandFlags.Buffered);
             var reader = ExecuteReaderImpl(db.Connection, ref command, CommandBehavior.Default, out IDbCommand dbcmd);
@@ -124,7 +124,7 @@ namespace Anet.Data
         /// This is typically used when the results of a query are not processed by Dapper, for example, used to fill a <see cref="DataTable"/>
         /// or <see cref="T:DataSet"/>.
         /// </remarks>
-        public static IDataReader ExecuteReader(this Db db, CommandDefinition command)
+        public static IDataReader ExecuteReader(this Database db, CommandDefinition command)
         {
             var reader = ExecuteReaderImpl(db.Connection, ref command, CommandBehavior.Default, out IDbCommand dbcmd);
             return new WrappedReader(dbcmd, reader);
@@ -141,7 +141,7 @@ namespace Anet.Data
         /// This is typically used when the results of a query are not processed by Dapper, for example, used to fill a <see cref="DataTable"/>
         /// or <see cref="T:DataSet"/>.
         /// </remarks>
-        public static IDataReader ExecuteReader(this Db db, CommandDefinition command, CommandBehavior commandBehavior)
+        public static IDataReader ExecuteReader(this Database db, CommandDefinition command, CommandBehavior commandBehavior)
         {
             var reader = ExecuteReaderImpl(db.Connection, ref command, commandBehavior, out IDbCommand dbcmd);
             return new WrappedReader(dbcmd, reader);
@@ -161,7 +161,7 @@ namespace Anet.Data
         /// <param name="commandTimeout">The command timeout (in seconds).</param>
         /// <param name="commandType">The type of command to execute.</param>
         /// <remarks>Note: each row can be accessed via "dynamic", or by casting to an IDictionary&lt;string,object&gt;</remarks>
-        public static IEnumerable<dynamic> Query(this Db db, string sql, object param = null, bool buffered = true, int? commandTimeout = null, CommandType? commandType = null) =>
+        public static IEnumerable<dynamic> Query(this Database db, string sql, object param = null, bool buffered = true, int? commandTimeout = null, CommandType? commandType = null) =>
             Query<DapperRow>(db, sql, param as object, buffered, commandTimeout, commandType);
 
         /// <summary>
@@ -173,7 +173,7 @@ namespace Anet.Data
         /// <param name="commandTimeout">The command timeout (in seconds).</param>
         /// <param name="commandType">The type of command to execute.</param>
         /// <remarks>Note: the row can be accessed via "dynamic", or by casting to an IDictionary&lt;string,object&gt;</remarks>
-        public static dynamic QueryFirst(this Db db, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null) =>
+        public static dynamic QueryFirst(this Database db, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null) =>
             QueryFirst<DapperRow>(db, sql, param as object, commandTimeout, commandType);
 
         /// <summary>
@@ -185,7 +185,7 @@ namespace Anet.Data
         /// <param name="commandTimeout">The command timeout (in seconds).</param>
         /// <param name="commandType">The type of command to execute.</param>
         /// <remarks>Note: the row can be accessed via "dynamic", or by casting to an IDictionary&lt;string,object&gt;</remarks>
-        public static dynamic QueryFirstOrDefault(this Db db, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null) =>
+        public static dynamic QueryFirstOrDefault(this Database db, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null) =>
             QueryFirstOrDefault<DapperRow>(db, sql, param as object, commandTimeout, commandType);
 
         /// <summary>
@@ -197,7 +197,7 @@ namespace Anet.Data
         /// <param name="commandTimeout">The command timeout (in seconds).</param>
         /// <param name="commandType">The type of command to execute.</param>
         /// <remarks>Note: the row can be accessed via "dynamic", or by casting to an IDictionary&lt;string,object&gt;</remarks>
-        public static dynamic QuerySingle(this Db db, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null) =>
+        public static dynamic QuerySingle(this Database db, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null) =>
             QuerySingle<DapperRow>(db, sql, param as object, commandTimeout, commandType);
 
         /// <summary>
@@ -209,7 +209,7 @@ namespace Anet.Data
         /// <param name="commandTimeout">The command timeout (in seconds).</param>
         /// <param name="commandType">The type of command to execute.</param>
         /// <remarks>Note: the row can be accessed via "dynamic", or by casting to an IDictionary&lt;string,object&gt;</remarks>
-        public static dynamic QuerySingleOrDefault(this Db db, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null) =>
+        public static dynamic QuerySingleOrDefault(this Database db, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null) =>
             QuerySingleOrDefault<DapperRow>(db, sql, param as object, commandTimeout, commandType);
 
         #endregion
@@ -230,7 +230,7 @@ namespace Anet.Data
         /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        public static IEnumerable<T> Query<T>(this Db db, string sql, object param = null, bool buffered = true, int? commandTimeout = null, CommandType? commandType = null)
+        public static IEnumerable<T> Query<T>(this Database db, string sql, object param = null, bool buffered = true, int? commandTimeout = null, CommandType? commandType = null)
         {
             var command = new CommandDefinition(sql, param, db.Transaction, commandTimeout, commandType, buffered ? CommandFlags.Buffered : CommandFlags.None);
             var data = SqlMapper.QueryImpl<T>(db.Connection, command, typeof(T));
@@ -250,7 +250,7 @@ namespace Anet.Data
         /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        public static T QueryFirst<T>(this Db db, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
+        public static T QueryFirst<T>(this Database db, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             var command = new CommandDefinition(sql, param, db.Transaction, commandTimeout, commandType, CommandFlags.None);
             return QueryRowImpl<T>(db.Connection, Row.First, ref command, typeof(T));
@@ -269,7 +269,7 @@ namespace Anet.Data
         /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        public static T QueryFirstOrDefault<T>(this Db db, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
+        public static T QueryFirstOrDefault<T>(this Database db, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             var command = new CommandDefinition(sql, param, db.Transaction, commandTimeout, commandType, CommandFlags.None);
             return QueryRowImpl<T>(db.Connection, Row.FirstOrDefault, ref command, typeof(T));
@@ -288,7 +288,7 @@ namespace Anet.Data
         /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        public static T QuerySingle<T>(this Db db, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
+        public static T QuerySingle<T>(this Database db, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             var command = new CommandDefinition(sql, param, db.Transaction, commandTimeout, commandType, CommandFlags.None);
             return QueryRowImpl<T>(db.Connection, Row.Single, ref command, typeof(T));
@@ -307,7 +307,7 @@ namespace Anet.Data
         /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        public static T QuerySingleOrDefault<T>(this Db db, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
+        public static T QuerySingleOrDefault<T>(this Database db, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             var command = new CommandDefinition(sql, param, db.Transaction, commandTimeout, commandType, CommandFlags.None);
             return QueryRowImpl<T>(db.Connection, Row.SingleOrDefault, ref command, typeof(T));
@@ -332,7 +332,7 @@ namespace Anet.Data
         /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        public static IEnumerable<object> Query(this Db db, Type type, string sql, object param = null, bool buffered = true, int? commandTimeout = null, CommandType? commandType = null)
+        public static IEnumerable<object> Query(this Database db, Type type, string sql, object param = null, bool buffered = true, int? commandTimeout = null, CommandType? commandType = null)
         {
             if (type == null) throw new ArgumentNullException(nameof(type));
             var command = new CommandDefinition(sql, param, db.Transaction, commandTimeout, commandType, buffered ? CommandFlags.Buffered : CommandFlags.None);
@@ -354,7 +354,7 @@ namespace Anet.Data
         /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        public static object QueryFirst(this Db db, Type type, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
+        public static object QueryFirst(this Database db, Type type, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             if (type == null) throw new ArgumentNullException(nameof(type));
             var command = new CommandDefinition(sql, param, db.Transaction, commandTimeout, commandType, CommandFlags.None);
@@ -375,7 +375,7 @@ namespace Anet.Data
         /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        public static object QueryFirstOrDefault(this Db db, Type type, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
+        public static object QueryFirstOrDefault(this Database db, Type type, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             if (type == null) throw new ArgumentNullException(nameof(type));
             var command = new CommandDefinition(sql, param, db.Transaction, commandTimeout, commandType, CommandFlags.None);
@@ -396,7 +396,7 @@ namespace Anet.Data
         /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        public static object QuerySingle(this Db db, Type type, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
+        public static object QuerySingle(this Database db, Type type, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             if (type == null) throw new ArgumentNullException(nameof(type));
             var command = new CommandDefinition(sql, param, db.Transaction, commandTimeout, commandType, CommandFlags.None);
@@ -417,7 +417,7 @@ namespace Anet.Data
         /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        public static object QuerySingleOrDefault(this Db db, Type type, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
+        public static object QuerySingleOrDefault(this Database db, Type type, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             if (type == null) throw new ArgumentNullException(nameof(type));
             var command = new CommandDefinition(sql, param, db.Transaction, commandTimeout, commandType, CommandFlags.None);
@@ -438,7 +438,7 @@ namespace Anet.Data
         /// A sequence of data of <typeparamref name="T"/>; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        public static IEnumerable<T> Query<T>(this Db db, CommandDefinition command)
+        public static IEnumerable<T> Query<T>(this Database db, CommandDefinition command)
         {
             var data = SqlMapper.QueryImpl<T>(db.Connection, command, typeof(T));
             return command.Buffered ? data.ToList() : data;
@@ -454,7 +454,7 @@ namespace Anet.Data
         /// A single instance or null of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        public static T QueryFirst<T>(this Db db, CommandDefinition command) =>
+        public static T QueryFirst<T>(this Database db, CommandDefinition command) =>
             QueryRowImpl<T>(db.Connection, Row.First, ref command, typeof(T));
 
         /// <summary>
@@ -467,7 +467,7 @@ namespace Anet.Data
         /// A single or null instance of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        public static T QueryFirstOrDefault<T>(this Db db, CommandDefinition command) =>
+        public static T QueryFirstOrDefault<T>(this Database db, CommandDefinition command) =>
             QueryRowImpl<T>(db.Connection, Row.FirstOrDefault, ref command, typeof(T));
 
         /// <summary>
@@ -480,7 +480,7 @@ namespace Anet.Data
         /// A single instance of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        public static T QuerySingle<T>(this Db db, CommandDefinition command) =>
+        public static T QuerySingle<T>(this Database db, CommandDefinition command) =>
             QueryRowImpl<T>(db.Connection, Row.Single, ref command, typeof(T));
 
         /// <summary>
@@ -493,7 +493,7 @@ namespace Anet.Data
         /// A single instance of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        public static T QuerySingleOrDefault<T>(this Db db, CommandDefinition command) =>
+        public static T QuerySingleOrDefault<T>(this Database db, CommandDefinition command) =>
             QueryRowImpl<T>(db.Connection, Row.SingleOrDefault, ref command, typeof(T));
 
         #endregion
@@ -505,7 +505,7 @@ namespace Anet.Data
         /// </summary>
         /// <param name="db">The DB to query on.</param>
         /// <param name="command">The command to execute for this query.</param>
-        public static GridReader QueryMultiple(this Db db, CommandDefinition command) => 
+        public static GridReader QueryMultiple(this Database db, CommandDefinition command) => 
             SqlMapper.QueryMultipleImpl(db.Connection, ref command);
 
         /// <summary>
@@ -516,7 +516,7 @@ namespace Anet.Data
         /// <param name="param">The parameters to use for this query.</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout.</param>
         /// <param name="commandType">Is it a stored proc or a batch?</param>
-        public static GridReader QueryMultiple(this Db db, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
+        public static GridReader QueryMultiple(this Database db, string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             var command = new CommandDefinition(sql, param, db.Transaction, commandTimeout, commandType, CommandFlags.Buffered);
             return SqlMapper.QueryMultipleImpl(db.Connection, ref command);
@@ -543,7 +543,7 @@ namespace Anet.Data
         /// <param name="commandType">Is it a stored proc or a batch?</param>
         /// <returns>An enumerable of <typeparamref name="TReturn"/>.</returns>
         public static IEnumerable<TReturn> Query<TFirst, TSecond, TReturn>(
-            this Db db, string sql, Func<TFirst, TSecond, TReturn> map, object param = null, bool buffered = true, string splitOn = "Id", int? commandTimeout = null, CommandType? commandType = null) =>
+            this Database db, string sql, Func<TFirst, TSecond, TReturn> map, object param = null, bool buffered = true, string splitOn = "Id", int? commandTimeout = null, CommandType? commandType = null) =>
             SqlMapper.MultiMap<TFirst, TSecond, DontMap, DontMap, DontMap, DontMap, DontMap, TReturn>(db.Connection, sql, map, param, db.Transaction, buffered, splitOn, commandTimeout, commandType);
 
         /// <summary>
@@ -564,7 +564,7 @@ namespace Anet.Data
         /// <param name="commandType">Is it a stored proc or a batch?</param>
         /// <returns>An enumerable of <typeparamref name="TReturn"/>.</returns>
         public static IEnumerable<TReturn> Query<TFirst, TSecond, TThird, TReturn>(
-            this Db db, string sql, Func<TFirst, TSecond, TThird, TReturn> map, object param = null, bool buffered = true, string splitOn = "Id", int? commandTimeout = null, CommandType? commandType = null) =>
+            this Database db, string sql, Func<TFirst, TSecond, TThird, TReturn> map, object param = null, bool buffered = true, string splitOn = "Id", int? commandTimeout = null, CommandType? commandType = null) =>
             SqlMapper.MultiMap<TFirst, TSecond, TThird, DontMap, DontMap, DontMap, DontMap, TReturn>(db.Connection, sql, map, param, db.Transaction, buffered, splitOn, commandTimeout, commandType);
 
         /// <summary>
@@ -586,7 +586,7 @@ namespace Anet.Data
         /// <param name="commandType">Is it a stored proc or a batch?</param>
         /// <returns>An enumerable of <typeparamref name="TReturn"/>.</returns>
         public static IEnumerable<TReturn> Query<TFirst, TSecond, TThird, TFourth, TReturn>(
-            this Db db, string sql, Func<TFirst, TSecond, TThird, TFourth, TReturn> map, object param = null, bool buffered = true, string splitOn = "Id", int? commandTimeout = null, CommandType? commandType = null) =>
+            this Database db, string sql, Func<TFirst, TSecond, TThird, TFourth, TReturn> map, object param = null, bool buffered = true, string splitOn = "Id", int? commandTimeout = null, CommandType? commandType = null) =>
             SqlMapper.MultiMap<TFirst, TSecond, TThird, TFourth, DontMap, DontMap, DontMap, TReturn>(db.Connection, sql, map, param, db.Transaction, buffered, splitOn, commandTimeout, commandType);
 
         /// <summary>
@@ -609,7 +609,7 @@ namespace Anet.Data
         /// <param name="commandType">Is it a stored proc or a batch?</param>
         /// <returns>An enumerable of <typeparamref name="TReturn"/>.</returns>
         public static IEnumerable<TReturn> Query<TFirst, TSecond, TThird, TFourth, TFifth, TReturn>(
-            this Db db, string sql, Func<TFirst, TSecond, TThird, TFourth, TFifth, TReturn> map, object param = null, bool buffered = true, string splitOn = "Id", int? commandTimeout = null, CommandType? commandType = null) =>
+            this Database db, string sql, Func<TFirst, TSecond, TThird, TFourth, TFifth, TReturn> map, object param = null, bool buffered = true, string splitOn = "Id", int? commandTimeout = null, CommandType? commandType = null) =>
             SqlMapper.MultiMap<TFirst, TSecond, TThird, TFourth, TFifth, DontMap, DontMap, TReturn>(db.Connection, sql, map, param, db.Transaction, buffered, splitOn, commandTimeout, commandType);
 
         /// <summary>
@@ -633,7 +633,7 @@ namespace Anet.Data
         /// <param name="commandType">Is it a stored proc or a batch?</param>
         /// <returns>An enumerable of <typeparamref name="TReturn"/>.</returns>
         public static IEnumerable<TReturn> Query<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TReturn>(
-            this Db db, string sql, Func<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TReturn> map, object param = null, bool buffered = true, string splitOn = "Id", int? commandTimeout = null, CommandType? commandType = null) =>
+            this Database db, string sql, Func<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TReturn> map, object param = null, bool buffered = true, string splitOn = "Id", int? commandTimeout = null, CommandType? commandType = null) =>
             SqlMapper.MultiMap<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, DontMap, TReturn>(db.Connection, sql, map, param, db.Transaction, buffered, splitOn, commandTimeout, commandType);
 
         /// <summary>
@@ -657,7 +657,7 @@ namespace Anet.Data
         /// <param name="commandType">Is it a stored proc or a batch?</param>
         /// <returns>An enumerable of <typeparamref name="TReturn"/>.</returns>
         public static IEnumerable<TReturn> Query<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TSeventh, TReturn>(
-            this Db db, string sql, Func<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TSeventh, TReturn> map, object param = null, bool buffered = true, string splitOn = "Id", int? commandTimeout = null, CommandType? commandType = null) =>
+            this Database db, string sql, Func<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TSeventh, TReturn> map, object param = null, bool buffered = true, string splitOn = "Id", int? commandTimeout = null, CommandType? commandType = null) =>
             SqlMapper.MultiMap<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TSeventh, TReturn>(db.Connection, sql, map, param, db.Transaction, buffered, splitOn, commandTimeout, commandType);
 
         /// <summary>
@@ -676,7 +676,7 @@ namespace Anet.Data
         /// <param name="commandType">Is it a stored proc or a batch?</param>
         /// <returns>An enumerable of <typeparamref name="TReturn"/>.</returns>
         public static IEnumerable<TReturn> Query<TReturn>(
-            this Db db, string sql, Type[] types, Func<object[], TReturn> map, object param = null, bool buffered = true, string splitOn = "Id", int? commandTimeout = null, CommandType? commandType = null)
+            this Database db, string sql, Type[] types, Func<object[], TReturn> map, object param = null, bool buffered = true, string splitOn = "Id", int? commandTimeout = null, CommandType? commandType = null)
         {
             var command = new CommandDefinition(sql, param, db.Transaction, commandTimeout, commandType, buffered ? CommandFlags.Buffered : CommandFlags.None);
             var results = SqlMapper.MultiMapImpl(db.Connection, command, types, map, splitOn, null, null, true);

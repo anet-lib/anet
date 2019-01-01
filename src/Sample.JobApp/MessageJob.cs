@@ -4,7 +4,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sample.ConsoleApp
+namespace Sample.JobApp
 {
     public class MessageJob : IJob
     {

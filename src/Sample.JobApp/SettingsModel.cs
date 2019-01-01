@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Sample.ConsoleApp
+namespace Sample.JobApp
 {
     public class SettingsModel
     {

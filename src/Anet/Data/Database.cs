@@ -2,9 +2,9 @@
 
 namespace Anet.Data
 {
-    public class Db
+    public class Database
     {
-        public Db(IDbConnection connection)
+        public Database(IDbConnection connection)
         {
             Connection = connection;
         }

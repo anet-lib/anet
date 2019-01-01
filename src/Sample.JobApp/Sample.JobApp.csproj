@@ -6,11 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="appsettings.json" />
-    <None Remove="nlog.config" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -21,7 +16,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Anet.Job\Anet.Job.csproj" />
-    <ProjectReference Include="..\Anet\Anet.csproj" />
   </ItemGroup>
 
 </Project>

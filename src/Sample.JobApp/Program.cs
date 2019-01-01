@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace Sample.ConsoleApp
+namespace Sample.JobApp
 {
     public class Program
     {
