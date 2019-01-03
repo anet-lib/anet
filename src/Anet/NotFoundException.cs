@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Anet.Web
+namespace Anet
 {
     public class NotFoundException : Exception { }
 }

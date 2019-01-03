@@ -10,6 +10,7 @@ namespace Anet.Web
             if (context.ModelState.IsValid) return;
 
             var errorMessage = "The request data is invalid.";
+
             foreach (var key in context.ModelState.Keys)
             {
                 var value = context.ModelState[key];
