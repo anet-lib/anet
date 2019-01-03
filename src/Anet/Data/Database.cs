@@ -28,8 +28,11 @@ namespace Anet.Data
 
         public void Dispose()
         {
-            Transaction?.Dispose();
-            Transaction = null;
+            if (Transaction == null)
+            {
+                Transaction.Dispose();
+                Transaction = null;
+            }
             Connection?.Close();
             Connection?.Dispose();
             Connection = null;

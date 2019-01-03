@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Anet.Data
+namespace Anet.Data.Entity
 {
     public abstract class EntityAuditFull<TKey> : EntityAudit<TKey>, IEntityAuditFull<TKey>
         where TKey : IEquatable<TKey>

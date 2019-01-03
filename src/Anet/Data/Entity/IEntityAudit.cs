@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Anet.Data
+namespace Anet.Data.Entity
 {
     public interface IEntityAudit<TKey> : IEntity<TKey>
         where TKey : IEquatable<TKey>

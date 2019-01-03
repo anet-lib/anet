@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Anet.Data
+namespace Anet.Data.Entity
 {
     public abstract class Entity<TKey> : IEntity<TKey>
         where TKey: IEquatable<TKey>
