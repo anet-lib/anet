@@ -10,70 +10,68 @@ namespace Anet.Data
             return string.Join(" AND ", paramNames.Select(x => x + "=@" + x));
         }
 
+        public static string Where(object clause)
+        {
+            IEnumerable<string> paramNames = GetParamNames(clause);
+            return Where(paramNames);
+        }
+
         public static string Where(params string[] paramNames)
         {
             return "WHERE " + Ands(paramNames);
         }
 
-        public static string Where(object clauseParam)
+        public static string Select(string tableName, object clause)
         {
-            IEnumerable<string> paramNames = GetParamNames(clauseParam);
-
-            return Where(paramNames);
-        }
-
-        public static string Select(string tableName, object clauseParam)
-        {
-            return Select(tableName, GetParamNames(clauseParam));
+            return Select(tableName, GetParamNames(clause));
         }
 
         public static string Select(string tableName, params string[] clauseColumns)
         {
             var sql = $"SELECT * FROM {tableName} ";
-            if (clauseColumns != null || clauseColumns.Count() > 0)
+            if (clauseColumns != null && clauseColumns.Count() > 0)
                 sql += Where(clauseColumns);
             return sql;
         }
 
-        public static string Insert(string tableName, object param)
+        public static string Insert(string table, object values)
         {
-            return Insert(tableName, GetParamNames(param));
+            return Insert(table, GetParamNames(values));
         }
 
-        public static string Insert(string tableName, params string[] columns)
+        public static string Insert(string table, params string[] columns)
         {
-            Ensure.HaveItems(columns, nameof(columns));
+            Ensure.HasItems(columns, nameof(columns));
 
-            return $"INSERT INTO {tableName}({string.Join(", ", columns)} VALUES(@{string.Join(", @", columns)})";
+            return $"INSERT INTO {table}({string.Join(", ", columns)} VALUES(@{string.Join(", @", columns)})";
         }
 
-        public static string Update(string tableName, object updateParam, object clauseParam)
+        public static string Update(string table, object update, object clause)
         {
-            Ensure.NotNull(updateParam, nameof(updateParam));
-
-            return Update(tableName, GetParamNames(updateParam), GetParamNames(clauseParam));
+            return Update(table, GetParamNames(update), GetParamNames(clause));
         }
 
-        public static string Update(string tableName, IEnumerable<string> updateColumns, IEnumerable<string> clauseColumns)
+        public static string Update(string table, IEnumerable<string> updateColumns, IEnumerable<string> clauseColumns)
         {
-            Ensure.HaveItems(updateColumns, nameof(updateColumns));
+            Ensure.HasItems(updateColumns, nameof(updateColumns));
 
-            var sql = $"UPDATE {tableName} SET {string.Join(", ", updateColumns.Select(x => x + "=@" + x))} ";
-            if (clauseColumns != null || clauseColumns.Count() > 0)
+            var sql = $"UPDATE {table} SET {string.Join(", ", updateColumns.Select(x => x + "=@" + x))} ";
+            if (clauseColumns != null && clauseColumns.Count() > 0)
                 sql += Where(clauseColumns);
             return sql;
         }
 
-        public static string Delete(string tableName, object param)
+        public static string Delete(string table, object clause)
         {
-            return Delete(tableName, GetParamNames(param));
+            return Delete(table, GetParamNames(clause));
         }
 
-        public static string Delete(string tableName, params string[] clauseColumns)
+        public static string Delete(string table, IEnumerable<string> clauseColumns)
         {
-            Ensure.HaveItems(clauseColumns, nameof(clauseColumns));
-
-            return $"DELETE FROM {tableName} {Where(clauseColumns)}";
+            var sql = $"DELETE FROM {table} ";
+            if (clauseColumns != null && clauseColumns.Count() > 0)
+                sql += Where(clauseColumns);
+            return sql;
         }
 
         /// <summary>

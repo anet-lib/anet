@@ -12,7 +12,13 @@ namespace Anet
                 throw new ArgumentNullException(paramName);
         }
 
-        public static void HaveItems<T>(IEnumerable<T> collection, string paramName)
+        public static void NotNullOrEmpty(string paramValue,string paramName)
+        {
+            if(string.IsNullOrEmpty(paramValue))
+                throw new ArgumentNullException(paramName);
+        }
+
+        public static void HasItems<T>(IEnumerable<T> collection, string paramName)
         {
             if (collection == null)
                 throw new ArgumentNullException(paramName);

@@ -1,4 +1,5 @@
-﻿using Anet.Job;
+﻿using Anet.Data;
+using Anet.Job;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -12,6 +13,8 @@ namespace Sample.JobApp
 
         static void Main(string[] args)
         {
+            Sql.Ands(null);
+
             Console.Title = "Aet 示例 - 简单任务调度程序";
             System.Net.ServicePointManager.DefaultConnectionLimit = 10;
 

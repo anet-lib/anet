@@ -15,6 +15,8 @@ namespace Anet.Data
         where TEntity : IEntity<TKey>
         where TKey : IEquatable<TKey>
     {
+        protected string TableName { get => nameof(TEntity); }
+
         /// <summary>
         /// Initialize the DAO.
         /// </summary>
@@ -55,28 +57,39 @@ namespace Anet.Data
             return FindAsync(new { Id = id });
         }
 
-        public Task<TEntity> FindAsync(object param)
+        public Task<TEntity> FindAsync(object clause)
         {
-            var sql = Sql.Select(nameof(TEntity), param);
-            return Db.QuerySingleOrDefaultAsync<TEntity>(sql, param);
+            var sql = Sql.Select(TableName, clause);
+            return Db.QuerySingleOrDefaultAsync<TEntity>(sql, clause);
         }
 
-        public Task<IEnumerable<TEntity>> QueryAsync(object param)
+        public Task<IEnumerable<TEntity>> QueryAsync(object clause)
         {
-            var sql = Sql.Select(nameof(TEntity), param);
-            return Db.QueryAsync<TEntity>(sql, param);
+            var sql = Sql.Select(TableName, clause);
+            return Db.QueryAsync<TEntity>(sql, clause);
         }
 
         public Task InsertAsync(TEntity entity)
         {
-            var sql = Sql.Insert(nameof(TEntity), entity);
+            var sql = Sql.Insert(TableName, entity);
             return Db.ExecuteAsync(sql, entity);
         }
 
-        public Task<int> UpdateAsync(object updateParam, object clauseParam)
+        public Task<int> UpdateAsync(object update, object clause)
         {
-            var sql = Sql.Update(nameof(TEntity), updateParam, clauseParam);
-            return Db.ExecuteAsync(sql, Sql.MergeParams(updateParam, clauseParam));
+            var sql = Sql.Update(TableName, update, clause);
+            return Db.ExecuteAsync(sql, Sql.MergeParams(update, clause));
+        }
+
+        public Task<int> DeleteAsync(TKey id)
+        {
+            return DeleteAsync(new { Id = id });
+        }
+
+        public Task<int> DeleteAsync(object clause)
+        {
+            var sql = Sql.Delete(TableName, clause);
+            return Db.ExecuteAsync(sql, clause);
         }
 
         #endregion
