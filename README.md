@@ -22,6 +22,7 @@ Anet 的目标是实现一个 .NET Core 通用库、通用框架和通用模板�
 
 ```bash
 dotnet add package Anet
+dotnet add package Anet.Job
 ```
 
 然后添加一个 MessageJob 类，使它实现 IJob 接口，代码如下：

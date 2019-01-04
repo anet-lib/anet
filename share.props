@@ -1,0 +1,10 @@
+﻿<Project>
+  <PropertyGroup>
+    <Version>0.1.3</Version>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageTags>netcore,aspnetcore,common,lib,framework,boilerplate</PackageTags>
+    <Description>A .NET Core Common Lib, Framework and Boilerplate.</Description>
+    <Authors>liamwang</Authors>
+    <PackageProjectUrl>https://github.com/liamwang/anet</PackageProjectUrl>
+  </PropertyGroup>
+</Project>

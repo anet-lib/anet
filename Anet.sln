@@ -5,11 +5,20 @@ VisualStudioVersion = 15.0.28010.2003
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anet", "Anet\Anet.csproj", "{ED670328-88E3-41DF-98D2-4DEA96C976DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anet.Job", "Anet.Job\Anet.Job.csproj", "{60141E6E-98B1-4FB2-9A5D-80882AA05055}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anet.Job", "Anet.Job\Anet.Job.csproj", "{60141E6E-98B1-4FB2-9A5D-80882AA05055}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anet.Web", "Anet.Web\Anet.Web.csproj", "{41F97159-01FD-49F4-91B8-D25800078D15}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anet.Web", "Anet.Web\Anet.Web.csproj", "{41F97159-01FD-49F4-91B8-D25800078D15}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.JobApp", "Sample.JobApp\Sample.JobApp.csproj", "{C8BBEFFC-A1CD-4DE3-9E23-BBAF4559DC03}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.JobApp", "Sample.JobApp\Sample.JobApp.csproj", "{C8BBEFFC-A1CD-4DE3-9E23-BBAF4559DC03}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6BC8D288-5768-4CEE-86F6-F80AA0828DF5}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		build.cmd = build.cmd
+		build.ps1 = build.ps1
+		README.md = README.md
+		share.props = share.props
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
