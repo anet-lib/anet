@@ -5,6 +5,7 @@
     <PackageTags>netcore,aspnetcore,common,lib,framework,boilerplate</PackageTags>
     <Description>A .NET Core Common Lib, Framework and Boilerplate.</Description>
     <Authors>liamwang</Authors>
-    <PackageProjectUrl>https://github.com/liamwang/anet</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/anet-team/anet</PackageProjectUrl>
+    <License>https://raw.githubusercontent.com/anet-team/anet/master/LICENSE</License>
   </PropertyGroup>
 </Project>
