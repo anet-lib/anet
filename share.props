@@ -1,11 +1,11 @@
 ﻿<Project>
   <PropertyGroup>
-    <Version>0.1.3</Version>
+    <Version>0.1.6</Version>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageTags>netcore,aspnetcore,common,lib,framework,boilerplate</PackageTags>
     <Description>A .NET Core Common Lib, Framework and Boilerplate.</Description>
     <Authors>liamwang</Authors>
     <PackageProjectUrl>https://github.com/anet-team/anet</PackageProjectUrl>
-    <License>https://raw.githubusercontent.com/anet-team/anet/master/LICENSE</License>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 </Project>

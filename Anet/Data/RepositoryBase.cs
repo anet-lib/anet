@@ -7,21 +7,21 @@ using System.Threading.Tasks;
 namespace Anet.Data
 {
     /// <summary>
-    /// Data Access Object
+    /// A base class for a repository.
     /// </summary>
     /// <typeparam name="TEntity">The type of entity.</typeparam>
     /// <typeparam name="TKey">The type of primary key.</typeparam>
-    public abstract class DaoBase<TEntity, TKey>
+    public abstract class RepositoryBase<TEntity, TKey>
         where TEntity : IEntity<TKey>
         where TKey : IEquatable<TKey>
     {
         protected string TableName { get => nameof(TEntity); }
 
         /// <summary>
-        /// Initialize the DAO.
+        /// Initialize the base class of a repository.
         /// </summary>
         /// <param name="db">The database to access.</param>
-        public DaoBase(Database db)
+        public RepositoryBase(Database db)
         {
             Db = db;
         }
@@ -96,12 +96,12 @@ namespace Anet.Data
     }
 
     /// <summary>
-    /// Data Access Object
+    /// A base class for a repository.
     /// </summary>
     /// <typeparam name="TEntity">The type of entity.</typeparam>
-    public abstract class DaoBase<TEntity> : DaoBase<IEntity, long>
+    public abstract class RepositoryBase<TEntity> : RepositoryBase<IEntity, long>
     {
-        public DaoBase(Database db) : base(db)
+        public RepositoryBase(Database db) : base(db)
         {
         }
     }

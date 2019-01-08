@@ -7,16 +7,19 @@ namespace Anet.Data.Entity
         where TKey: IEquatable<TKey>
     {
         public virtual TKey Id { get; set; }
-
-        public abstract void SetId();
     }
 
-    public abstract class EntityBase : EntityBase<long>
+    public abstract class EntityBase : EntityBase<long>, IEntity
     {
+        public EntityBase()
+        {
+            SetId();
+        }
+
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public override long Id { get; set; }
 
-        public override void SetId()
+        public void SetId()
         {
             Id = IdGenerator.NewId();
         }

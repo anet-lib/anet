@@ -9,7 +9,11 @@ namespace Anet.Data.Entity
         public virtual DateTime UpdatedAt { get; set; } = DateTime.Now;
     }
 
-    public abstract class EntityAudit : EntityAudit<long>
+    public abstract class EntityAudit : EntityAudit<long>, IEntityAudit
     {
+        public void SetId()
+        {
+            Id = IdGenerator.NewId();
+        }
     }
 }

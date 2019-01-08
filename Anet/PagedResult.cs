@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Anet.Data
+namespace Anet
 {
     public class PagedResult<T>
     {
