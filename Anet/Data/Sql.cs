@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Anet.Data
@@ -87,7 +88,7 @@ namespace Anet.Data
             if (param is DynamicParameters dynamicParameters)
                 return dynamicParameters.ParameterNames;
 
-            return param.GetType().GetProperties().Select(x => x.Name);
+            return param.GetType().GetProperties().Where(x => x.PropertyType.IsSimpleType()).Select(x => x.Name);
         }
 
         /// <summary>

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Anet.Data
@@ -72,6 +73,13 @@ namespace Anet.Data
         public Task InsertAsync(TEntity entity)
         {
             var sql = Sql.Insert(TableName, entity);
+            return Db.ExecuteAsync(sql, entity);
+        }
+
+        public Task<int> UpdateAsync(TEntity entity)
+        {
+            var updateColumns = Sql.GetParamNames(entity).Where(x => x != "Id");
+            var sql = Sql.Update(TableName, updateColumns, new { entity.Id });
             return Db.ExecuteAsync(sql, entity);
         }
 
