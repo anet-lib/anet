@@ -16,7 +16,7 @@ namespace Anet.Data
         where TEntity : IEntity<TKey>
         where TKey : IEquatable<TKey>
     {
-        protected string TableName { get => nameof(TEntity); }
+        protected string TableName { get => typeof(TEntity).Name; }
 
         /// <summary>
         /// Initialize the base class of a repository.

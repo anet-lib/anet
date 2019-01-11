@@ -11,9 +11,9 @@ namespace Anet.Data
             return string.Join(" AND ", paramNames.Select(x => x + "=@" + x));
         }
 
-        public static string Where(object clause)
+        public static string Where(dynamic clause)
         {
-            IEnumerable<string> paramNames = GetParamNames(clause);
+            IEnumerable<string> paramNames = GetParamNames(clause as object);
             return Where(paramNames);
         }
 
@@ -22,9 +22,9 @@ namespace Anet.Data
             return "WHERE " + Ands(paramNames);
         }
 
-        public static string Select(string tableName, object clause)
+        public static string Select(string tableName, dynamic clause)
         {
-            return Select(tableName, GetParamNames(clause));
+            return Select(tableName, GetParamNames(clause as object));
         }
 
         public static string Select(string tableName, params string[] clauseColumns)
@@ -35,9 +35,9 @@ namespace Anet.Data
             return sql;
         }
 
-        public static string Insert(string table, object values)
+        public static string Insert(string table, dynamic values)
         {
-            return Insert(table, GetParamNames(values));
+            return Insert(table, GetParamNames(values as object));
         }
 
         public static string Insert(string table, params string[] columns)
@@ -47,9 +47,9 @@ namespace Anet.Data
             return $"INSERT INTO {table}({string.Join(", ", columns)} VALUES(@{string.Join(", @", columns)})";
         }
 
-        public static string Update(string table, object update, object clause)
+        public static string Update(string table, dynamic update, dynamic clause)
         {
-            return Update(table, GetParamNames(update), GetParamNames(clause));
+            return Update(table, GetParamNames(update as object), GetParamNames(clause as object));
         }
 
         public static string Update(string table, IEnumerable<string> updateColumns, IEnumerable<string> clauseColumns)
@@ -62,9 +62,9 @@ namespace Anet.Data
             return sql;
         }
 
-        public static string Delete(string table, object clause)
+        public static string Delete(string table, dynamic clause)
         {
-            return Delete(table, GetParamNames(clause));
+            return Delete(table, GetParamNames(clause as object));
         }
 
         public static string Delete(string table, IEnumerable<string> clauseColumns)
@@ -88,7 +88,8 @@ namespace Anet.Data
             if (param is DynamicParameters dynamicParameters)
                 return dynamicParameters.ParameterNames;
 
-            return param.GetType().GetProperties().Where(x => x.PropertyType.IsSimpleType()).Select(x => x.Name);
+            return param.GetType()
+                .GetProperties().Where(x => x.PropertyType.IsSimpleType()).Select(x => x.Name);
         }
 
         /// <summary>
