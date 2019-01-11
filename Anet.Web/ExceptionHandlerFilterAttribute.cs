@@ -8,13 +8,11 @@ using System;
 
 namespace Anet.Web
 {
-    public class ExceptionHandlerFilterAttribute : ExceptionFilterAttribute
+    internal class ExceptionHandlerFilterAttribute : ExceptionFilterAttribute
     {
         public override void OnException(ExceptionContext context)
         {
             var exception = context.Exception;
-            if (exception == null)
-                return; // Should never happen.
 
             var result = new ObjectResult("An error has occurred.");
 
@@ -33,11 +31,6 @@ namespace Anet.Web
                 result.StatusCode = StatusCodes.Status401Unauthorized;
                 result.Value = "Unauthorized request.";
             }
-            //else if (exception is SecurityTokenValidationException)
-            //{
-            //    result.StatusCode = StatusCodes.Status403Forbidden;
-            //    result.Value = "Invalid token.";
-            //}
             else
             {
                 result.StatusCode = StatusCodes.Status500InternalServerError;

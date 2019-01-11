@@ -1,9 +1,8 @@
 ﻿using Anet.Data;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Data;
 
-namespace Anet
+namespace Microsoft.Extensions.DependencyInjection
 {
     public static class AnetServiceCollectionExtensions
     {

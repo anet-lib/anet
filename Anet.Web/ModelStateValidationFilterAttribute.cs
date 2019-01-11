@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Anet.Web
 {
-    public class ModelStateValidationFilterAttribute : ActionFilterAttribute
+    internal class ModelStateValidationFilterAttribute : ActionFilterAttribute
     {
         public override void OnResultExecuting(ResultExecutingContext context)
         {
