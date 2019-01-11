@@ -8,10 +8,11 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IMvcCoreBuilder AddAnetMvcCore(this IServiceCollection services, Action<MvcOptions> setupAction = null)
         {
-            return services.AddMvcCore(options => {
+            return services.AddMvcCore(options =>
+            {
                 options.Filters.Add(new ExceptionHandlerFilterAttribute());
                 options.Filters.Add(new ModelStateValidationFilterAttribute());
-                setupAction(options);
+                setupAction?.Invoke(options);
             });
         }
     }
