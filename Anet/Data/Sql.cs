@@ -6,72 +6,47 @@ namespace Anet.Data
 {
     public static class Sql
     {
-        public static string Ands(params string[] paramNames)
+        public static string And(object clause)
         {
-            return string.Join(" AND ", paramNames.Select(x => x + "=@" + x));
+            var names = GetParamNames(clause);
+            return string.Join(" AND ", names.Select(x => x + "=@" + x));
         }
 
-        public static string Where(dynamic clause)
+        public static string Where(object clause)
         {
-            IEnumerable<string> paramNames = GetParamNames(clause as object);
-            return Where(paramNames);
+            return "WHERE " + And(clause);
         }
 
-        public static string Where(params string[] paramNames)
+        public static string Select(string table, object clause)
         {
-            return "WHERE " + Ands(paramNames);
-        }
-
-        public static string Select(string tableName, dynamic clause)
-        {
-            return Select(tableName, GetParamNames(clause as object));
-        }
-
-        public static string Select(string tableName, params string[] clauseColumns)
-        {
-            var sql = $"SELECT * FROM {tableName} ";
-            if (clauseColumns != null && clauseColumns.Count() > 0)
-                sql += Where(clauseColumns);
+            var sql = $"SELECT * FROM {table} ";
+            if (clause != null)
+                sql += Where(clause);
             return sql;
         }
 
-        public static string Insert(string table, dynamic values)
+        public static string Insert(string table, object columns)
         {
-            return Insert(table, GetParamNames(values as object));
+            var colNames = GetParamNames(columns);
+            return $"INSERT INTO {table}({string.Join(", ", colNames)} VALUES(@{string.Join(", @", colNames)})";
         }
 
-        public static string Insert(string table, params string[] columns)
+        public static string Update(string table, object update, object clause)
         {
-            Ensure.HasItems(columns, nameof(columns));
-
-            return $"INSERT INTO {table}({string.Join(", ", columns)} VALUES(@{string.Join(", @", columns)})";
-        }
-
-        public static string Update(string table, dynamic update, dynamic clause)
-        {
-            return Update(table, GetParamNames(update as object), GetParamNames(clause as object));
-        }
-
-        public static string Update(string table, IEnumerable<string> updateColumns, IEnumerable<string> clauseColumns)
-        {
-            Ensure.HasItems(updateColumns, nameof(updateColumns));
-
-            var sql = $"UPDATE {table} SET {string.Join(", ", updateColumns.Select(x => x + "=@" + x))} ";
-            if (clauseColumns != null && clauseColumns.Count() > 0)
-                sql += Where(clauseColumns);
+            var updateCols = GetParamNames(update);
+            var clauseCols = GetParamNames(clause);
+            var sql = $"UPDATE {table} SET {string.Join(", ", updateCols.Select(x => x + "=@" + x))} ";
+            if (clauseCols != null && clauseCols.Count() > 0)
+                sql += Where(clauseCols);
             return sql;
         }
 
-        public static string Delete(string table, dynamic clause)
+        public static string Delete(string table, object clause)
         {
-            return Delete(table, GetParamNames(clause as object));
-        }
-
-        public static string Delete(string table, IEnumerable<string> clauseColumns)
-        {
+            var clauseCols = GetParamNames(clause);
             var sql = $"DELETE FROM {table} ";
-            if (clauseColumns != null && clauseColumns.Count() > 0)
-                sql += Where(clauseColumns);
+            if (clauseCols != null && clauseCols.Count() > 0)
+                sql += Where(clauseCols);
             return sql;
         }
 
@@ -83,13 +58,33 @@ namespace Anet.Data
         public static IEnumerable<string> GetParamNames(object param)
         {
             if (param == null)
+            {
                 return new HashSet<string>();
+            }
+
+            if (param is string str)
+            {
+                if (str.Contains(','))
+                    return str
+                        .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(x => x.Trim());
+                return new[] { str };
+            }
 
             if (param is DynamicParameters dynamicParameters)
+            {
                 return dynamicParameters.ParameterNames;
+            }
+
+            if (param is IEnumerable<string> array)
+            {
+                return array;
+            }
 
             return param.GetType()
-                .GetProperties().Where(x => x.PropertyType.IsSimpleType()).Select(x => x.Name);
+                .GetProperties()
+                .Where(x => x.PropertyType.IsSimpleType())
+                .Select(x => x.Name);
         }
 
         /// <summary>
