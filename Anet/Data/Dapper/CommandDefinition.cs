@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Data;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -126,6 +127,22 @@ namespace Anet.Data
             if (CommandType.HasValue)
                 cmd.CommandType = CommandType.Value;
             paramReader?.Invoke(cmd, Parameters);
+
+            if (Database.Logger != null)
+            {
+                var log = new System.Text.StringBuilder(cmd.CommandText);
+                if (cmd.Parameters.Count > 0)
+                {
+                    log.AppendLine().Append("/* ");
+                    foreach (IDataParameter item in cmd.Parameters)
+                    {
+                        log.Append($"@{item.ParameterName},{item.DbType}={item.Value}; ");
+                    }
+                    log.Append("*/");
+                }
+                Database.Logger.LogDebug(log.ToString());
+            }
+
             return cmd;
         }
 

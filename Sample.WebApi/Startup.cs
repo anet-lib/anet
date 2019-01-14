@@ -22,7 +22,7 @@ namespace Sample.WebApi
         {
             services.AddDatabase<SqlConnection>(Configuration.GetConnectionString("DefaultConnection"));
 
-            services.AddAnetMvcCore().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddAnetMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddTransient<UserRepository>();
             services.AddTransient<UserService>();
@@ -35,6 +35,7 @@ namespace Sample.WebApi
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseAnet();
             app.UseMvc();
         }
     }

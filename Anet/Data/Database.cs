@@ -1,9 +1,12 @@
-﻿using System.Data;
+﻿using Microsoft.Extensions.Logging;
+using System.Data;
 
 namespace Anet.Data
 {
     public class Database
     {
+        public static ILogger<Database> Logger { get; set; }
+
         public Database(IDbConnection connection)
         {
             Connection = connection;
@@ -28,14 +31,17 @@ namespace Anet.Data
 
         public void Dispose()
         {
-            if (Transaction == null)
+            if (Transaction != null)
             {
                 Transaction.Dispose();
                 Transaction = null;
             }
-            Connection?.Close();
-            Connection?.Dispose();
-            Connection = null;
+            if (Connection != null)
+            {
+                Connection.Close();
+                Connection.Dispose();
+                Connection = null;
+            }
         }
     }
 }

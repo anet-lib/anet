@@ -17,7 +17,7 @@ namespace Sample.WebApi.Services
 
         public async Task CreateUserAsync(UserRequestDto dto)
         {
-            var newUser = new User { UserName = dto.UserName };
+            var newUser = new AnetUser { UserName = dto.UserName };
 
             using (var tran = userRepository.BeginTransaction())
             {

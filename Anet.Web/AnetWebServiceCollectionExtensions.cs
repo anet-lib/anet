@@ -6,9 +6,9 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class AnetWebServiceCollectionExtensions
     {
-        public static IMvcCoreBuilder AddAnetMvcCore(this IServiceCollection services, Action<MvcOptions> setupAction = null)
+        public static IMvcBuilder AddAnetMvc(this IServiceCollection services, Action<MvcOptions> setupAction = null)
         {
-            return services.AddMvcCore(options =>
+            return services.AddMvc(options =>
             {
                 options.Filters.Add(new ExceptionHandlerFilterAttribute());
                 options.Filters.Add(new ModelStateValidationFilterAttribute());

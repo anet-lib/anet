@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sample.WebApi.Repositories
 {
-    public class UserRepository : RepositoryBase<User>
+    public class UserRepository : RepositoryBase<AnetUser>
     {
         public UserRepository(Database db) : base(db)
         {
@@ -14,13 +14,13 @@ namespace Sample.WebApi.Repositories
 
         public Task<IEnumerable<UserResponseDto>> GetAllAsync()
         {
-            var sql = "SELECT * FROM User;";
+            var sql = "SELECT * FROM AnetUser;";
             return Db.QueryAsync<UserResponseDto>(sql);
         }
 
         public Task<UserResponseDto> GetByIdAsync(long id)
         {
-            var sql = Sql.Select("User", new { Id = id });
+            var sql = Sql.Select("AnetUser", new { Id = id });
             return Db.QueryFirstOrDefaultAsync<UserResponseDto>(sql);
         }
     }

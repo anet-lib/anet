@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Anet.Data;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
@@ -37,14 +38,12 @@ namespace Anet.Job
 
             // 3、Config Logging
             var loggerFactory = ServiceProvider.GetRequiredService<ILoggerFactory>();
-            var nlogOptions = new NLogProviderOptions
-            {
-                CaptureMessageTemplates = true,
-                CaptureMessageProperties = true
-            };
             loggerFactory.AddConsole(); // LogLevel.Debug
-            loggerFactory.AddNLog(nlogOptions);
-            NLog.LogManager.LoadConfiguration("nlog.config");
+            loggerFactory.AddNLog();
+            //NLog.LogManager.LoadConfiguration("nlog.config");
+
+            // 4、Set Database Logger
+            Database.Logger = ServiceProvider.GetRequiredService<ILogger<Database>>();
         }
     }
 }
