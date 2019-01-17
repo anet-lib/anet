@@ -6,10 +6,10 @@ namespace Anet.Data.Entity
         where TKey : IEquatable<TKey>
     {
         TKey Id { get; set; }
+        void SetId();
     }
 
-    public interface IEntity : IEntity<long>
+    public interface IEntity : IEntity<string>
     {
-        void SetId();
     }
 }

@@ -11,7 +11,7 @@ namespace Anet.Data.Entity
 
     public abstract class EntityAuditFull : EntityAudit, IEntityAuditFull
     {
-        public virtual long CreatedBy { get; set; }
-        public virtual long UpdatedBy { get; set; }
+        public virtual string CreatedBy { get; set; }
+        public virtual string UpdatedBy { get; set; }
     }
 }
