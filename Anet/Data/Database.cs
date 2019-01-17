@@ -5,7 +5,7 @@ namespace Anet.Data
 {
     public class Database
     {
-        public static ILogger<Database> Logger { get; set; }
+        internal static ILogger<Database> Logger { get; set; }
 
         public Database(IDbConnection connection)
         {

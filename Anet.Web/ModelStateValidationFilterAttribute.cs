@@ -16,7 +16,7 @@ namespace Anet.Web
                 var value = context.ModelState[key];
                 if (value.Errors != null && value.Errors.Count > 0)
                 {
-                    errorMessage = key + ": " + value.Errors[0].ErrorMessage;
+                    errorMessage = value.Errors[0].ErrorMessage;
                     break;
                 }
             }

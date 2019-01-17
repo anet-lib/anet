@@ -9,11 +9,7 @@ namespace Microsoft.AspNetCore.Builder
     {
         public static IApplicationBuilder UseAnet(this IApplicationBuilder app)
         {
-            var loggerFactory = app.ApplicationServices.GetRequiredService<ILoggerFactory>();
-            loggerFactory.AddNLog();
-
-            Database.Logger = app.ApplicationServices.GetRequiredService<ILogger<Database>>();
-
+            // todo
             return app;
         }
     }

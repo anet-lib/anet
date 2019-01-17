@@ -33,7 +33,9 @@ namespace Anet.Job
             var services = new ServiceCollection();
             services.AddSingleton(Configuration);
             services.AddLogging(b => b.AddConfiguration(Configuration.GetSection("Logging")));
+
             setup(Configuration, services);
+
             ServiceProvider = services.BuildServiceProvider();
 
             // 3、Config Logging
@@ -41,9 +43,6 @@ namespace Anet.Job
             loggerFactory.AddConsole(); // LogLevel.Debug
             loggerFactory.AddNLog();
             //NLog.LogManager.LoadConfiguration("nlog.config");
-
-            // 4、Set Database Logger
-            Database.Logger = ServiceProvider.GetRequiredService<ILogger<Database>>();
         }
     }
 }

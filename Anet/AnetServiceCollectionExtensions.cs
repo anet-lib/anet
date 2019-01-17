@@ -1,4 +1,5 @@
 ﻿using Anet.Data;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Data;
 
@@ -18,6 +19,10 @@ namespace Microsoft.Extensions.DependencyInjection
             where TDb : Database
             where TDbConnection : IDbConnection, new()
         {
+            // set database access logger.
+            var tempServiceProvider = services.BuildServiceProvider();
+            Database.Logger = tempServiceProvider.GetService<ILogger<Database>>();
+
             return services.AddScoped((serviceProvider) =>
             {
                 var connection = new TDbConnection() as IDbConnection;
