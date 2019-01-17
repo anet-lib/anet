@@ -28,7 +28,7 @@ namespace Anet.Data
         public static string Insert(string table, object columns)
         {
             var colNames = GetParamNames(columns);
-            return $"INSERT INTO {table}({string.Join(", ", colNames)} VALUES(@{string.Join(", @", colNames)})";
+            return $"INSERT INTO {table}({string.Join(", ", colNames)}) VALUES(@{string.Join(", @", colNames)})";
         }
 
         public static string Update(string table, object update, object clause)
