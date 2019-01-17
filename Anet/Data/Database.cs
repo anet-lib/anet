@@ -26,7 +26,8 @@ namespace Anet.Data
             // Auto open connection.
             if (Connection.State == ConnectionState.Closed)
                 Connection.Open();
-            return Connection.BeginTransaction(il);
+            Transaction = Connection.BeginTransaction(il);
+            return Transaction;
         }
 
         public void Dispose()
