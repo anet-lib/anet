@@ -9,11 +9,9 @@ namespace Anet.Data.Entity
         public virtual TKey UpdatedBy { get; set; }
     }
 
-    public abstract class EntityAuditFull : EntityAuditFull<long>, IEntityAuditFull
+    public abstract class EntityAuditFull : EntityAudit, IEntityAuditFull
     {
-        public void SetId()
-        {
-            Id = IdGenerator.NewId();
-        }
+        public virtual long CreatedBy { get; set; }
+        public virtual long UpdatedBy { get; set; }
     }
 }
