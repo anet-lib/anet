@@ -20,11 +20,11 @@ namespace Anet
         private static long _maxSequence = 0;
         private static long _lastTimestamp = 0;
 
-        private static readonly long EpochTicks = new DateTime(2017, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks;
+        private static readonly long EpochTicks = new DateTime(2010, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks;
         private static readonly long OffsetTicks = DateTime.UtcNow.Ticks - EpochTicks;
 
         private static readonly Stopwatch _stopwatch = Stopwatch.StartNew();
-        private static readonly Object _lockObject = new Object();
+        private static readonly object _lockObject = new object();
 
         static IdGenerator()
         {
@@ -68,7 +68,7 @@ namespace Anet
         /// </summary>
         /// <param name="machineIdBits">机器码位数（0-10之间）</param>
         /// <param name="sequenceBits">序列号位数（0-12之间）</param>
-        public static void Config(byte machineIdBits = 10, byte sequenceBits = 12)
+        internal static void Config(byte machineIdBits = 10, byte sequenceBits = 12)
         {
             if (machineIdBits > 10)
                 throw new ArgumentOutOfRangeException(nameof(machineIdBits), "机器码位数必须小于10。");

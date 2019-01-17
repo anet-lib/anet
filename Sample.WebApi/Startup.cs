@@ -20,9 +20,10 @@ namespace Sample.WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDatabase<SqlConnection>(Configuration.GetConnectionString("DefaultConnection"));
+            services.AddAnet(opt => opt.ConfigIdGenerator(1, 1))
+                .AddDatabase<SqlConnection>(Configuration.GetConnectionString("DefaultConnection"));
 
-            services.AddAnetMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddTransient<UserRepository>();
             services.AddTransient<UserService>();
