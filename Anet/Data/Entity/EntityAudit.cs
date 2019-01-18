@@ -9,9 +9,8 @@ namespace Anet.Data.Entity
         public virtual DateTime UpdatedAt { get; set; } = DateTime.Now;
     }
 
-    public abstract class EntityAudit : EntityBase, IEntityAudit
+    public abstract class EntityAudit : EntityAudit<string>
     {
-        public virtual DateTime CreatedAt { get; set; } = DateTime.Now;
-        public virtual DateTime UpdatedAt { get; set; } = DateTime.Now;
+
     }
 }

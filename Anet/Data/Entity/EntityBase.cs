@@ -10,14 +10,14 @@ namespace Anet.Data.Entity
         public abstract void SetId();
     }
 
-    public abstract class EntityBase : EntityBase<string>, IEntity
+    public abstract class EntityBase : EntityBase<long>
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public override string Id { get; set; }
+        public override long Id { get; set; }
 
         public override void SetId()
         {
-            Id = IdGenerator.NewId().ToString();
+            Id = ID.NewId();
         }
     }
 }

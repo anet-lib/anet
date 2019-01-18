@@ -3,7 +3,7 @@
     /// <summary>
     /// Corresponds to a database table.
     /// </summary>
-    public interface ITable
+    public interface IDbTable
     {
     }
 }

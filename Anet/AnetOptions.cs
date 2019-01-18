@@ -9,7 +9,7 @@
         /// <param name="sequenceBits">序列号位数（0-12之间）</param>
         public void ConfigIdGenerator(byte machineIdBits = 10, byte sequenceBits = 12)
         {
-            IdGenerator.Config(machineIdBits, sequenceBits);
+            ID.Config(machineIdBits, sequenceBits);
         }
     }
 }

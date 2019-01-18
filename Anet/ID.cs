@@ -9,7 +9,7 @@ namespace Anet
     /// 格式：{41位时间戳, 0-10位机器码, 0-12位递增系列号}。
     /// 注意：程序启动前请确保系统时间正确。
     /// </summary>
-    public static class IdGenerator
+    public static class ID
     {
         private const byte TIMESTAMP_BITS = 41;
         
@@ -26,9 +26,9 @@ namespace Anet
         private static readonly Stopwatch _stopwatch = Stopwatch.StartNew();
         private static readonly object _lockObject = new object();
 
-        static IdGenerator()
+        static ID()
         {
-            Config(10, 12);
+            Config();
         }
 
         private static long GetTimestampNow()
@@ -68,7 +68,7 @@ namespace Anet
         /// </summary>
         /// <param name="machineIdBits">机器码位数（0-10之间）</param>
         /// <param name="sequenceBits">序列号位数（0-12之间）</param>
-        internal static void Config(byte machineIdBits = 10, byte sequenceBits = 12)
+        internal static void Config(byte machineIdBits = 1, byte sequenceBits = 1)
         {
             if (machineIdBits > 10)
                 throw new ArgumentOutOfRangeException(nameof(machineIdBits), "机器码位数必须小于10。");
