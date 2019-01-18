@@ -130,13 +130,14 @@ namespace Anet.Data
 
             if (Database.Logger != null)
             {
-                var log = new System.Text.StringBuilder(cmd.CommandText);
+                // SQL 语句为了美观，可能会人为缩进，为了输出日志的简洁，将去除这些缩进。
+                var log = new System.Text.StringBuilder(cmd.CommandText.Replace("    ",""));
                 if (cmd.Parameters.Count > 0)
                 {
                     log.AppendLine().Append("/* ");
                     foreach (IDataParameter item in cmd.Parameters)
                     {
-                        log.Append($"@{item.ParameterName},{item.DbType}={item.Value}; ");
+                        log.Append($"@{item.DbType},{item.ParameterName}={item.Value}; ");
                     }
                     log.Append("*/");
                 }
