@@ -25,10 +25,15 @@ namespace Anet
         /// <summary>
         /// The constructor of <see cref="IdGen"/>.
         /// </summary>
-        /// <param name="sequenceBits">序列号位数（0-20之间），并发量越大，此值也要越大</param>
-        /// <param name="machineIdBits">机器码位数（0-10之间）</param>
         /// <param name="machineId">当前机器码</param>
-        public IdGen(byte sequenceBits = 8, byte machineIdBits = 0, byte machineId = 0)
+        /// <param name="machineIdBits">机器码位数（0-10之间）</param>
+        /// <param name="sequenceBits">
+        /// 序列号位数（0-20之间）
+        /// 注意：
+        /// 1. 并发量越大，此值也要越大，例如：10 可以 1 秒内生成 2^10=1024 个 ID。
+        /// 2. 每台机器此参数务必相同。
+        /// </param>
+        public IdGen(byte machineId = 0, byte machineIdBits = 0, byte sequenceBits = 10)
         {
             if (sequenceBits > 20)
                 throw new ArgumentOutOfRangeException(nameof(sequenceBits), "序列号不能超过 20 位。");

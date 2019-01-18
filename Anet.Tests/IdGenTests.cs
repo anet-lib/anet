@@ -9,11 +9,11 @@ namespace Anet.Tests
         [Fact]
         public void GeneratedIds_Not_Duplication()
         {
-            IdGen.SetDefault(new IdGen(15));
+            IdGen.SetDefault(new IdGen(sequenceBits: 15));
 
             var idList = new List<long>();
 
-            for (int i= 0; i < 10000; i++)
+            for (int i = 0; i < 10000; i++)
             {
                 var id = IdGen.NewId();
                 idList.Add(id);
