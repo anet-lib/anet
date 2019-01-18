@@ -9,7 +9,7 @@ namespace Anet.Data.Entity
         public virtual TKey UpdatedBy { get; set; }
     }
 
-    public abstract class EntityAuditFull : EntityAuditFull<string>
+    public abstract class EntityAuditFull : EntityAuditFull<string>, IEntityAuditFull
     {
 
     }
