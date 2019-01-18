@@ -17,7 +17,7 @@ namespace Anet.Data.Entity
 
         public override void SetId()
         {
-            Id = ID.NewId();
+            Id = IdGen.NewId();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Anet;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -20,7 +21,7 @@ namespace Sample.WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAnet(opt => opt.ConfigIdGenerator(1, 1))
+            services.AddAnet(opt => opt.SetIdGenerator(new IdGenerator(10)))
                 .AddDatabase<SqlConnection>(Configuration.GetConnectionString("DefaultConnection"));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);

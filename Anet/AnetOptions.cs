@@ -3,13 +3,12 @@
     public class AnetOptions
     {
         /// <summary>
-        /// 配置ID生成器
+        /// Set the default instance of <see cref="IdGenerator"/>.
         /// </summary>
-        /// <param name="machineIdBits">机器码位数（0-10之间）</param>
-        /// <param name="sequenceBits">序列号位数（0-12之间）</param>
-        public void ConfigIdGeneration(byte machineIdBits = 1, byte sequenceBits = 1)
+        /// <param name="idGenerator">The instace of <see cref="IdGenerator"/>.</param>
+        public void SetIdGenerator(IdGenerator idGenerator = null)
         {
-            ID.Config(machineIdBits, sequenceBits);
+            IdGen.SetInstace(idGenerator);
         }
     }
 }
