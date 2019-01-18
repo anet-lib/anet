@@ -16,7 +16,7 @@ namespace Anet
         public static void SetInstace(IdGenerator idGenerator = null)
         {
             if (Instance != null)
-                throw new InvalidOperationException("The default IdGenerator instace can't be set twice.");
+                throw new InvalidOperationException("The IdGen.SetInstace method can't be call twice.");
             Instance = idGenerator ?? new IdGenerator();
         }
 

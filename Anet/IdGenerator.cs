@@ -96,7 +96,7 @@ namespace Anet
                 _lastTimestamp = GetNextTimestamp();
 
                 //var bitsLength = (int)(Math.Log(_lastTimestamp, 2)) + 1;
-                //Console.WriteLine($"Timestamp bits: {bitsLength}");
+                //Console.WriteLine($"Timestamp bits: {bitsLength}"); 
 
                 int timestampShift = _machineIdBits + _sequenceBits;
                 int machineIdShift = _sequenceBits;
