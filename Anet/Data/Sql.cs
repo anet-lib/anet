@@ -6,6 +6,11 @@ namespace Anet.Data
 {
     public static class Sql
     {
+        public static string Like(string keyword)
+        {
+            return $"%{keyword.Replace(" ", "%")}%";
+        }
+
         public static string And(object clause)
         {
             var names = GetParamNames(clause);
@@ -53,7 +58,7 @@ namespace Anet.Data
         /// <summary>
         /// Get parameter names from an object or <see cref="DynamicParameters"/>.
         /// </summary>
-        /// <param name="param">The param object to get properties.</param>
+        /// <param name="param">Columns(array or string with comma separated), DynamicParameters, Dynamic object or Entity type.</param>
         /// <returns>The parameter names collection.</returns>
         public static IEnumerable<string> GetParamNames(object param)
         {
@@ -71,17 +76,19 @@ namespace Anet.Data
                 return new[] { str };
             }
 
-            if (param is DynamicParameters dynamicParameters)
-            {
-                return dynamicParameters.ParameterNames;
-            }
-
             if (param is IEnumerable<string> array)
             {
                 return array;
             }
 
-            return param.GetType()
+            if (param is DynamicParameters dynamicParameters)
+            {
+                return dynamicParameters.ParameterNames;
+            }
+
+            var type = param is Type ? (param as Type) : param.GetType();
+
+            return type
                 .GetProperties()
                 .Where(x => x.PropertyType.IsSimpleType())
                 .Select(x => x.Name);
