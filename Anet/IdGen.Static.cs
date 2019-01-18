@@ -4,11 +4,9 @@ namespace Anet
 {
     public partial class IdGen
     {
-        // 636503616000000000 = new DateTime(2018, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks
-        //private static readonly long OffsetTicks = DateTime.UtcNow.Ticks - 636503616000000000;
-        private static readonly long OffsetTicks = new DateTime(2028, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks - 636503616000000000;
+        private static readonly long OffsetTicks = 
+            DateTime.UtcNow.Ticks - new DateTime(2018, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks;
 
-        // Default instance
         private static IdGen Instance;
 
         /// <summary>
