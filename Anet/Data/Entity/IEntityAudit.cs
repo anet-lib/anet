@@ -9,7 +9,7 @@ namespace Anet.Data.Entity
         DateTime UpdatedAt { get; set; }
     }
 
-    public interface IEntityAudit : IEntityAudit<string>
+    public interface IEntityAudit : IEntityAudit<long>
     {
     }
 }
