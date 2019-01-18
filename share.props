@@ -1,6 +1,6 @@
 ﻿<Project>
   <PropertyGroup>
-    <Version>0.3.0</Version>
+    <Version>0.3.1</Version>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageTags>netcore,aspnetcore,common,lib,framework,boilerplate</PackageTags>
     <Description>A .NET Core Common Lib, Framework and Boilerplate.</Description>
