@@ -21,7 +21,7 @@ namespace Sample.WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAnet(opt => opt.SetIdGenerator(new IdGenerator(10)))
+            services.AddAnet(opt => opt.SetIdGen(new IdGen(10)))
                 .AddDatabase<SqlConnection>(Configuration.GetConnectionString("DefaultConnection"));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);

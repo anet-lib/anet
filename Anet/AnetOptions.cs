@@ -3,12 +3,12 @@
     public class AnetOptions
     {
         /// <summary>
-        /// Set the default instance of <see cref="IdGenerator"/>.
+        /// Set the default instance of <see cref="IdGen"/>.
         /// </summary>
-        /// <param name="idGenerator">The instace of <see cref="IdGenerator"/>.</param>
-        public void SetIdGenerator(IdGenerator idGenerator = null)
+        /// <param name="idGen">The instace of <see cref="IdGen"/>.</param>
+        public void SetIdGen(IdGen idGen = null)
         {
-            IdGen.SetInstace(idGenerator);
+            IdGen.SetDefault(idGen);
         }
     }
 }
