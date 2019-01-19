@@ -8,7 +8,7 @@ namespace Anet.Data
     {
         public static string Like(string keyword)
         {
-            return $"%{keyword.Replace(" ", "%")}%";
+            return $"%{keyword?.Replace(" ", "%")}%";
         }
 
         public static string And(object clause)
