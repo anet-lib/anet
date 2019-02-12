@@ -27,18 +27,14 @@ namespace Sample.JobApp
                 services.AddTransient<MessageJob>();
             });
 
-            using (var scope = App.ServiceProvider.CreateScope())
-            {
-                var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+            var logger = App.ServiceProvider.GetRequiredService<ILogger<Program>>();
 
-                logger.LogInformation("程序已启动。");
+            logger.LogInformation("程序已启动。");
 
-                // 1. 简单任务调度示例
-                Scheduler.StartNew<MessageJob>(Settings.JobIntervalSeconds);
-                logger.LogInformation("已启动消息发送任务处理程序。");
+            // 启动定时轮循任务
+            Scheduler.StartNew<MessageJob>(Settings.JobIntervalSeconds);
 
-                // todo: 其它例子
-            }
+            logger.LogInformation("已启动消息发送任务处理程序。");
 
             // 等待程序关闭
             Scheduler.WaitForShutdown();
