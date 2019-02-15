@@ -77,36 +77,25 @@ namespace Anet.Job
         /// </summary>
         public static void WaitForShutdown()
         {
-            // 程序结束事件
-            var done = new ManualResetEventSlim(false);
-            // 附加 Ctrl+C 终止程序
-            AttachCtrlcSigtermShutdown(done);
-            // 程序保活
-            while (!IsStopping || _runningTaskCount > 0)
-            {
-                Thread.Sleep(0);
-            }
-            // 程序正常结束
-            done.Set();
-        }
-
-        private static void AttachCtrlcSigtermShutdown(ManualResetEventSlim doneEvent)
-        {
             void Shutdown()
             {
                 Console.WriteLine("程序正在关闭，请稍后...");
-                IsStopping = true;
-                // 等待程序执行结束
-                doneEvent.Wait();
-            };
+                StopAll();
+            }
 
             AppDomain.CurrentDomain.ProcessExit += (sender, eventArgs) => Shutdown();
-            Console.CancelKeyPress += (sender, eventArgs) =>
-            {
-                Shutdown();
-                // 不要立即关闭, 等待主线程退出
-                eventArgs.Cancel = true;
-            };
+            Console.CancelKeyPress += (s, e) => Shutdown();
+            Thread.Sleep(Timeout.Infinite);
+        }
+
+        /// <summary>
+        /// 停止所有任务
+        /// </summary>
+        private static void StopAll()
+        {
+            if (IsStopping) return;
+            IsStopping = true;
+            while (_runningTaskCount > 0) ;
         }
     }
 }
