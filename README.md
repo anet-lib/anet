@@ -131,7 +131,7 @@ public class UserService
 
 ### 5. 定时任务
 
-Anet 封装了一个 JobScheduler，它可以满足大部分任务调度的需求。下面演示如何通过 Anet 来实现一个简单任务轮循程序，模拟一个发送消息的任务调度服务。这个示例也可以在 GitHub 仓库中找到源代码。
+Anet 封装了一个 Scheduler，它可以满足大部分任务调度的需求。下面演示如何通过 Anet 来实现一个简单任务轮循程序，模拟一个发送消息的任务调度服务。这个示例也可以在 GitHub 仓库中找到源代码。
 
 首先创建一个 Console（.NET Core）应用，需要先安装 Anet 的两个包：
 
@@ -215,6 +215,7 @@ Anet 才刚起步，处在最小可用状态。它目前只是一个通用库，
 
 Thanks goes to these wonderful people:
 
-| [<img src="https://avatars2.githubusercontent.com/u/5000396?v=4" width="100px;"/><br /><small>Liam Wang</small>](https://github.com/liamwang) |
-| :-------------------------------------------------------------------------------------------------------------------------------------------: |
+| [<img src="https://avatars2.githubusercontent.com/u/5000396?v=4" width="100px;"/><br/>Liam Wang](https://github.com/liamwang) | [<img src="https://avatars2.githubusercontent.com/u/12966814?v=4" width="100px;"/><br/>Zae](https://github.com/Zaeworks) |
+| :---------------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------: |
+
 
