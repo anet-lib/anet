@@ -20,8 +20,9 @@ namespace Sample.WebApi.Repositories
 
         public Task<UserResponseDto> GetByIdAsync(long id)
         {
-            var sql = Sql.Select("AnetUser", new { Id = id });
-            return Db.QueryFirstOrDefaultAsync<UserResponseDto>(sql);
+            var param = new { Id = id };
+            var sql = Sql.Select("AnetUser", param);
+            return Db.QueryFirstOrDefaultAsync<UserResponseDto>(sql, param);
         }
     }
 }
