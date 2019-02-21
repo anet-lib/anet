@@ -116,6 +116,7 @@ namespace Anet.Job
         /// <summary>
         /// 开启新的任务调度
         /// </summary>
+        /// <typeparam name="T">用于调度的 <see cref="IJob"/> 服务</typeparam>
         /// <param name="seconds">任务间隔秒数</param>
         [Obsolete("请用 StartNewAt<T>(DateTime, TimeSpan) 代替")]
         public static void StartNew<T>(int seconds) where T : IJob
@@ -126,6 +127,7 @@ namespace Anet.Job
         /// <summary>
         /// 开启新的任务调度
         /// </summary>
+        /// <typeparam name="T">用于调度的 <see cref="IJob"/> 服务</typeparam>
         /// <param name="interval">任务间隔</param>
         [Obsolete("请用 StartNewAt<T>(DateTime, TimeSpan) 代替")]
         public static void StartNew<T>(TimeSpan interval) where T : IJob
@@ -136,9 +138,9 @@ namespace Anet.Job
         /// <summary>
         /// 开启新的任务调度
         /// </summary>
-        /// <typeparam name="T">用于调度的 IJob 服务</typeparam>
+        /// <typeparam name="T">用于调度的 <see cref="IJob"/> 服务</typeparam>
         /// <param name="startTime">任务开始时间</param>
-        /// <param name="interval">任务间隔</param>
+        /// <param name="interval">任务间隔; 当值为 <see cref="TimeSpan.Zero"/> 时, 指定任务为一次性任务</param>
         /// <param name="executeAtStartTime">指定任务是否在<paramref name="startTime"/>时执行</param>
         public static void StartNewAt<T>(DateTime startTime, TimeSpan interval, bool executeAtStartTime = true) where T : IJob
         {
@@ -156,7 +158,7 @@ namespace Anet.Job
             UpdateTimer();
         }
 
-        private static DateTime ?GetNextTimeToRun(DateTime date, TimeSpan interval)
+        private static DateTime? GetNextTimeToRun(DateTime date, TimeSpan interval)
         {
             var span = (DateTime.Now - date).Ticks;
             if (span < 0) return date;
