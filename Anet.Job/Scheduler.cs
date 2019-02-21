@@ -52,7 +52,11 @@ namespace Anet.Job
 
         private static void RunJob(Schedule schedule)
         {
-            schedule.NextRun = schedule.NextRun + schedule.Interval;
+            var nextRun = GetNextTimeToRun(schedule.NextRun, schedule.Interval);
+            if (nextRun != null)
+                schedule.NextRun = nextRun.Value;
+            else
+                _scheduleList.Remove(schedule);
 
             lock (_running)
             {
@@ -146,12 +150,20 @@ namespace Anet.Job
             };
 
             if (!executeAtStartTime)
-                schedule.NextRun += interval;
+                schedule.NextRun = GetNextTimeToRun(startTime, interval) ?? throw new ArgumentException("任务无法调度");
 
             _scheduleList.Add(schedule);
             UpdateTimer();
         }
-        
+
+        private static DateTime ?GetNextTimeToRun(DateTime date, TimeSpan interval)
+        {
+            var span = (DateTime.Now - date).Ticks;
+            if (span < 0) return date;
+            if (interval <= TimeSpan.Zero) return null;
+            return new DateTime(date.Ticks + span + interval.Ticks - span % interval.Ticks, date.Kind);
+        }
+
         /// <summary>
         /// 等待程序关闭
         /// </summary>
