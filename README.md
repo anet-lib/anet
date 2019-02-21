@@ -199,7 +199,24 @@ logger.LogInformation("已启动消息发送任务处理程序。");
 Scheduler.WaitForShutdown();
 ```
 
-一个简单的消息发送服务就做好了，每隔指定秒数就会执行发送任务。运行后在控制台看到的效果是：
+一个简单的消息发送服务就做好了，每隔指定秒数就会执行发送任务。此外，你还可以用 Scheduler.StartNewAt 方法进一步实现定时需求：
+
+```csharp
+// 等同于 Scheduler.StartNew<MessageJob>(Settings.JobIntervalSeconds);
+Scheduler.StartNewAt<MessageJob>(DateTime.Now, TimeSpan.FromSeconds(Settings.JobIntervalSeconds), true);
+
+// 10秒钟后开启任务, 且只执行一次
+Scheduler.StartNewAt<MessageJob>(DateTime.Now.AddSeconds(10), TimeSpan.Zero);
+
+// 每天1点执行任务
+// 第三个参数默认为 true, 指定当到达开始时间时, 是否立即执行一次任务
+Scheduler.StartNewAt<MessageJob>(DateTime.Today.AddHours(1), TimeSpan.FromDays(1), false);
+
+// 此任务无法执行, 因为10秒钟后不立即执行且不继续进行, 会抛出 ArgumentException 异常
+// Scheduler.StartNewAt<MessageJob>(DateTime.Now.AddSeconds(10), TimeSpan.Zero, false);
+```
+
+运行后在控制台看到的效果是：
 
 ![](https://i.imgur.com/plVdQD2.png)
 
