@@ -26,6 +26,8 @@ namespace Anet.Job
 
         private static void UpdateTimer()
         {
+            if (!Enabled) return;
+
             var nextToRun = _scheduleList.OrderBy(s => s.NextRun).FirstOrDefault();
             if(nextToRun == null)
             {
@@ -102,8 +104,6 @@ namespace Anet.Job
 
         private static void OnTimerCallback()
         {
-            Debug.WriteLine($"run {_nextToRun.JobType} {_nextToRun.NextRun}");
-
             RunJob(_nextToRun);
             UpdateTimer();
         }
@@ -140,8 +140,8 @@ namespace Anet.Job
         /// </summary>
         public static void WaitForShutdown()
         {
-            AppDomain.CurrentDomain.ProcessExit += (sender, eventArgs) => StopAll();
-            Console.CancelKeyPress += (s, e) => StopAll();
+            AppDomain.CurrentDomain.ProcessExit += (sender, eventArgs) => StopAllAndWait();
+            Console.CancelKeyPress += (s, e) => StopAllAndWait();
             Thread.Sleep(Timeout.Infinite);
         }
 
@@ -162,7 +162,6 @@ namespace Anet.Job
             StopAll();
 
             var tasks = new Task[0];
-
             do
             {
                 lock (_running)
