@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -112,64 +113,79 @@ namespace Anet.Job
         /// 开启新的任务调度
         /// </summary>
         /// <param name="seconds">任务间隔秒数</param>
+        [Obsolete("请用 StartNewAt<T>(DateTime, TimeSpan) 代替")]
         public static void StartNew<T>(int seconds) where T : IJob
         {
-            StartNew<T>(TimeSpan.FromSeconds(seconds));
+            StartNewAt<T>(DateTime.Now, TimeSpan.FromSeconds(seconds), true);
         }
 
         /// <summary>
         /// 开启新的任务调度
         /// </summary>
         /// <param name="interval">任务间隔</param>
+        [Obsolete("请用 StartNewAt<T>(DateTime, TimeSpan) 代替")]
         public static void StartNew<T>(TimeSpan interval) where T : IJob
+        {
+            StartNewAt<T>(DateTime.Now, interval, true);
+        }
+
+        /// <summary>
+        /// 开启新的任务调度
+        /// </summary>
+        /// <typeparam name="T">用于调度的 IJob 服务</typeparam>
+        /// <param name="startTime">任务开始时间</param>
+        /// <param name="interval">任务间隔</param>
+        /// <param name="executeAtStartTime">指定任务是否在<paramref name="startTime"/>时执行</param>
+        public static void StartNewAt<T>(DateTime startTime, TimeSpan interval, bool executeAtStartTime = true) where T : IJob
         {
             var schedule = new Schedule()
             {
                 JobType = typeof(T),
                 Interval = interval,
-                NextRun = DateTime.Now + interval
+                NextRun = startTime
             };
+
+            if (!executeAtStartTime)
+                schedule.NextRun += interval;
 
             _scheduleList.Add(schedule);
             UpdateTimer();
         }
-
         
         /// <summary>
         /// 等待程序关闭
         /// </summary>
         public static void WaitForShutdown()
         {
-            AppDomain.CurrentDomain.ProcessExit += (sender, eventArgs) => StopAllAndWait();
-            Console.CancelKeyPress += (s, e) => StopAllAndWait();
+            AppDomain.CurrentDomain.ProcessExit += async (s, e) => await StopAll();
+            Console.CancelKeyPress += async (s, e) => await StopAll();
             Thread.Sleep(Timeout.Infinite);
         }
 
         /// <summary>
         /// 停止所有任务
         /// </summary>
-        public static void StopAll()
+        public async static Task StopAll()
         {
+            if (IsStopping) return;
+            IsStopping = true;
+
             Enabled = false;
             _timer.Change(-1, -1);
-        }
 
-        /// <summary>
-        /// 停止所有任务并等待
-        /// </summary>
-        public static void StopAllAndWait()
-        {
-            StopAll();
-
-            var tasks = new Task[0];
-            do
+            await Task.Run(() =>
             {
-                lock (_running)
+                var tasks = new Task[0];
+                do
                 {
-                    tasks = _running.Select(t => t.Item2).ToArray();
-                }
-                Task.WaitAll(tasks);
-            } while (tasks.Any());
+                    lock (_running)
+                    {
+                        tasks = _running.Select(t => t.Item2).ToArray();
+                    }
+                    Task.WaitAll(tasks);
+                } while (tasks.Any());
+                IsStopping = false;
+            });
         }
     }
 }
