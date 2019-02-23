@@ -1746,7 +1746,7 @@ namespace Anet.Data
             il.Emit(OpCodes.Ldarg_1); // stack is now [untyped-param]
             if (isStruct)
             {
-                il.DeclareLocal(type.MakePointerType());
+                il.DeclareLocal(type.MakeByRefType()); // note: ref-local
                 il.Emit(OpCodes.Unbox, type); // stack is now [typed-param]
             }
             else
