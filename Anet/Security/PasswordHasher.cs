@@ -22,7 +22,7 @@ namespace Anet.Security
         /// <returns>Salted hash result.</returns>
         public static string HashPassword(string password)
         {
-            var rng = RandomNumberGenerator.Create();
+            using var rng = RandomNumberGenerator.Create();
             var salt = new byte[SALT_SIZE];
             rng.GetBytes(salt);
 
@@ -62,7 +62,7 @@ namespace Anet.Security
         // Computes the PBKDF2-SHA1 hash of a password.
         private static byte[] Pbkdf2(string password, byte[] salt)
         {
-            Rfc2898DeriveBytes pbkdf2 = new Rfc2898DeriveBytes(password, salt)
+            using var pbkdf2 = new Rfc2898DeriveBytes(password, salt)
             {
                 IterationCount = PBKDF2_ITERATION
             };

@@ -102,7 +102,7 @@ namespace Anet.Data
         /// <returns>Merged parameters.</returns>
         public static DynamicParameters MergeParams(object firstParam, params object[] otherParams)
         {
-            Ensure.NotNull(firstParam, nameof(firstParam));
+            Guard.NotNull(firstParam, nameof(firstParam));
 
             var parameters = new DynamicParameters();
             parameters.AddDynamicParams(firstParam);

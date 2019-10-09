@@ -2,11 +2,12 @@
 
 namespace Anet.Data.Entity
 {
-    public interface IEntity<TKey> : IDbTable
+    public interface IEntity<TKey> : ITable
         where TKey : IEquatable<TKey>
     {
         TKey Id { get; set; }
-        void SetId();
+
+        void SetNewId();
     }
 
     public interface IEntity : IEntity<long>

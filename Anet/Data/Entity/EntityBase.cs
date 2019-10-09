@@ -7,7 +7,9 @@ namespace Anet.Data.Entity
         where TKey: IEquatable<TKey>
     {
         public virtual TKey Id { get; set; }
-        public abstract void SetId();
+        public virtual DateTime CreatedAt { get; set; }
+
+        public abstract void SetNewId();
     }
 
     public abstract class EntityBase : EntityBase<long>, IEntity
@@ -15,7 +17,7 @@ namespace Anet.Data.Entity
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public override long Id { get; set; }
 
-        public override void SetId()
+        public override void SetNewId()
         {
             Id = IdGen.NewId();
         }

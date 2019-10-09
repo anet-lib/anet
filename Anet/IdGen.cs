@@ -6,7 +6,7 @@ namespace Anet
 {
     /// <summary>
     /// 类似 Twitter Snowflake(41 + 10 + 12) 算法的 Id 生成器。
-    /// 格式：{32 位时间戳, 0-10 位机器码, 0-12 位递增系列号}。
+    /// 格式：{32 位时间戳, 0-10 位机器码, 0-20 位递增系列号}。
     /// 注意：程序启动前请确保系统时间正确。
     /// </summary>
     public partial class IdGen

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Data;
 
 namespace Anet.Data
@@ -32,17 +33,35 @@ namespace Anet.Data
 
         public void Dispose()
         {
-            if (Transaction != null)
+            // See: Implement IDisposable correctly
+            // https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1063-implement-idisposable-correctly
+
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                Transaction.Dispose();
-                Transaction = null;
+                if (Transaction != null)
+                {
+                    Transaction.Dispose();
+                    Transaction = null;
+                }
+                if (Connection != null)
+                {
+                    Connection.Dispose();
+                    Connection = null;
+                }
             }
-            if (Connection != null)
-            {
-                Connection.Close();
-                Connection.Dispose();
-                Connection = null;
-            }
+
+            // free native resources if there are any.
+        }
+
+        ~Database()
+        {
+            Dispose(false);
         }
     }
 }
