@@ -1,7 +1,6 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Anet.Data.Entity
+namespace Anet.Data
 {
     public abstract class EntityBase<TKey> : IEntity<TKey>
         where TKey: IEquatable<TKey>
@@ -14,7 +13,7 @@ namespace Anet.Data.Entity
 
     public abstract class EntityBase : EntityBase<long>, IEntity
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        // [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public override long Id { get; set; }
 
         public override void SetNewId()

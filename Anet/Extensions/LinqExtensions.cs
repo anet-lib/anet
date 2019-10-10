@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
-namespace System.Collections
+namespace System.Linq
 {
-    public static class CollectionExtensions
+    public static class LinqExtensions
     {
         public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
         {

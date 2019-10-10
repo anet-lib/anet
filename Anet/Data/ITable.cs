@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Anet.Data.Entity
+namespace Anet.Data
 {
     /// <summary>
     /// Corresponds to a database table.

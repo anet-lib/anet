@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Anet.Data.Entity
+namespace Anet.Data
 {
     public interface IEntity<TKey> : ITable
         where TKey : IEquatable<TKey>

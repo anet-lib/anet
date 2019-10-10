@@ -25,7 +25,15 @@ namespace Anet
         /// <summary>
         /// The constructor of <see cref="IdGen"/>.
         /// </summary>
-        /// <param name="machineId">当前机器码</param>
+        /// <param name="machineId">当前机器码（唯一机会编号）</param>
+        public IdGen(ushort machineId) : this(machineId, 6, 12)
+        {
+        }
+
+        /// <summary>
+        /// The constructor of <see cref="IdGen"/>.
+        /// </summary>
+        /// <param name="machineId">当前机器码（唯一机会编号）</param>
         /// <param name="machineIdBits">机器码位数（0-10之间）</param>
         /// <param name="sequenceBits">
         /// 序列号位数（0-20之间）
@@ -33,7 +41,7 @@ namespace Anet
         /// 1. 并发量越大，此值也要越大，例如：10 可以 1 秒内生成 2^10=1024 个 ID。
         /// 2. 每台机器此参数务必相同。
         /// </param>
-        public IdGen(byte machineId = 0, byte machineIdBits = 0, byte sequenceBits = 10)
+        public IdGen(ushort machineId, byte machineIdBits, byte sequenceBits)
         {
             if (sequenceBits > 20)
                 throw new ArgumentOutOfRangeException(nameof(sequenceBits), "序列号不能超过 20 位。");
@@ -45,13 +53,10 @@ namespace Anet
             _sequenceBits = sequenceBits;
             _maxSequence = GetMaxOfBits(_sequenceBits);
 
-            if (machineId > 0)
-            {
-                var maxMachineId = GetMaxOfBits(machineId);
-                if (machineId > maxMachineId)
-                    throw new ArgumentOutOfRangeException(nameof(machineId), $"机器码不能大于 {maxMachineId}。");
-                _machineId = machineId;
-            }
+            var maxMachineId = GetMaxOfBits(machineIdBits);
+            if (machineId > maxMachineId)
+                throw new ArgumentOutOfRangeException(nameof(machineId), $"机器码不能大于 {maxMachineId}。");
+            _machineId = machineId;
         }
 
         private long GetTimestampNow()

@@ -3,12 +3,12 @@
     public class AnetOptions
     {
         /// <summary>
-        /// Use a default instance of <see cref="IdGen"/>.
+        /// Use <see cref="IdGen"/> for generating sequence IDs.
         /// </summary>
-        /// <param name="idGen">The instace of <see cref="IdGen"/>.</param>
-        public void UseIdGen(IdGen idGen = null)
+        /// <param name="machineId">An unique id of current machine.</param>
+        public void UseIdGen(ushort machineId)
         {
-            IdGen.SetDefault(idGen);
+            IdGen.SetMachineId(machineId);
         }
     }
 }

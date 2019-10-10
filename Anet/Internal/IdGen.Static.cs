@@ -7,17 +7,17 @@ namespace Anet
         private static readonly long OffsetTicks = 
             DateTime.UtcNow.Ticks - new DateTime(2018, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks;
 
-        private static IdGen Instance;
+        private static IdGen _instance;
 
         /// <summary>
-        /// Set the default instance of <see cref="IdGen"/>.
+        /// Specify an unique id of current machine.
         /// </summary>
-        /// <param name="idGen">The instace of <see cref="IdGen"/>.</param>
-        public static void SetDefault(IdGen idGen = null)
+        ///  <param name="machineId">An unique id of current machine.</param>
+        public static void SetMachineId(ushort machineId)
         {
-            if (Instance != null)
-                throw new InvalidOperationException("Can't set default instance of IdGen twice.");
-            Instance = idGen ?? new IdGen();
+            if (_instance != null)
+                throw new InvalidOperationException("Can't set machine id twice.");
+            _instance = new IdGen(machineId);
         }
 
         /// <summary>
@@ -26,9 +26,9 @@ namespace Anet
         /// <returns>The generated id.</returns>
         public static long NewId()
         {
-            if (Instance == null)
+            if (_instance == null)
                 throw new Exception("The IdGen has no default instance.");
-            return Instance.NewSequenceId();
+            return _instance.NewSequenceId();
         }
 
         // 获取指定长度二进制的最大整型数。例如：5 返回 000..011111。
