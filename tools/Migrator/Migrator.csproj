@@ -12,8 +12,4 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Anet\Anet.csproj" />
-  </ItemGroup>
-
 </Project>

@@ -1,8 +1,6 @@
-﻿using Anet.Data;
-
-namespace Migrator.Entities
+﻿namespace Migrator.Entities
 {
-    public class FooTable : EntityAudit
+    public class FooTable
     {
         public string Column0 { get; set; }
         public string Column1 { get; set; }

@@ -39,9 +39,9 @@ namespace Anet.Job
             ServiceProvider = services.BuildServiceProvider();
 
             // 3、Config Logging
-            var loggerFactory = ServiceProvider.GetRequiredService<ILoggerFactory>();
-            loggerFactory.AddConsole(); // LogLevel.Debug
-            loggerFactory.AddNLog();
+            var loggingBuilder = ServiceProvider.GetRequiredService<ILoggingBuilder>();
+            loggingBuilder.AddConsole(); // LogLevel.Debug
+            loggingBuilder.AddNLog();
             //NLog.LogManager.LoadConfiguration("nlog.config");
         }
     }
