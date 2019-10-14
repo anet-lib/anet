@@ -11,7 +11,7 @@ namespace Anet.Data
         public abstract void SetNewId();
     }
 
-    public abstract class EntityBase : Entity<long>, IEntity
+    public abstract class Entity : Entity<long>, IEntity
     {
         // [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public override long Id { get; set; }
