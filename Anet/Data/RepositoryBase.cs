@@ -21,7 +21,7 @@ namespace Anet.Data
         /// Initialize the base class of a repository.
         /// </summary>
         /// <param name="db">The database to access.</param>
-        public RepositoryBase(Database db)
+        public RepositoryBase(Db db)
         {
             Db = db;
         }
@@ -29,7 +29,7 @@ namespace Anet.Data
         /// <summary>
         /// The database to access.
         /// </summary>
-        protected Database Db { get; }
+        protected Db Db { get; }
 
         /// <summary>
         /// Begins a database transaction.
@@ -109,7 +109,7 @@ namespace Anet.Data
     public abstract class RepositoryBase<TEntity> : RepositoryBase<TEntity, long>
         where TEntity : IEntity
     {
-        public RepositoryBase(Database db) : base(db)
+        public RepositoryBase(Db db) : base(db)
         {
         }
     }

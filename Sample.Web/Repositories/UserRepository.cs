@@ -8,7 +8,7 @@ namespace Sample.Web.Repositories
 {
     public class UserRepository : RepositoryBase<AnetUser>
     {
-        public UserRepository(Database db) : base(db)
+        public UserRepository(Db db) : base(db)
         {
         }
 

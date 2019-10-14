@@ -128,7 +128,7 @@ namespace Anet.Data
                 cmd.CommandType = CommandType.Value;
             paramReader?.Invoke(cmd, Parameters);
 
-            if (Database.Logger != null)
+            if (Db.Logger != null)
             {
                 // SQL 语句为了美观，可能会人为缩进，为了输出日志的简洁，将去除这些缩进。
                 var log = cmd.CommandText.Trim('\n').Replace("    ","");
@@ -141,7 +141,7 @@ namespace Anet.Data
                     }
                     log += "*/";
                 }
-                Database.Logger.LogDebug(log);
+                Db.Logger.LogDebug(log);
             }
 
             return cmd;

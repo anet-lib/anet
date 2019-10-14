@@ -4,11 +4,11 @@ using System.Data;
 
 namespace Anet.Data
 {
-    public class Database
+    public class Db
     {
-        internal static ILogger<Database> Logger { get; set; }
+        internal static ILogger<Db> Logger { get; set; }
 
-        public Database(IDbConnection connection)
+        public Db(IDbConnection connection)
         {
             Connection = connection;
         }
@@ -59,7 +59,7 @@ namespace Anet.Data
             // free native resources if there are any.
         }
 
-        ~Database()
+        ~Db()
         {
             Dispose(false);
         }
