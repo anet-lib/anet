@@ -11,7 +11,7 @@ namespace Anet.Data
     /// </summary>
     /// <typeparam name="TEntity">The type of entity.</typeparam>
     /// <typeparam name="TKey">The type of primary key.</typeparam>
-    public abstract class RepositoryBase<TEntity, TKey>
+    public abstract class Repository<TEntity, TKey>
         where TEntity : IEntity<TKey>
         where TKey : IEquatable<TKey>
     {
@@ -21,7 +21,7 @@ namespace Anet.Data
         /// Initialize the base class of a repository.
         /// </summary>
         /// <param name="db">The database to access.</param>
-        public RepositoryBase(Db db)
+        public Repository(Db db)
         {
             Db = db;
         }
@@ -106,7 +106,7 @@ namespace Anet.Data
     /// A base class for a repository.
     /// </summary>
     /// <typeparam name="TEntity">The type of entity.</typeparam>
-    public abstract class RepositoryBase<TEntity> : RepositoryBase<TEntity, long>
+    public abstract class RepositoryBase<TEntity> : Repository<TEntity, long>
         where TEntity : IEntity
     {
         public RepositoryBase(Db db) : base(db)
