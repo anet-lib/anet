@@ -13,8 +13,8 @@ Write-Host "  dotnet --version:" (dotnet --version)
 $packageOutputFolder = "$PSScriptRoot\.nupkgs"
 $projectsToBuild =
     'Anet',
-    'Anet.Job',
-    'Anet.Web'
+    'Anet.Data',
+    'Anet.Job'
 
 $testsToRun =
 

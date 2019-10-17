@@ -1,5 +1,4 @@
-﻿using Anet.Data;
-using Anet.Job;
+﻿using Anet.Job;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
