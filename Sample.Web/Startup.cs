@@ -23,7 +23,7 @@ namespace Sample.Web
         {
             services
                 .AddAnet(opt => opt.UseIdGen(0))
-                .AddDatabase<SqlConnection>(Configuration.GetConnectionString("DefaultConnection"));
+                .AddDb<SqlConnection>(Configuration.GetConnectionString("DefaultConnection"));
 
             services.AddControllers();
 

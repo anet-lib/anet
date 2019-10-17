@@ -26,9 +26,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{BDFD7372
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anet.Tests", "tests\Anet.Tests\Anet.Tests.csproj", "{9865A3FF-3FD0-43AA-900D-EC54E2409B5C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Job", "Sample.Job\Sample.Job.csproj", "{B101444D-49BB-4CFA-8353-18816D26F26A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.Job", "Sample.Job\Sample.Job.csproj", "{B101444D-49BB-4CFA-8353-18816D26F26A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Web", "Sample.Web\Sample.Web.csproj", "{9CCA70E1-3067-498E-8FF5-2F03688E6820}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.Web", "Sample.Web\Sample.Web.csproj", "{9CCA70E1-3067-498E-8FF5-2F03688E6820}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
