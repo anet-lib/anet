@@ -106,10 +106,10 @@ namespace Anet.Data
     /// A base class for a repository.
     /// </summary>
     /// <typeparam name="TEntity">The type of entity.</typeparam>
-    public abstract class RepositoryBase<TEntity> : Repository<TEntity, long>
+    public abstract class Repository<TEntity> : Repository<TEntity, long>
         where TEntity : IEntity
     {
-        public RepositoryBase(Db db) : base(db)
+        public Repository(Db db) : base(db)
         {
         }
     }

@@ -4,7 +4,7 @@ using System.Data;
 
 namespace Anet.Data
 {
-    public class Db
+    public class Db : IDisposable
     {
         internal static ILogger<Db> Logger { get; set; }
 
@@ -33,35 +33,10 @@ namespace Anet.Data
 
         public void Dispose()
         {
-            // See: Implement IDisposable correctly
-            // https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1063-implement-idisposable-correctly
-
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (Transaction != null)
-                {
-                    Transaction.Dispose();
-                    Transaction = null;
-                }
-                if (Connection != null)
-                {
-                    Connection.Dispose();
-                    Connection = null;
-                }
-            }
-
-            // free native resources if there are any.
-        }
-
-        ~Db()
-        {
-            Dispose(false);
+            Transaction?.Dispose();
+            Transaction = null;
+            Connection?.Dispose();
+            Connection = null;
         }
     }
 }

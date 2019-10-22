@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sample.Web.Repositories
 {
-    public class UserRepository : RepositoryBase<AnetUser>
+    public class UserRepository : Repository<AnetUser>
     {
         public UserRepository(Db db) : base(db)
         {

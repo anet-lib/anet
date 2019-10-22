@@ -19,14 +19,21 @@ namespace Microsoft.Extensions.DependencyInjection
             where TDb : Db
             where TDbConnection : IDbConnection, new()
         {
-            builder.Services.AddScoped((serviceProvider) =>
+            TDb implementationFactory(IServiceProvider serviceProvider)
             {
                 var connection = new TDbConnection() as IDbConnection;
                 connection.ConnectionString = connectionString;
 
                 var db = (TDb)Activator.CreateInstance(typeof(TDb), connection);
+
                 return db;
-            });
+            }
+            builder.Services.AddScoped(implementationFactory);
+
+            if(typeof(TDb) != typeof(Db))
+            {
+                builder.Services.AddScoped<Db>(implementationFactory);
+            }
 
             return builder;
         }
