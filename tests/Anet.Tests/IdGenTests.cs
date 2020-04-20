@@ -9,7 +9,7 @@ namespace Anet.Tests
         [Fact]
         public void GeneratedIds_Not_Duplication()
         {
-            IdGen.SetMachineId(0);
+            IdGen.Init(0);
 
             var idList = new List<long>();
 

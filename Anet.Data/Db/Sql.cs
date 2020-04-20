@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,10 +12,26 @@ namespace Anet.Data
             return $"%{keyword?.Replace(" ", "%")}%";
         }
 
+        public static string Limit(int page, int size)
+        {
+            return $"LIMIT {size * (page - 1)},{size}";
+        }
+
         public static string And(object clause)
         {
+            if (clause == null) return "1=1";
+
             var names = GetParamNames(clause);
-            return string.Join(" AND ", names.Select(x => x + "=@" + x));
+            var type = clause.GetType();
+
+            return string.Join(" AND ", names.Select(x =>
+            {
+                var propertyValue = type.GetProperty(x).GetValue(clause);
+                if (propertyValue == null) return x + " IS NULL";
+                else if (propertyValue is IEnumerable && !(propertyValue is string))
+                    return x + " IN @" + x;
+                else return x + "=@" + x;
+            }));
         }
 
         public static string Where(object clause)
@@ -30,6 +47,19 @@ namespace Anet.Data
             return sql;
         }
 
+        /// <summary>
+        /// 生成INSERT语句
+        /// </summary>
+        /// <param name="table">表名</param>
+        /// <param name="columns">
+        /// <para>
+        /// 需要生成语句的列。参数可以是：
+        /// 1. 用“,”分隔的多个列名字符串
+        /// 2. 列名字符串数组
+        /// 3. 包括列名的对象若其类型
+        /// </para>
+        /// </param>
+        /// <returns></returns>
         public static string Insert(string table, object columns)
         {
             var colNames = GetParamNames(columns);
@@ -42,7 +72,7 @@ namespace Anet.Data
             var clauseCols = GetParamNames(clause);
             var sql = $"UPDATE {table} SET {string.Join(", ", updateCols.Select(x => x + "=@" + x))} ";
             if (clauseCols != null && clauseCols.Count() > 0)
-                sql += Where(clauseCols);
+                sql += Where(clause);
             return sql;
         }
 
@@ -51,7 +81,7 @@ namespace Anet.Data
             var clauseCols = GetParamNames(clause);
             var sql = $"DELETE FROM {table} ";
             if (clauseCols != null && clauseCols.Count() > 0)
-                sql += Where(clauseCols);
+                sql += Where(clause);
             return sql;
         }
 
@@ -60,11 +90,11 @@ namespace Anet.Data
         /// </summary>
         /// <param name="param">Columns(array or string with comma separated), DynamicParameters, Dynamic object or Entity type.</param>
         /// <returns>The parameter names collection.</returns>
-        public static IEnumerable<string> GetParamNames(object param)
+        public static string[] GetParamNames(object param)
         {
             if (param == null)
             {
-                return new HashSet<string>();
+                return new string[] { };
             }
 
             if (param is string str)
@@ -72,26 +102,26 @@ namespace Anet.Data
                 if (str.Contains(','))
                     return str
                         .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                        .Select(x => x.Trim());
+                        .Select(x => x.Trim()).ToArray();
                 return new[] { str };
             }
 
             if (param is IEnumerable<string> array)
             {
-                return array;
+                return array.ToArray();
             }
 
             if (param is DynamicParameters dynamicParameters)
             {
-                return dynamicParameters.ParameterNames;
+                return dynamicParameters.ParameterNames.ToArray();
             }
 
             var type = param is Type ? (param as Type) : param.GetType();
 
             return type
                 .GetProperties()
-                .Where(x => x.PropertyType.IsSimpleType())
-                .Select(x => x.Name);
+                .Where(x => x.PropertyType.IsSimpleType() || x.PropertyType.GetAnyElementType().IsSimpleType())
+                .Select(x => x.Name).ToArray();
         }
 
         /// <summary>

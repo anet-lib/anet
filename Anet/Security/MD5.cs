@@ -29,7 +29,7 @@ namespace Anet.Security
 
         private static string HashToCompactString(byte[] hash)
         {
-            return BitConverter.ToString(hash).Replace("-", "");
+            return BitConverter.ToString(hash).Replace("-", "").ToLower();
         }
     }
 }

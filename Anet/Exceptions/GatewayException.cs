@@ -4,8 +4,12 @@ namespace Anet
 {
     public class GatewayException : Exception
     {
-        public GatewayException(string message, Exception innerException = null)
-            : base(message, innerException)
-        { }
+        public GatewayException(string url, string message = null)
+            : base(message)
+        {
+            RequestUrl = url;
+        }
+
+        public string RequestUrl { get; }
     }
 }
