@@ -9,7 +9,7 @@ namespace Anet.Entity
         TKey UpdatedBy { get; set; }
     }
 
-    public interface IFullAuditEntity : IFullAuditEntity<long>
+    public interface IFullAuditEntity : IFullAuditEntity<long>, IAuditEntity
     {
     }
 }
