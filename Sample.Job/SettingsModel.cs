@@ -6,6 +6,6 @@ namespace Sample.Job
 {
     public class SettingsModel
     {
-        public int JobIntervalSeconds { get; set; }
+        public uint JobIntervalSeconds { get; set; }
     }
 }

@@ -2,8 +2,6 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,51 +10,47 @@ namespace Anet.Job
 {
     public class Scheduler
     {
-
-        public static bool Enabled { get; private set; } = true;
-
-        public static bool IsStopping { get; private set; }
-
-        private static Timer _timer = new Timer(s => OnTimerCallback(), null, -1, -1);
-
-        private static List<Schedule> _scheduleList = new List<Schedule>();
-
+        public static bool _enabled = true;
+        public static bool _issStopping = false;
         private static Schedule _nextToRun = null;
-
-        private static HashSet<(Schedule, Task)> _running = new HashSet<(Schedule, Task)>();
+        private static readonly Timer _timer = new Timer(s => OnTimerCallback(), null, -1, -1);
+        private static readonly List<Schedule> _scheduleList = new List<Schedule>();
+        private static readonly HashSet<(Schedule, Task)> _running = new HashSet<(Schedule, Task)>();
 
         private static void UpdateTimer()
         {
-            if (!Enabled) return;
+            if (!_enabled) return;
 
-            var nextToRun = _scheduleList.OrderBy(s => s.NextRun).FirstOrDefault();
+            var nextToRun = _scheduleList.OrderBy(s => s.NextRunTime).FirstOrDefault();
             if(nextToRun == null)
             {
                 _timer.Change(-1, -1);
+                return;
+            }
+            
+            _nextToRun = nextToRun;
+
+            var interval = nextToRun.NextRunTime - DateTime.Now;
+            if (interval <= TimeSpan.Zero)
+            {
+                OnTimerCallback();
             }
             else
             {
-                _nextToRun = nextToRun;
-                var interval = nextToRun.NextRun - DateTime.Now;
-                if(interval <= TimeSpan.Zero)
-                {
-                    OnTimerCallback();
-                }
-                else
-                {
-                    _timer.Change(interval, interval);
-                }
+                _timer.Change(interval, interval);
             }
-                
         }
 
         private static void RunJob(Schedule schedule)
         {
-            var nextRun = GetNextTimeToRun(schedule.NextRun, schedule.Interval);
-            if (nextRun != null)
-                schedule.NextRun = nextRun.Value;
-            else
+            if (schedule.Interval <= TimeSpan.Zero)
+            {
                 _scheduleList.Remove(schedule);
+            }
+            else
+            {
+                schedule.NextRunTime = schedule.NextRunTime.Add(schedule.Interval);
+            }
 
             lock (_running)
             {
@@ -83,7 +77,7 @@ namespace Anet.Job
                     catch (Exception innerEx)
                     {
                         var logger = scope.ServiceProvider.GetService<ILogger<Scheduler>>();
-                        logger?.LogError(innerEx, "任务内部处理执行异常。");
+                        logger?.LogError(innerEx, "执行任务异常处理发生错误。");
                     }
                 }
                 finally
@@ -104,7 +98,6 @@ namespace Anet.Job
             }
 
             task.Start();
-
         }
 
         private static void OnTimerCallback()
@@ -114,56 +107,44 @@ namespace Anet.Job
         }
 
         /// <summary>
-        /// 开启新的任务调度
+        /// 开启一个新的任务调度
         /// </summary>
         /// <typeparam name="T">用于调度的 <see cref="IJob"/> 服务</typeparam>
-        /// <param name="seconds">任务间隔秒数</param>
-        [Obsolete("请用 StartNewAt<T>(DateTime, TimeSpan) 代替")]
-        public static void StartNew<T>(int seconds) where T : IJob
+        /// <param name="intervalSeconds">任务间隔秒数；当值为 0 时, 任务只执行一次</param>
+        /// <param name="immediate">是否立即执行</param>
+        public static void StartNew<T>(uint intervalSeconds, bool immediate = true) where T : IJob
         {
-            StartNewAt<T>(DateTime.Now, TimeSpan.FromSeconds(seconds), true);
+            StartNew<T>(TimeSpan.FromSeconds(intervalSeconds), immediate);
         }
 
         /// <summary>
-        /// 开启新的任务调度
+        /// 开启一个新的任务调度
         /// </summary>
         /// <typeparam name="T">用于调度的 <see cref="IJob"/> 服务</typeparam>
-        /// <param name="interval">任务间隔</param>
-        [Obsolete("请用 StartNewAt<T>(DateTime, TimeSpan) 代替")]
-        public static void StartNew<T>(TimeSpan interval) where T : IJob
+        /// <param name="interval">任务间隔；当值为 <see cref="TimeSpan.Zero"/> 时, 任务只执行一次</param>
+        /// <param name="immediate">是否立即执行</param>
+        public static void StartNew<T>(TimeSpan interval, bool immediate = true) where T : IJob
         {
-            StartNewAt<T>(DateTime.Now, interval, true);
+            var firstRunTime = immediate ? DateTime.Now : DateTime.Now.Add(interval);
+            StartNewAt<T>(firstRunTime, interval);
         }
 
         /// <summary>
-        /// 开启新的任务调度
+        /// 开启一个新的任务调度
         /// </summary>
         /// <typeparam name="T">用于调度的 <see cref="IJob"/> 服务</typeparam>
-        /// <param name="startTime">任务开始时间</param>
-        /// <param name="interval">任务间隔; 当值为 <see cref="TimeSpan.Zero"/> 时, 指定任务为一次性任务</param>
-        /// <param name="executeAtStartTime">指定任务是否在<paramref name="startTime"/>时执行</param>
-        public static void StartNewAt<T>(DateTime startTime, TimeSpan interval, bool executeAtStartTime = true) where T : IJob
+        /// <param name="startTime">任务开始时间（小于或等于当前时间会立即执行）</param>
+        /// <param name="interval">任务间隔，当值为 <see cref="TimeSpan.Zero"/> 时, 任务只执行一次</param>
+        public static void StartNewAt<T>(DateTime startTime, TimeSpan interval) where T : IJob
         {
             var schedule = new Schedule()
             {
                 JobType = typeof(T),
                 Interval = interval,
-                NextRun = startTime
+                NextRunTime = startTime
             };
-
-            if (!executeAtStartTime)
-                schedule.NextRun = GetNextTimeToRun(startTime, interval) ?? throw new ArgumentException("任务无法调度");
-
             _scheduleList.Add(schedule);
             UpdateTimer();
-        }
-
-        private static DateTime? GetNextTimeToRun(DateTime date, TimeSpan interval)
-        {
-            var span = (DateTime.Now - date).Ticks;
-            if (span < 0) return date;
-            if (interval <= TimeSpan.Zero) return null;
-            return new DateTime(date.Ticks + span + interval.Ticks - span % interval.Ticks, date.Kind);
         }
 
         /// <summary>
@@ -181,10 +162,10 @@ namespace Anet.Job
         /// </summary>
         public async static Task StopAll()
         {
-            if (IsStopping) return;
-            IsStopping = true;
+            if (_issStopping) return;
+            _issStopping = true;
 
-            Enabled = false;
+            _enabled = false;
             _timer.Change(-1, -1);
 
             await Task.Run(() =>
@@ -198,7 +179,7 @@ namespace Anet.Job
                     }
                     Task.WaitAll(tasks);
                 } while (tasks.Any());
-                IsStopping = false;
+                _issStopping = false;
             });
         }
     }
