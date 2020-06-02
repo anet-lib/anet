@@ -25,6 +25,9 @@ namespace Anet
         private long _sequence = 0;
         private long _lastTimestamp = 0;
 
+        // 637134336000000000 = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks
+        private static readonly long _offsetTicks = DateTime.UtcNow.Ticks - 637134336000000000;
+
         /// <summary>
         /// The constructor of <see cref="IdGen"/>.
         /// </summary>
@@ -65,7 +68,7 @@ namespace Anet
         private long GetTimestampNow()
         {
             // 10000000 = TimeSpan.FromSeconds(1).Ticks
-            return (OffsetTicks + _stopwatch.Elapsed.Ticks) / 10000000L;
+            return (_offsetTicks + _stopwatch.Elapsed.Ticks) / 10000000L;
         }
 
         private long GetNextTimestamp()

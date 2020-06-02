@@ -12,6 +12,7 @@ namespace Sample.Job
 
         static void Main(string[] args)
         {
+            var aa = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks;
             Console.Title = "Aet 示例 - 简单任务调度程序";
             System.Net.ServicePointManager.DefaultConnectionLimit = 10;
 

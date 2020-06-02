@@ -4,10 +4,7 @@ namespace Anet
 {
     public partial class IdGen
     {
-        private static readonly long OffsetTicks =
-            DateTime.UtcNow.Ticks - new DateTime(2018, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks;
-
-        private static IdGen _instance;
+       private static IdGen _instance;
 
         /// <summary>
         /// Specify an unique id of current machine.
