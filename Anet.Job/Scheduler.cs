@@ -72,7 +72,7 @@ namespace Anet.Job
                 {
                     try
                     {
-                        job.OnExceptionAsync(ex).Wait();
+                        job.OnExceptionAsync(GetInnerException(ex)).Wait();
                     }
                     catch (Exception innerEx)
                     {
@@ -98,6 +98,13 @@ namespace Anet.Job
             }
 
             task.Start();
+        }
+
+        private static Exception GetInnerException(Exception ex)
+        {
+            if (ex.InnerException == null)
+                return ex;
+            return GetInnerException(ex.InnerException);
         }
 
         private static void OnTimerCallback()
