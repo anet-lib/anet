@@ -1,11 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿namespace Anet.Job;
 
-namespace Anet.Job
+public interface IJob
 {
-    public interface IJob
-    {
-        Task ExecuteAsync();
-        Task OnExceptionAsync(Exception ex);
-    }
+    Task ExecuteAsync();
+    Task OnExceptionAsync(Exception ex);
 }
+

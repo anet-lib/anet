@@ -1,4 +1,5 @@
 ﻿using Anet.Data;
+using Dapper;
 using Sample.Web.Models.Dtos;
 using Sample.Web.Models.Entities;
 using System.Collections.Generic;
@@ -15,14 +16,14 @@ namespace Sample.Web.Repositories
         public Task<IEnumerable<UserResponseDto>> GetAllAsync()
         {
             var sql = "SELECT * FROM AnetUser;";
-            return Db.QueryAsync<UserResponseDto>(sql);
+            return Db.Connection.QueryAsync<UserResponseDto>(sql);
         }
 
         public Task<UserResponseDto> GetByIdAsync(long id)
         {
             var param = new { Id = id };
             var sql = Sql.Select("AnetUser", param);
-            return Db.QueryFirstOrDefaultAsync<UserResponseDto>(sql, param);
+            return Db.Connection.QueryFirstOrDefaultAsync<UserResponseDto>(sql, param);
         }
     }
 }

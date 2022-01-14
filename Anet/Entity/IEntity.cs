@@ -1,13 +1,10 @@
-﻿using System;
+﻿namespace Anet.Entity;
 
-namespace Anet.Entity
+public interface IEntity<TKey>
 {
-    public interface IEntity<TKey> : ITable
-    {
-        TKey Id { get; set; }
-    }
+    TKey Id { get; set; }
+}
 
-    public interface IEntity : IEntity<long>
-    {
-    }
+public interface IEntity : IEntity<long>
+{
 }

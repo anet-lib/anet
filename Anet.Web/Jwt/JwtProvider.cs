@@ -1,0 +1,56 @@
+﻿using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+
+namespace Anet.Web.Jwt;
+
+public class JwtProvider
+{
+    private readonly JwtOptions _options;
+    private readonly IRefreshTokenStore _refreshTokenStore;
+
+    public JwtProvider(JwtOptions options, IRefreshTokenStore refreshTokenStore)
+    {
+        _options = options;
+        _refreshTokenStore = refreshTokenStore;
+    }
+
+    public JwtResult GenerateToken(IEnumerable<Claim> claims)
+    {
+        var jwtSecurityToken = new JwtSecurityToken(
+            claims: claims,
+            issuer: _options.Issuer,
+            audience: _options.Audience,
+            expires: _options.Expiration > 0
+                ? DateTime.UtcNow.AddSeconds(_options.Expiration)
+                : default(DateTime?),
+            signingCredentials: new SigningCredentials(
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SigningKey)),
+                SecurityAlgorithms.HmacSha256)
+        );
+
+        var accessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+
+        return new JwtResult
+        {
+            AccessToken = accessToken,
+            ExpiresAt = DateTime.UtcNow.AddSeconds(_options.Expiration).ToTimestamp()
+        };
+    }
+
+    public async Task<JwtResult> RefreshToken(string refreshToken)
+    {
+        var token = await _refreshTokenStore.GetTokenAsync(refreshToken);
+        if (token == null) return null;
+
+        var securityToken = new JwtSecurityTokenHandler().ReadJwtToken(token);
+        var newToken = GenerateToken(securityToken.Claims.ToList());
+
+        await _refreshTokenStore.DeleteTokenAsync(refreshToken);
+        await _refreshTokenStore.SaveTokenAsync(newToken);
+
+        return newToken;
+    }
+}
+

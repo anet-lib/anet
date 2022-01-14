@@ -1,18 +1,17 @@
 ﻿using System;
 
-namespace Anet
+namespace Anet;
+
+public class GatewayException : Exception
 {
-    public class GatewayException : Exception
+    public GatewayException(string url, string response, string message = null)
+        : base(message)
     {
-        public GatewayException(string url, string response, string message = null)
-            : base(message)
-        {
-            Url = url;
-            Response = response;
-        }
-
-        public string Url { get; set; }
-
-        public string Response { get; set; }
+        Url = url;
+        Response = response;
     }
+
+    public string Url { get; set; }
+
+    public string Response { get; set; }
 }

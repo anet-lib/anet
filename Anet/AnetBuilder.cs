@@ -1,14 +1,13 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Anet
-{
-    public class AnetBuilder
-    {
-        public AnetBuilder(IServiceCollection services)
-        {
-            Services = services;
-        }
+namespace Anet;
 
-        public IServiceCollection Services { get; private set; }
+public class AnetBuilder
+{
+    public AnetBuilder(IServiceCollection services)
+    {
+        Services = services;
     }
+
+    public IServiceCollection Services { get; private set; }
 }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29403.142
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32104.313
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anet", "Anet\Anet.csproj", "{ED670328-88E3-41DF-98D2-4DEA96C976DB}"
 EndProject
@@ -11,16 +11,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anet.Web", "Anet.Web\Anet.W
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution items", "solution items", "{6BC8D288-5768-4CEE-86F6-F80AA0828DF5}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		.gitignore = .gitignore
 		build.cmd = build.cmd
 		build.ps1 = build.ps1
 		README.md = README.md
 		share.props = share.props
 	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Migrator", "tools\Migrator\Migrator.csproj", "{93062E27-965A-45A9-8F3E-499DFCD07DB1}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{88AB0EA7-AC04-4FB3-87B1-10999EB9C373}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{BDFD7372-3617-461D-9910-D345994D3060}"
 EndProject
@@ -50,10 +47,6 @@ Global
 		{41F97159-01FD-49F4-91B8-D25800078D15}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41F97159-01FD-49F4-91B8-D25800078D15}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41F97159-01FD-49F4-91B8-D25800078D15}.Release|Any CPU.Build.0 = Release|Any CPU
-		{93062E27-965A-45A9-8F3E-499DFCD07DB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{93062E27-965A-45A9-8F3E-499DFCD07DB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{93062E27-965A-45A9-8F3E-499DFCD07DB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{93062E27-965A-45A9-8F3E-499DFCD07DB1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9865A3FF-3FD0-43AA-900D-EC54E2409B5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9865A3FF-3FD0-43AA-900D-EC54E2409B5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9865A3FF-3FD0-43AA-900D-EC54E2409B5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -75,7 +68,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{93062E27-965A-45A9-8F3E-499DFCD07DB1} = {88AB0EA7-AC04-4FB3-87B1-10999EB9C373}
 		{9865A3FF-3FD0-43AA-900D-EC54E2409B5C} = {BDFD7372-3617-461D-9910-D345994D3060}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

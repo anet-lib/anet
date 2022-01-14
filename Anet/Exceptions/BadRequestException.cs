@@ -1,9 +1,6 @@
-﻿using System;
+﻿namespace Anet;
 
-namespace Anet
+public class BadRequestException : Exception
 {
-    public class BadRequestException : Exception
-    {
-        public BadRequestException(string message) : base(message) { }
-    }
+    public BadRequestException(string message) : base(message) { }
 }

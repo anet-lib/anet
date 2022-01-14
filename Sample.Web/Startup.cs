@@ -1,11 +1,11 @@
-using System.Data.SqlClient;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Sample.Web.Repositories;
 using Sample.Web.Services;
+using System.Data.SqlClient;
 
 namespace Sample.Web
 {
@@ -22,7 +22,7 @@ namespace Sample.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services
-                .AddAnet(opt => opt.UseIdGen(0))
+                .AddAnet(opt => opt.UseDefaultIdGen(0))
                 .AddDb<SqlConnection>(Configuration.GetConnectionString("DefaultConnection"));
 
             services.AddControllers();

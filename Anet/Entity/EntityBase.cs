@@ -1,14 +1,11 @@
-﻿using System;
+﻿namespace Anet.Entity;
 
-namespace Anet.Entity
+public abstract class EntityBase<TKey> : IEntity<TKey>
+    where TKey : IEquatable<TKey>
 {
-    public abstract class EntityBase<TKey> : IEntity<TKey>
-        where TKey: IEquatable<TKey>
-    {
-        public virtual TKey Id { get; set; }
-    }
+    public virtual TKey Id { get; set; }
+}
 
-    public abstract class EntityBase : EntityBase<long>, IEntity
-    {
-    }
+public abstract class EntityBase : EntityBase<long>, IEntity
+{
 }

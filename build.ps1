@@ -14,7 +14,8 @@ $packageOutputFolder = "$PSScriptRoot\.nupkgs"
 $projectsToBuild =
     'Anet',
     'Anet.Data',
-    'Anet.Job'
+    'Anet.Job',
+    'Anet.Web'
 
 $testsToRun =
 
