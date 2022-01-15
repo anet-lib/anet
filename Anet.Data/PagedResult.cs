@@ -1,4 +1,7 @@
-﻿namespace Anet;
+﻿using System;
+using System.Collections.Generic;
+
+namespace Anet.Data;
 
 public class PagedResult<T>
 {

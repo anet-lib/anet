@@ -1,4 +1,4 @@
-﻿namespace Anet.Entity;
+﻿namespace Anet.Data.Entity;
 
 public abstract class EntityBase<TKey> : IEntity<TKey>
     where TKey : IEquatable<TKey>

@@ -1,4 +1,4 @@
-﻿namespace Anet.Entity;
+﻿namespace Anet.Data.Entity;
 
 public abstract class FullAuditEntity<TKey> : AuditEntity<TKey>, IFullAuditEntity<TKey>
     where TKey : IEquatable<TKey>

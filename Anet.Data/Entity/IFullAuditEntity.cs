@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Anet.Entity;
+﻿namespace Anet.Data.Entity;
 
 public interface IFullAuditEntity<TKey> : IAuditEntity<TKey>
     where TKey : IEquatable<TKey>

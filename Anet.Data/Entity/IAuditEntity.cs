@@ -1,4 +1,4 @@
-﻿namespace Anet.Entity;
+﻿namespace Anet.Data.Entity;
 
 public interface IAuditEntity<TKey> : IEntity<TKey>
     where TKey : IEquatable<TKey>

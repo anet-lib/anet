@@ -1,19 +1,19 @@
-﻿namespace Anet.Web;
+﻿namespace Anet.Data;
 
-public class ValueModel<T>
+public class TypedValue<T>
 {
-    public ValueModel()
+    public TypedValue()
     {
     }
 
-    public ValueModel(T value)
+    public TypedValue(T value)
     {
         Value = value;
     }
     public T Value { get; set; }
 }
 
-public class ValueModel : ValueModel<string>
+public class ValueModel : TypedValue<string>
 {
     public ValueModel()
     {
