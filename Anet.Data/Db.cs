@@ -3,26 +3,61 @@ using System.Data;
 
 namespace Anet.Data;
 
-public class Db : IDbConnection
+public class Db : IDisposable
 {
-    public static ILogger<Db> Logger { get; internal set; }
-
-    private readonly IDbConnection _connection;
+    internal static ILogger<Db> Logger { get; set; }
 
     public Db(IDbConnection connection)
     {
-        _connection = connection;
+        Connection = connection;
     }
 
-    public string ConnectionString { get => _connection.ConnectionString; set => _connection.ConnectionString = value; }
-    public int ConnectionTimeout => _connection.ConnectionTimeout;
-    public string Database => _connection.Database;
-    public ConnectionState State => _connection.State;
-    public IDbTransaction BeginTransaction() => _connection.BeginTransaction();
-    public IDbTransaction BeginTransaction(IsolationLevel il) => _connection.BeginTransaction(il);
-    public void ChangeDatabase(string databaseName) => _connection.ChangeDatabase(databaseName);
-    public void Close() => _connection.Close();
-    public IDbCommand CreateCommand() => _connection.CreateCommand();
-    public void Open() => _connection.Open();
-    public void Dispose() => _connection.Dispose();
+    /// <summary>
+    /// The current transaction to use, if any.
+    /// </summary>
+    public IDbConnection Connection { get; set; }
+
+    /// <summary>
+    /// Number of seconds before command execution timeout.
+    /// </summary>
+    public int? CommandTimeout { get; set; }
+
+    private IDbTransaction _transaction;
+    public IDbTransaction Transaction
+    {
+        // return null if transaction is disposed.
+        get => _transaction == null || _transaction.Connection == null ? null : _transaction;
+        private set => _transaction = value;
+    }
+
+    /// <summary>
+    /// Begins a database transaction.
+    /// </summary>
+    /// <returns>An object representing the new transaction.</returns>
+    public IDbTransaction BeginTransaction()
+    {
+        return BeginTransaction(IsolationLevel.Unspecified);
+    }
+
+    /// <summary>
+    /// Begins a database transaction with the specified <see cref="IsolationLevel"/> value.
+    /// </summary>
+    /// <param name="il">One of the <see cref="IsolationLevel"/> values.</param>
+    /// <returns> An object representing the new transaction.</returns>
+    public IDbTransaction BeginTransaction(IsolationLevel il)
+    {
+        // Auto open connection.
+        if (Connection.State == ConnectionState.Closed)
+            Connection.Open();
+        Transaction = Connection.BeginTransaction(il);
+        return Transaction;
+    }
+
+    public void Dispose()
+    {
+        Transaction?.Dispose();
+        Connection?.Dispose();
+        GC.SuppressFinalize(this);
+    }
 }
+

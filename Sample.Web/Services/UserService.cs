@@ -1,54 +1,65 @@
 ﻿using Anet;
+using Anet.Data;
 using Sample.Web.Models.Dtos;
 using Sample.Web.Models.Entities;
-using Sample.Web.Repositories;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Sample.Web.Services
+namespace Sample.Web.Services;
+
+public class UserService : ServiceBase
 {
-    public class UserService
+    public UserService(Db db) : base(db)
     {
-        private readonly UserRepository userRepository;
-        public UserService(UserRepository userRepository)
-        {
-            this.userRepository = userRepository;
-        }
+    }
 
-        public async Task CreateUserAsync(UserRequestDto dto)
-        {
-            var newUser = new AnetUser { UserName = dto.UserName };
+    public Task<IEnumerable<UserResponseDto>> GetAllAsync()
+    {
+        var sql = "SELECT * FROM AnetUser;";
+        return Db.QueryAsync<UserResponseDto>(sql);
+    }
 
-            using (var tran = userRepository.BeginTransaction())
-            {
-                await userRepository.InsertAsync(newUser);
+    public Task<UserResponseDto> GetByIdAsync(long id)
+    {
+        var param = new { Id = id };
+        var sql = Sql.Select("AnetUser", param);
+        return Db.QueryFirstOrDefaultAsync<UserResponseDto>(sql, param);
+    }
 
-                // Other business logic code.
+    public async Task CreateUserAsync(UserRequestDto dto)
+    {
+        var newUser = new AnetUser { UserName = dto.UserName };
 
-                tran.Commit();
-            }
-        }
+        using var tran = Db.BeginTransaction();
 
-        public async Task UpdateUserAsync(long userId, UserRequestDto dto)
-        {
-            var user = await userRepository.FindAsync(userId);
-            if (user == null)
-                throw new NotFoundException();
+        await Db.InsertAsync(newUser);
 
-            using(var tran = userRepository.BeginTransaction())
-            {
-                await userRepository.UpdateAsync(
-                    update: new { dto.UserName }, 
-                    clause: new { Id = userId });
+        // Other business logic code.
 
-                tran.Commit();
-            }
-        }
+        tran.Commit();
+    }
 
-        public async Task DeleteUserAsync(long id)
-        {
-            var rows = await userRepository.DeleteAsync(id);
-            if (rows == 0)
-                throw new NotFoundException();
-        }
+    public async Task UpdateUserAsync(long userId, UserRequestDto dto)
+    {
+        var user = await Db.FindAsync<AnetUser>(new { Id = userId });
+        if (user == null)
+            throw new NotFoundException();
+
+        using var tran = Db.BeginTransaction();
+
+        user.UserName = dto.UserName;
+
+        await Db.UpdateAsync(user);
+
+        // Other business logic code.
+
+        tran.Commit();
+    }
+
+    public async Task DeleteUserAsync(long id)
+    {
+        var rows = await Db.DeleteAsync(new { Id = id });
+        if (rows == 0)
+            throw new NotFoundException();
     }
 }

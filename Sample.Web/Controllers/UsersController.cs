@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Sample.Web.Models.Dtos;
-using Sample.Web.Repositories;
 using Sample.Web.Services;
 
 namespace Sample.Web.Controllers
@@ -11,44 +10,40 @@ namespace Sample.Web.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly UserRepository userRepository;
-        private readonly UserService userService;
-        public UsersController(
-            UserRepository userRepository,
-            UserService userService)
+        private readonly UserService _userService;
+        public UsersController(UserService userService)
         {
-            this.userRepository = userRepository;
-            this.userService = userService;
+            _userService = userService;
         }
 
         [HttpGet]
         public Task<IEnumerable<UserResponseDto>> Get()
         {
-            return userRepository.GetAllAsync();
+            return _userService.GetAllAsync();
         }
 
         [HttpGet("{id}")]
         public Task<UserResponseDto> Get(long id)
         {
-            return userRepository.GetByIdAsync(id);
+            return _userService.GetByIdAsync(id);
         }
 
         [HttpPost]
         public Task Post([FromBody] UserRequestDto dto)
         {
-            return userService.CreateUserAsync(dto);
+            return _userService.CreateUserAsync(dto);
         }
 
         [HttpPut("{id}")]
         public Task Put(long id, [FromBody] UserRequestDto dto)
         {
-            return userService.UpdateUserAsync(id, dto);
+            return _userService.UpdateUserAsync(id, dto);
         }
 
         [HttpDelete("{id}")]
         public Task Delete(long id)
         {
-            return userService.DeleteUserAsync(id);
+            return _userService.DeleteUserAsync(id);
         }
     }
 }

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Sample.Web.Repositories;
 using Sample.Web.Services;
 using System.Data.SqlClient;
 
@@ -27,7 +26,6 @@ namespace Sample.Web
 
             services.AddControllers();
 
-            services.AddTransient<UserRepository>();
             services.AddTransient<UserService>();
         }
 
