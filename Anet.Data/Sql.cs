@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using Dapper;
 
 namespace Anet.Data;
 
@@ -8,11 +7,6 @@ public static class Sql
     public static string Like(string keyword)
     {
         return $"%{keyword?.Replace(" ", "%")}%";
-    }
-
-    public static string Limit(int page, int size)
-    {
-        return $"LIMIT {size * (page - 1)},{size}";
     }
 
     public static string And(object clause)
@@ -26,7 +20,7 @@ public static class Sql
         {
             var propertyValue = type.GetProperty(x).GetValue(clause);
             if (propertyValue == null) return x + " IS NULL";
-            else if (propertyValue is IEnumerable && !(propertyValue is string))
+            else if (propertyValue is IEnumerable && propertyValue is not string)
                 return x + " IN @" + x;
             else return x + "=@" + x;
         }));
@@ -69,7 +63,7 @@ public static class Sql
         var updateCols = GetParamNames(update);
         var clauseCols = GetParamNames(clause);
         var sql = $"UPDATE {table} SET {string.Join(", ", updateCols.Select(x => x + "=@" + x))} ";
-        if (clauseCols != null && clauseCols.Count() > 0)
+        if (clauseCols != null && clauseCols.Length > 0)
             sql += Where(clause);
         return sql;
     }
@@ -78,7 +72,7 @@ public static class Sql
     {
         var clauseCols = GetParamNames(clause);
         var sql = $"DELETE FROM {table} ";
-        if (clauseCols != null && clauseCols.Count() > 0)
+        if (clauseCols != null && clauseCols.Length > 0)
             sql += Where(clause);
         return sql;
     }
@@ -139,5 +133,16 @@ public static class Sql
             parameters.AddDynamicParams(param);
         }
         return parameters;
+    }
+
+    /// <summary>
+    /// 生成 LIMIT 语句（仅支持MySQL）
+    /// </summary>
+    /// <param name="page"></param>
+    /// <param name="size"></param>
+    /// <returns></returns>
+    public static string Limit(int page, int size)
+    {
+        return $"LIMIT {size * (page - 1)},{size}";
     }
 }

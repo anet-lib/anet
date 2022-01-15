@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
-namespace Anet;
+namespace Anet.Utilities;
 
 public class EnumDisplay
 {
@@ -13,7 +13,7 @@ public class EnumDisplay
     public bool Checked { get; set; }
 }
 
-public class EnumUtil
+public class EnumUtility
 {
     public static IEnumerable<EnumDisplay> GetDisplayList(Type enumType)
     {

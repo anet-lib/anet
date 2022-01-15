@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Anet.Utilities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System.Net;
 
@@ -74,6 +75,6 @@ public class ExceptionMiddleware
         }
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)HttpStatusCode.OK;
-        return context.Response.WriteAsync(Json.SerializeCamelCase(result));
+        return context.Response.WriteAsync(JsonUtility.SerializeCamelCase(result));
     }
 }

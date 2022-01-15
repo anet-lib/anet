@@ -1,6 +1,4 @@
-﻿using Anet.Entity;
-using Dapper;
-using System.Data;
+﻿using System.Data;
 
 namespace Anet.Data;
 
@@ -9,7 +7,8 @@ namespace Anet.Data;
 /// </summary>
 /// <typeparam name="TEntity">The type of entity.</typeparam>
 /// <typeparam name="TKey">The type of primary key.</typeparam>
-public class Repository<TEntity, TKey> : IRepository<TEntity, TKey> where TEntity : IEntity<TKey>
+public class Repository<TEntity, TKey> : IRepository<TEntity, TKey> 
+    where TEntity : class
     where TKey : IEquatable<TKey>
 {
     /// <summary>
@@ -57,47 +56,47 @@ public class Repository<TEntity, TKey> : IRepository<TEntity, TKey> where TEntit
     public virtual Task<TEntity> FindAsync(object clause)
     {
         var sql = Sql.Select(TableName, clause);
-        return Db.Connection.QuerySingleOrDefaultAsync<TEntity>(sql, clause);
+        return Db.QuerySingleOrDefaultAsync<TEntity>(sql, clause);
     }
 
     public virtual Task<IEnumerable<TEntity>> QueryAsync(object clause)
     {
         var sql = Sql.Select(TableName, clause);
-        return Db.Connection.QueryAsync<TEntity>(sql, clause);
+        return Db.QueryAsync<TEntity>(sql, clause);
     }
 
     public virtual Task InsertAsync(TEntity entity)
     {
         var sql = Sql.Insert(TableName, entity);
-        return Db.Connection.ExecuteAsync(sql, entity);
+        return Db.ExecuteAsync(sql, entity);
     }
 
     public virtual Task InsertAsync(IEnumerable<TEntity> entities)
     {
-        if (entities == null || entities.Count() == 0)
+        if (entities == null || !entities.Any())
             return Task.CompletedTask;
         var sql = Sql.Insert(TableName, typeof(TEntity));
-        return Db.Connection.ExecuteAsync(sql, entities);
+        return Db.ExecuteAsync(sql, entities);
     }
 
-    public virtual Task<int> UpdateAsync(TEntity entity)
+    public virtual Task<int> UpdateAsync(TEntity entity, string primaryKey = "Id")
     {
-        var updateColumns = Sql.GetParamNames(entity).Where(x => x != "Id");
-        var sql = Sql.Update(TableName, updateColumns, new { entity.Id });
-        return Db.Connection.ExecuteAsync(sql, entity);
+        var updateColumns = Sql.GetParamNames(entity).Where(x => x != primaryKey);
+        var sql = Sql.Update(TableName, updateColumns, primaryKey);
+        return Db.ExecuteAsync(sql, entity);
     }
 
-    public virtual Task<int> UpdateAsync(IEnumerable<TEntity> entities)
+    public virtual Task<int> UpdateAsync(IEnumerable<TEntity> entities, string primaryKey = "Id")
     {
-        var updateColumns = Sql.GetParamNames(typeof(TEntity)).Where(x => x != "Id");
-        var sql = Sql.Update(TableName, updateColumns, new { Id = default(long) });
-        return Db.Connection.ExecuteAsync(sql, entities);
+        var updateColumns = Sql.GetParamNames(typeof(TEntity)).Where(x => x != primaryKey);
+        var sql = Sql.Update(TableName, updateColumns, primaryKey);
+        return Db.ExecuteAsync(sql, entities);
     }
 
     public virtual Task<int> UpdateAsync(object update, object clause)
     {
         var sql = Sql.Update(TableName, update, clause);
-        return Db.Connection.ExecuteAsync(sql, Sql.MergeParams(update, clause));
+        return Db.ExecuteAsync(sql, Sql.MergeParams(update, clause));
     }
 
     public virtual Task<int> DeleteAsync(TKey id)
@@ -108,7 +107,7 @@ public class Repository<TEntity, TKey> : IRepository<TEntity, TKey> where TEntit
     public virtual Task<int> DeleteAsync(object clause)
     {
         var sql = Sql.Delete(TableName, clause);
-        return Db.Connection.ExecuteAsync(sql, clause);
+        return Db.ExecuteAsync(sql, clause);
     }
 
     #endregion
@@ -118,7 +117,7 @@ public class Repository<TEntity, TKey> : IRepository<TEntity, TKey> where TEntit
 /// A base class for a repository.
 /// </summary>
 /// <typeparam name="TEntity">The type of entity.</typeparam>
-public class Repository<TEntity> : Repository<TEntity, long> where TEntity : IEntity<long>
+public class Repository<TEntity> : Repository<TEntity, long> where TEntity : class
 {
     public Repository(Db db) : base(db)
     {

@@ -1,13 +1,14 @@
 ﻿<Project>
   <PropertyGroup>
-    <Version>0.6.0</Version>
+    <Version>0.6.1</Version>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <PackageTags>netcore,aspnetcore,common,lib,framework,boilerplate</PackageTags>
     <Description>A .NET Core Common Lib, Framework and Boilerplate.</Description>
     <Authors>liamwang</Authors>
-    <PackageProjectUrl>https://github.com/anet-team/anet</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/anet-lib/anet</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <RepositoryUrl>https://github.com/anet-lib/anet</RepositoryUrl>
   </PropertyGroup>
 </Project>

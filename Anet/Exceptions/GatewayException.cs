@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Anet;
+﻿namespace Anet;
 
 public class GatewayException : Exception
 {

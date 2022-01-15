@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Anet;
+namespace Anet.Utilities;
 
-public class Json
+public class JsonUtility
 {
     public static JsonSerializerSettings SnakeCaseSettings
     {

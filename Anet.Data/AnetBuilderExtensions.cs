@@ -26,8 +26,10 @@ public static class AnetBuilderExtensions
                 Db.Logger = serviceProvider.GetService<ILogger<Db>>();
             }
 
-            var connection = new TDbConnection() as IDbConnection;
-            connection.ConnectionString = connectionString;
+            var connection = new TDbConnection
+            {
+                ConnectionString = connectionString
+            };
 
             var db = (TDb)Activator.CreateInstance(typeof(TDb), connection);
 
@@ -40,6 +42,9 @@ public static class AnetBuilderExtensions
         {
             builder.Services.AddScoped<Db>(implementationFactory);
         }
+
+        builder.Services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+        builder.Services.AddTransient(typeof(IRepository<,>), typeof(Repository<,>));
 
         return builder;
     }

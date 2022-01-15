@@ -19,10 +19,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution items", "solution 
 		share.props = share.props
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{BDFD7372-3617-461D-9910-D345994D3060}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anet.Tests", "tests\Anet.Tests\Anet.Tests.csproj", "{9865A3FF-3FD0-43AA-900D-EC54E2409B5C}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.Job", "Sample.Job\Sample.Job.csproj", "{B101444D-49BB-4CFA-8353-18816D26F26A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.Web", "Sample.Web\Sample.Web.csproj", "{9CCA70E1-3067-498E-8FF5-2F03688E6820}"
@@ -47,10 +43,6 @@ Global
 		{41F97159-01FD-49F4-91B8-D25800078D15}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41F97159-01FD-49F4-91B8-D25800078D15}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41F97159-01FD-49F4-91B8-D25800078D15}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9865A3FF-3FD0-43AA-900D-EC54E2409B5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9865A3FF-3FD0-43AA-900D-EC54E2409B5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9865A3FF-3FD0-43AA-900D-EC54E2409B5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9865A3FF-3FD0-43AA-900D-EC54E2409B5C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B101444D-49BB-4CFA-8353-18816D26F26A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B101444D-49BB-4CFA-8353-18816D26F26A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B101444D-49BB-4CFA-8353-18816D26F26A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -66,9 +58,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{9865A3FF-3FD0-43AA-900D-EC54E2409B5C} = {BDFD7372-3617-461D-9910-D345994D3060}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3380AE0E-41C5-4701-9A2B-5E65F82945A3}

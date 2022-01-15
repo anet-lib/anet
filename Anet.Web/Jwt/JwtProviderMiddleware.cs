@@ -1,4 +1,5 @@
-﻿using Anet.Web.Api;
+﻿using Anet.Utilities;
+using Anet.Web.Api;
 using Microsoft.AspNetCore.Http;
 using System.Net;
 using System.Text;
@@ -71,7 +72,7 @@ internal class JwtProviderMiddleware
             string body = await reader.ReadToEndAsync();
             try
             {
-                return Json.DeserializeCamelCase<JwtParams>(body);
+                return JsonUtility.DeserializeCamelCase<JwtParams>(body);
             }
             catch
             {
@@ -127,7 +128,7 @@ internal class JwtProviderMiddleware
     {
         _context.Response.ContentType = ContentTypes.JsonContentType;
         _context.Response.StatusCode = (int)HttpStatusCode.OK;
-        var json = Json.SerializeCamelCase(apiResult);
+        var json = JsonUtility.SerializeCamelCase(apiResult);
         return _context.Response.WriteAsync(json);
     }
 }

@@ -1,10 +1,12 @@
-﻿using System.Data;
-using Anet.Entity;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Threading.Tasks;
 
 namespace Anet.Data;
 
 public interface IRepository<TEntity, TKey>
-    where TEntity : IEntity<TKey>
+    where TEntity : class
     where TKey : IEquatable<TKey>
 {
     Db Db { get; }
@@ -20,11 +22,11 @@ public interface IRepository<TEntity, TKey>
     Task InsertAsync(TEntity entity);
     Task InsertAsync(IEnumerable<TEntity> entities);
     Task<int> UpdateAsync(object update, object clause);
-    Task<int> UpdateAsync(TEntity entity);
-    Task<int> UpdateAsync(IEnumerable<TEntity> entities);
+    Task<int> UpdateAsync(TEntity entity, string primaryKey = "Id");
+    Task<int> UpdateAsync(IEnumerable<TEntity> entities, string primaryKey = "Id");
 }
 
 public interface IRepository<TEntity> : IRepository<TEntity, long>
-    where TEntity : IEntity<long>
+    where TEntity : class
 {
 }
