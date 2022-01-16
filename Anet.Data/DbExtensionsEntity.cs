@@ -1,56 +1,61 @@
-﻿using System.Data;
-
-namespace Anet.Data;
+﻿namespace Anet.Data;
 
 public static class DbExtensionsEntity
 {
-    public static Task<TEntity> FindAsync<TEntity>(this Db db, object clause, string table = null)
+    public static Task<T> FindAsync<T>(this Db db, object clause, string table = null)
     {
-        var sql = Sql.Select(table ?? typeof(TEntity).Name, clause);
-        return db.QuerySingleOrDefaultAsync<TEntity>(sql, clause);
+        var sql = Sql.Select(table ?? typeof(T).Name, clause);
+        return db.QuerySingleOrDefaultAsync<T>(sql, clause);
     }
 
-    public static Task<IEnumerable<TEntity>> QueryAsync<TEntity>(this Db db, object clause, string table = null)
+    public static Task<IEnumerable<T>> QueryAsync<T>(this Db db, object clause, string table = null)
     {
-        var sql = Sql.Select(table ?? typeof(TEntity).Name, clause);
-        return db.QueryAsync<TEntity>(sql, clause);
+        var sql = Sql.Select(table ?? typeof(T).Name, clause);
+        return db.QueryAsync<T>(sql, clause);
     }
 
-    public static Task InsertAsync<TEntity>(this Db db, TEntity entity, string table = null)
+    public static Task InsertAsync<T>(this Db db, T entity, string table = null)
     {
-        var sql = Sql.Insert(table ?? typeof(TEntity).Name, entity);
+        var sql = new SqlString().Insert(table ?? typeof(T).Name).Values(entity);
         return db.ExecuteAsync(sql, entity);
     }
 
-    public static Task InsertAsync<TEntity>(this Db db, IEnumerable<TEntity> entities, string table = null)
+    public static Task InsertAsync<T>(this Db db, IEnumerable<T> entities, string table = null)
     {
         if (entities == null || !entities.Any())
             return Task.CompletedTask;
-        var sql = Sql.Insert(table ?? typeof(TEntity).Name, typeof(TEntity));
+        var sql = Sql.Insert(table ?? typeof(T).Name, typeof(T));
         return db.ExecuteAsync(sql, entities);
     }
 
-    public static Task<int> UpdateAsync<TEntity>(this Db db, TEntity entity, string table = null, string keyCols = "Id")
+    public static Task<int> UpdateAsync<T>(this Db db, T entity, string keyCols = "Id", string table = null)
     {
-        var updateColumns = Sql.GetParamNames(entity).Where(x => keyCols.Contains(x, StringComparison.OrdinalIgnoreCase));
-        var sql = Sql.Update(table ?? typeof(TEntity).Name, updateColumns, keyCols);
+        var updateCols = Sql.ParamNames(entity, keyCols);
+        var sql = Sql.Update(table ?? typeof(T).Name, updateCols, keyCols);
         return db.ExecuteAsync(sql, entity);
     }
 
-    public static Task<int> UpdateAsync<TEntity>(this Db db, IEnumerable<TEntity> entities, string table = default, string keyCols = "Id")
+    public static Task<int> UpdateAsync<T>(this Db db, IEnumerable<T> entities, string keyCols = "Id", string table = null)
     {
-        var updateColumns = Sql.GetParamNames(typeof(TEntity)).Where(x => keyCols.Contains(x, StringComparison.OrdinalIgnoreCase));
-        var sql = Sql.Update(table ?? typeof(TEntity).Name, updateColumns, keyCols);
+        var updateCols = Sql.ParamNames(typeof(T), keyCols);
+        var sql = Sql.Update(table ?? typeof(T).Name, updateCols, keyCols);
         return db.ExecuteAsync(sql, entities);
     }
 
-    public static Task<int> UpdateAsync(this Db db, object update, object clause, string table = null)
+    public static Task<int> UpdateAsync(this Db db, string table, object entity, string keyCols = "Id")
     {
-        var sql = Sql.Update(table, update, clause);
-        return db.ExecuteAsync(sql, Sql.MergeParams(update, clause));
+        var updateCols = Sql.ParamNames(entity, keyCols);
+        var sql = Sql.Update(table, updateCols, keyCols);
+        return db.ExecuteAsync(sql, entity);
     }
 
-    public static Task<int> DeleteAsync(this Db db, object clause, string table = null)
+    public static Task<int> UpdateAsync(this Db db, string table, object update, object clause)
+    {
+        var sql = Sql.Update(table, update, clause);
+        return db.ExecuteAsync(sql, SqlParams.Merge(update, clause));
+    }
+
+    public static Task<int> DeleteAsync(this Db db, string table, object clause)
     {
         var sql = Sql.Delete(table, clause);
         return db.ExecuteAsync(sql, clause);

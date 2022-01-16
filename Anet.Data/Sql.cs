@@ -1,149 +1,68 @@
-﻿using System.Collections;
-using Dapper;
+﻿using System.Reflection;
 
 namespace Anet.Data;
 
 public static class Sql
 {
-    public static string Like(string keyword)
+    public static SqlString Select(string table, object clause)
     {
-        return $"%{keyword?.Replace(" ", "%")}%";
+        return new SqlString().Select("*").From(table).Where(clause);
     }
 
-    public static string And(object clause)
+    public static SqlString Insert(string table, object columns)
     {
-        if (clause == null) return "1=1";
+        return new SqlString().Insert(table).Values(columns);
+    }
 
-        var names = GetParamNames(clause);
-        var type = clause.GetType();
+    public static SqlString Update(string table, object update, object clause)
+    {
+       return new SqlString().Update(table).Values(update).Where(clause);
+    }
 
-        return string.Join(" AND ", names.Select(x =>
+    public static SqlString Delete(string table, object clause)
+    {
+        return new SqlString().Delete(table).Where(clause);
+    }
+
+    static readonly BindingFlags _colBind = BindingFlags.Instance & BindingFlags.Public;
+
+    public static IEnumerable<string> ParamNames(object obj, string excludeCols)
+    {
+        var excludes = excludeCols.Split(',', StringSplitOptions.RemoveEmptyEntries);
+        return ParamNames(obj, n => !excludes.Contains(n));
+    }
+
+    public static IEnumerable<string> ParamNames(object obj, Func<string, bool> predicate = null)
+    {
+        Guard.NotNull(obj, nameof(obj));
+
+        IEnumerable<string> names;
+
+        if (obj is string str)
         {
-            var propertyValue = type.GetProperty(x).GetValue(clause);
-            if (propertyValue == null) return x + " IS NULL";
-            else if (propertyValue is IEnumerable && propertyValue is not string)
-                return x + " IN @" + x;
-            else return x + "=@" + x;
-        }));
-    }
-
-    public static string Where(object clause)
-    {
-        return "WHERE " + And(clause);
-    }
-
-    public static string Select(string table, object clause)
-    {
-        var sql = $"SELECT * FROM {table} ";
-        if (clause != null)
-            sql += Where(clause);
-        return sql;
-    }
-
-    /// <summary>
-    /// 生成INSERT语句
-    /// </summary>
-    /// <param name="table">表名</param>
-    /// <param name="columns">
-    /// <para>
-    /// 需要生成语句的列。参数可以是：
-    /// 1. 用“,”分隔的多个列名字符串
-    /// 2. 列名字符串数组
-    /// 3. 包括列名的对象若其类型
-    /// </para>
-    /// </param>
-    /// <returns></returns>
-    public static string Insert(string table, object columns)
-    {
-        var colNames = GetParamNames(columns);
-        return $"INSERT INTO {table}({string.Join(", ", colNames)}) VALUES(@{string.Join(", @", colNames)})";
-    }
-
-    public static string Update(string table, object update, object clause)
-    {
-        var updateCols = GetParamNames(update);
-        var clauseCols = GetParamNames(clause);
-        var sql = $"UPDATE {table} SET {string.Join(", ", updateCols.Select(x => x + "=@" + x))} ";
-        if (clauseCols != null && clauseCols.Length > 0)
-            sql += Where(clause);
-        return sql;
-    }
-
-    public static string Delete(string table, object clause)
-    {
-        var clauseCols = GetParamNames(clause);
-        var sql = $"DELETE FROM {table} ";
-        if (clauseCols != null && clauseCols.Length > 0)
-            sql += Where(clause);
-        return sql;
-    }
-
-    /// <summary>
-    /// Get parameter names from an object or <see cref="DynamicParameters"/>.
-    /// </summary>
-    /// <param name="param">Columns(array or string with comma separated), DynamicParameters, Dynamic object or Entity type.</param>
-    /// <returns>The parameter names collection.</returns>
-    public static string[] GetParamNames(object param)
-    {
-        if (param == null)
+            names = str.Split(',');
+        }
+        else if (obj is IEnumerable<string> list)
         {
-            return Array.Empty<string>();
+            names = list.Where(predicate);
+        }
+        else if (obj is Type type)
+        {
+            names = type
+                .GetFields(_colBind).Select(x => x.Name)
+                .Concat(type.GetProperties(_colBind).Select(x => x.Name))
+                .Where(predicate);
+        }
+        else
+        {
+            throw new NotSupportedException();
         }
 
-        if (param is string str)
+        if (predicate != null)
         {
-            if (str.Contains(','))
-                return str
-                    .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                    .Select(x => x.Trim()).ToArray();
-            return new[] { str };
+            names = names.Where(predicate) ;
         }
 
-        if (param is IEnumerable<string> array)
-        {
-            return array.ToArray();
-        }
-
-        if (param is DynamicParameters dynamicParameters)
-        {
-            return dynamicParameters.ParameterNames.ToArray();
-        }
-
-        var type = param is Type ? (param as Type) : param.GetType();
-
-        return type
-            .GetProperties()
-            .Where(x => x.PropertyType.IsSimpleType() || x.PropertyType.GetAnyElementType().IsSimpleType())
-            .Select(x => x.Name).ToArray();
-    }
-
-    /// <summary>
-    /// Merge parameters.
-    /// </summary>
-    /// <param name="firstParam">The first parameter to merge.</param>
-    /// <param name="otherParams">The other prameters to merge.</param>
-    /// <returns>Merged parameters.</returns>
-    public static DynamicParameters MergeParams(object firstParam, params object[] otherParams)
-    {
-        Guard.NotNull(firstParam, nameof(firstParam));
-
-        var parameters = new DynamicParameters();
-        parameters.AddDynamicParams(firstParam);
-        foreach (var param in otherParams)
-        {
-            parameters.AddDynamicParams(param);
-        }
-        return parameters;
-    }
-
-    /// <summary>
-    /// 生成 LIMIT 语句（仅支持MySQL）
-    /// </summary>
-    /// <param name="page"></param>
-    /// <param name="size"></param>
-    /// <returns></returns>
-    public static string Limit(int page, int size)
-    {
-        return $"LIMIT {size * (page - 1)},{size}";
+        return names;
     }
 }

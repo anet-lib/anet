@@ -7,7 +7,7 @@
 public abstract class ServiceBase<TDb> where TDb : Db
 {
     /// <summary>
-    /// Initialize the base class of a repository.
+    /// Initialize the base class of a service.
     /// </summary>
     /// <param name="db">The database to access.</param>
     public ServiceBase(TDb db)
@@ -26,6 +26,10 @@ public abstract class ServiceBase<TDb> where TDb : Db
 /// </summary>
 public abstract class ServiceBase : ServiceBase<Db>
 {
+    /// <summary>
+    /// Initialize the base class of a service.
+    /// </summary>
+    /// <param name="db">The database to access.</param>
     protected ServiceBase(Db db) : base(db)
     {
     }

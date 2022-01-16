@@ -15,7 +15,7 @@ public class Db : IDisposable
     /// <summary>
     /// The current transaction to use, if any.
     /// </summary>
-    public IDbConnection Connection { get; set; }
+    public IDbConnection Connection { get; }
 
     /// <summary>
     /// Number of seconds before command execution timeout.

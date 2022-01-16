@@ -2,8 +2,6 @@
 using Anet.Data;
 using Sample.Web.Models.Dtos;
 using Sample.Web.Models.Entities;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Sample.Web.Services;
 
@@ -58,7 +56,7 @@ public class UserService : ServiceBase
 
     public async Task DeleteUserAsync(long id)
     {
-        var rows = await Db.DeleteAsync(new { Id = id });
+        var rows = await Db.DeleteAsync("AnetUser", new { Id = id });
         if (rows == 0)
             throw new NotFoundException();
     }
