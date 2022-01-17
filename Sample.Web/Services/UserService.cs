@@ -1,5 +1,6 @@
 ﻿using Anet;
 using Anet.Data;
+using Anet.Models;
 using Sample.Web.Models.Dtos;
 using Sample.Web.Models.Entities;
 
@@ -11,20 +12,36 @@ public class UserService : ServiceBase
     {
     }
 
-    public Task<IEnumerable<UserResponseDto>> GetAllAsync()
+    public async Task<PagedResult<UserDto>> GetAsync(int page, int size, string keyword = null)
     {
-        var sql = "SELECT * FROM AnetUser;";
-        return Db.QueryAsync<UserResponseDto>(sql);
+        var param = new SqlParams();
+        var sql = Sql.Select().From("AnetUser").Where();
+
+        if (!string.IsNullOrEmpty(keyword))
+        {
+            sql.AndLike("Name");
+            param.Add("Name", $"'%{keyword}%'");
+        }
+
+        sql.OrderBy("Id").Page(page, size);
+
+        var test = sql.Count();
+
+        var result = new PagedResult<UserDto>(page, size);
+        result.Items = await Db.QueryAsync<UserDto>(sql, param);
+        result.Total = await Db.QuerySingleAsync<int>(sql.Count(), param);
+
+        return result;
     }
 
-    public Task<UserResponseDto> GetByIdAsync(long id)
+    public Task<UserDto> GetByIdAsync(long id)
     {
         var param = new { Id = id };
         var sql = Sql.Select("AnetUser", param);
-        return Db.QueryFirstOrDefaultAsync<UserResponseDto>(sql, param);
+        return Db.QueryFirstOrDefaultAsync<UserDto>(sql, param);
     }
 
-    public async Task CreateUserAsync(UserRequestDto dto)
+    public async Task CreateAsync(UserEditDto dto)
     {
         var newUser = new AnetUser { UserName = dto.UserName };
 
@@ -37,7 +54,7 @@ public class UserService : ServiceBase
         tran.Commit();
     }
 
-    public async Task UpdateUserAsync(long userId, UserRequestDto dto)
+    public async Task UpdateAsync(long userId, UserEditDto dto)
     {
         var user = await Db.FindAsync<AnetUser>(new { Id = userId });
         if (user == null)
@@ -54,7 +71,7 @@ public class UserService : ServiceBase
         tran.Commit();
     }
 
-    public async Task DeleteUserAsync(long id)
+    public async Task DeleteAsync(long id)
     {
         var rows = await Db.DeleteAsync("AnetUser", new { Id = id });
         if (rows == 0)

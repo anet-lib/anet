@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Anet.Data\Anet.Data.csproj" />
+    <ProjectReference Include="..\Anet\Anet.csproj" />
   </ItemGroup>
 
 </Project>

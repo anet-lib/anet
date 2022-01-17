@@ -27,22 +27,39 @@ dotnet add package Anet
 ### 1. 查询操作
 
 ```csharp
-public class UserRepository : RepositoryBase<AnetUser>
+public class UserService : ServiceBase
 {
-    public UserRepository(Database db) : base(db)
+    public UserService(Db db) : base(db)
     {
     }
 
-    public Task<IEnumerable<UserResponseDto>> GetAllAsync()
+    public async Task<PagedResult<UserDto>> GetAsync(int page, int size, string keyword = null)
     {
-        var sql = "SELECT * FROM AnetUser;";
-        return Db.QueryAsync<UserResponseDto>(sql);
-    }
+        var param = new SqlParams();
+        var sql = Sql.Select().From("AnetUser").Where();
 
-    public Task<UserResponseDto> GetByIdAsync(long id)
+        if (!string.IsNullOrEmpty(keyword))
+        {
+            sql.AndLike("Name");
+            param.Add("Name", $"'%{keyword}%'");
+        }
+
+        sql.OrderBy("Id").Page(page, size);
+
+        var test = sql.Count();
+
+        var result = new PagedResult<UserDto>(page, size);
+        result.Items = await Db.QueryAsync<UserDto>(sql, param);
+        result.Total = await Db.QuerySingleAsync<int>(sql.Count(), param);
+
+        return result;
+    }
+    
+    public Task<UserDto> GetByIdAsync(long id)
     {
-        var sql = Sql.Select("AnetUser", new { Id = id });
-        return Db.QueryFirstOrDefaultAsync<UserResponseDto>(sql);
+        var param = new { Id = id };
+        var sql = Sql.Select("AnetUser", param);
+        return Db.QueryFirstOrDefaultAsync<UserDto>(sql, param);
     }
 }
 ```
@@ -50,82 +67,71 @@ public class UserRepository : RepositoryBase<AnetUser>
 ### 2. 新增操作
 
 ```csharp
-public class UserService
+public class UserService : ServiceBase
 {
-    private readonly UserRepository userRepository;
-    public UserService(UserRepository userRepository)
+    public UserService(Db db) : base(db)
     {
-        this.userRepository = userRepository;
     }
 
-    public async Task CreateUserAsync(UserRequestDto dto)
+    public async Task CreateAsync(UserEditDto dto)
     {
         var newUser = new AnetUser { UserName = dto.UserName };
 
-        using (var tran = userRepository.BeginTransaction())
-        {
-            await userRepository.InsertAsync(newUser);
+        using var tran = Db.BeginTransaction();
 
-            // Other business logic code.
+        await Db.InsertAsync(newUser);
 
-            tran.Commit();
-        }
+        // Other business logic code.
+
+        tran.Commit();
     }
-
-    // ...（其它代码）
 }
 ```
 
 ### 3. 更新操作
 
 ```csharp
-public class UserService
+public class UserService : ServiceBase
 {
-    private readonly UserRepository userRepository;
-    public UserService(UserRepository userRepository)
+    public UserService(Db db) : base(db)
     {
-        this.userRepository = userRepository;
     }
 
-    public async Task UpdateUserAsync(long userId, UserRequestDto dto)
+    public async Task UpdateAsync(long userId, UserEditDto dto)
     {
-        var user = await userRepository.FindAsync(userId);
+        var user = await Db.FindAsync<AnetUser>(new { Id = userId });
         if (user == null)
             throw new NotFoundException();
 
-        using(var tran = userRepository.BeginTransaction())
-        {
-            await userRepository.UpdateAsync(
-                update: new { dto.UserName },
-                clause: new { Id = userId });
+        using var tran = Db.BeginTransaction();
 
-            tran.Commit();
-        }
+        user.UserName = dto.UserName;
+
+        await Db.UpdateAsync(user);
+
+        // Other business logic code.
+
+        tran.Commit();
     }
-
-    // ...（其它代码）
 }
+
 ```
 
 ### 4. 删除操作
 
 ```csharp
-public class UserService
+public class UserService : ServiceBase
 {
-    private readonly UserRepository userRepository;
-    public UserService(UserRepository userRepository)
+    public UserService(Db db) : base(db)
     {
-        this.userRepository = userRepository;
     }
 
-    public async Task DeleteUserAsync(long id)
+    public async Task DeleteAsync(long id)
     {
-        var rows = await userRepository.DeleteAsync(id);
+        var rows = await Db.DeleteAsync("AnetUser", new { Id = id });
         if (rows == 0)
             throw new NotFoundException();
     }
-
-    // ...（其它代码）
 }
 ```
 

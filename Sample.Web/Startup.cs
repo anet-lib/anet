@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+﻿using Anet.Data;
 using Sample.Web.Services;
 using System.Data.SqlClient;
 
@@ -20,9 +16,9 @@ namespace Sample.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services
-                .AddAnet(opt => opt.UseDefaultIdGen(0))
-                .AddDb<SqlConnection>(Configuration.GetConnectionString("DefaultConnection"));
+            var connStr = Configuration.GetConnectionString("DefaultConnection");
+
+            services.AddAnet().AddDb<SqlConnection>(DbDialect.SQLServer, connStr);
 
             services.AddControllers();
 

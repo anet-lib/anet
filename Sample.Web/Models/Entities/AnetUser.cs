@@ -1,4 +1,4 @@
-﻿using Anet.Data.Entity;
+﻿using Anet.Entity;
 
 namespace Sample.Web.Models.Entities
 {
