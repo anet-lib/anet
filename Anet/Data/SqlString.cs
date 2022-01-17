@@ -1,25 +1,32 @@
-﻿using System.Text;
+﻿using System.Reflection;
+using System.Text;
 
 namespace Anet.Data;
 
 public class SqlString
 {
     readonly StringBuilder _sb;
-    private int _selectLength = -1;
 
-    public SqlString() => _sb = new StringBuilder();
-    public SqlString(string value) => _sb = new StringBuilder(value);
-    public SqlString(DbDialect dialect) : this() => Dialect = dialect;
-
-    public static implicit operator string(SqlString s) => s._sb.ToString();
-    public static implicit operator SqlString(string s) => new(s);
-    public override string ToString() => _sb.ToString();
-
-    public DbDialect Dialect { get; init; } = Sql.DefaultDialect;
+    public SqlString(DbDialect dialect) : this(dialect, null)
+    {
+    }
+    public SqlString(DbDialect dialect, string value)
+    {
+        _sb = new StringBuilder(value);
+        Dialect = dialect;
+    }
 
     public int Length { get => _sb.Length; }
 
     public string RawString { get => _sb.ToString(); }
+
+    public DbDialect Dialect { get; init; }
+
+    public static implicit operator string(SqlString s) => s.ToString();
+    //public static implicit operator SqlString(string s) => new(s);
+
+    public override string ToString() => _sb.ToString();
+    public SqlString Clone() => new(Dialect, this);
 
     public SqlString Append(char c)
     {
@@ -53,24 +60,31 @@ public class SqlString
     public SqlString TabAppend(string value = null) => Append("\n  ").Append(value);
     public SqlString End() => Append(';');
 
+    private int _selectLength = -1;
     public SqlString Select(object cols, string prefix = null)
+    {
+        if (Length > 0) // 已有部分SQL，在其前面插入
+        {
+            if (_selectLength > 0) // 已有SELECT，先移除
+                Remove(0, _selectLength);
+            var newSelect = new SqlString(Dialect).Select(cols, prefix);
+            Prepend(newSelect);
+            _selectLength = newSelect.Length;
+        }
+        else
+        {
+            Append("SELECT ").ForEachCol(cols, n => Column(n, prefix).Append(", ")).RemoveTrail(2);
+            _selectLength = Length;
+        }
+        return this;
+    }
+    public SqlString DeSelect()
     {
         if (_selectLength > 0)
         {
             Remove(0, _selectLength);
-
-            var newSelect = new SqlString().Select(cols, prefix);
-            Prepend(newSelect.ToString());
-
-            _selectLength = newSelect.Length;
-
-            return this;
+            _selectLength = -1;
         }
-
-        Append("SELECT ").ForEachCol(cols, n => Column(n, prefix).Append(", ")).RemoveTrail(2);
-
-        _selectLength = Length;
-
         return this;
     }
 
@@ -131,8 +145,10 @@ public class SqlString
     public SqlString ThenBy(object cols, string dir = "ASC", string prefix = null) =>
         AppendSpace().ForEachCol(cols, col => Append(", ").Column(col, prefix).AppendSpace().Append(dir).Append(", ")).RemoveTrail(2);
 
+    private int _pageStart = -1;
     public SqlString Page(int pageNum, int pageSize)
     {
+        _pageStart = _sb.Length;
         return Dialect switch
         {
             DbDialect.MySQL => LineAppend($"LIMIT {pageSize * (pageNum - 1)},{pageSize}"),
@@ -141,6 +157,12 @@ public class SqlString
             DbDialect.PostgreSQL => LineAppend($"LIMIT {pageSize} OFFSET {pageSize * (pageNum - 1)}"),
             _ => throw new NotSupportedException("To call the InsertedId method, you need to set the DbDialect first.")
         };
+    }
+    public SqlString DePage()
+    {
+        Remove(0, _pageStart);
+        _pageStart = -1;
+        return this;
     }
 
     public SqlString Column(string name, string prefix = null)
@@ -152,7 +174,7 @@ public class SqlString
         return Append(name);
     }
 
-    public SqlString Opt(string name, string opt = "=", string prefix = null) => Column(name, prefix).AppendSpace(opt).Append('@').Append(name);
+    public SqlString Opt(string name, string opt = "=", string prefix = null) => Column(name, prefix).Append(opt).Append('@').Append(name);
 
     public SqlString RemoveTrail(int charCount = 1)
     {
@@ -163,10 +185,79 @@ public class SqlString
     public SqlString ForEachCol(object obj, Action<string> action, Func<string, bool> predicate = null)
     {
         ArgumentNullException.ThrowIfNull(obj);
-        foreach (var name in Sql.ParamNames(obj, predicate))
+        foreach (var name in ParamNames(obj, predicate))
         {
             action(name);
         }
         return this;
     }
+
+    public SqlString Select(string table, object clause)
+    {
+        return Select("*").From(table).Where(clause);
+    }
+
+    public SqlString Insert(string table, object columns)
+    {
+        return Insert(table).Values(columns);
+    }
+
+    public SqlString Update(string table, object update, object clause)
+    {
+        return Update(table).Values(update).Where(clause);
+    }
+
+    public SqlString Delete(string table, object clause)
+    {
+        return Delete(table).Where(clause);
+    }
+
+    #region Static Methods
+
+    static readonly BindingFlags _colBind = BindingFlags.Instance | BindingFlags.Public;
+
+    public static IEnumerable<string> ParamNames(object obj, string excludeCols)
+    {
+        var excludes = excludeCols.Split(',', StringSplitOptions.RemoveEmptyEntries);
+        return ParamNames(obj, n => !excludes.Contains(n));
+    }
+
+    public static IEnumerable<string> ParamNames(object obj, Func<string, bool> predicate = null)
+    {
+        ArgumentNullException.ThrowIfNull(obj);
+
+        static IEnumerable<string> GetPropsFields(Type type) => type
+            .GetFields(_colBind).Select(x => x.Name)
+            .Concat(type.GetProperties(_colBind).Select(x => x.Name));
+
+        IEnumerable<string> names;
+
+        if (obj is string str)
+        {
+            names = str.Split(',');
+        }
+        else if (obj is IEnumerable<string> list)
+        {
+            names = list.Where(predicate);
+        }
+        else if (obj is Type type)
+        {
+            names = GetPropsFields(type);
+        }
+        else
+        {
+            // todo: 限制类型
+            // throw new NotSupportedException();
+            names = GetPropsFields(obj.GetType());
+        }
+
+        if (predicate != null)
+        {
+            names = names.Where(predicate);
+        }
+
+        return names;
+    }
+
+    #endregion
 }

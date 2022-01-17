@@ -1,7 +1,9 @@
-﻿namespace Anet.Data;
+﻿using Anet.Data.Logging;
+
+namespace Anet.Data;
 
 public class DbOptions
 {
-    public DbDialect DbDialect { get; set; }
-    public string ConnectionString { get; set; }
+    public LoggingOptions LoggingOptions { get; set; }
+    public bool EnableMetrics { get; set; }
 }

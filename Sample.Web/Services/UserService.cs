@@ -15,7 +15,7 @@ public class UserService : ServiceBase
     public async Task<PagedResult<UserDto>> GetAsync(int page, int size, string keyword = null)
     {
         var param = new SqlParams();
-        var sql = Sql.Select().From("AnetUser").Where();
+        var sql = Db.NewSql().From("GkBid").Where();
 
         if (!string.IsNullOrEmpty(keyword))
         {
@@ -23,11 +23,12 @@ public class UserService : ServiceBase
             param.Add("Name", $"'%{keyword}%'");
         }
 
-        sql.OrderBy("Id").Page(page, size);
-
-        var result = new PagedResult<UserDto>(page, size);
-        result.Items = await Db.QueryAsync<UserDto>(sql, param);
-        result.Total = await Db.QuerySingleAsync<int>(sql.Count(), param);
+        var result = new PagedResult<UserDto>(page, size)
+        {
+            Total = await Db.QuerySingleAsync<int>(sql.Count(), param),
+            Items = await Db.QueryAsync<UserDto>(
+                sql.Select("*").OrderBy("Id").Page(page, size), param)
+        };
 
         return result;
     }
@@ -35,7 +36,7 @@ public class UserService : ServiceBase
     public Task<UserDto> GetByIdAsync(long id)
     {
         var param = new { Id = id };
-        var sql = Sql.Select("AnetUser", param);
+        var sql = Db.NewSql().Select("AnetUser", param);
         return Db.QueryFirstOrDefaultAsync<UserDto>(sql, param);
     }
 

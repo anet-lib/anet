@@ -1,16 +1,18 @@
-﻿using Microsoft.Extensions.Logging;
-using System.Data;
+﻿using System.Data;
 
 namespace Anet.Data;
 
 public class Db : IDisposable
 {
-    internal static ILogger<Db> Logger { get; set; }
-
-    public Db(IDbConnection connection)
+    public Db(DbDialect dialect, IDbConnection connection)
     {
+        Dialect = dialect;
         Connection = connection;
     }
+
+    public DbDialect Dialect { get; }
+
+    public SqlString NewSql() => new(Dialect);
 
     /// <summary>
     /// The current transaction to use, if any.
@@ -51,11 +53,6 @@ public class Db : IDisposable
             Connection.Open();
         Transaction = Connection.BeginTransaction(il);
         return Transaction;
-    }
-
-    internal void LogSql(string sql)
-    {
-        Logger.LogInformation(sql);
     }
 
     public void Dispose()
