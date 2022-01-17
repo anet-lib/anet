@@ -13,7 +13,7 @@ public class EnumDisplay
     public bool Checked { get; set; }
 }
 
-public class EnumUtility
+public class EnumUtil
 {
     public static IEnumerable<EnumDisplay> GetDisplayList(Type enumType)
     {

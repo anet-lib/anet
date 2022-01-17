@@ -72,7 +72,7 @@ internal class JwtProviderMiddleware
             string body = await reader.ReadToEndAsync();
             try
             {
-                return JsonUtility.DeserializeCamelCase<JwtParams>(body);
+                return JsonUtil.DeserializeCamelCase<JwtParams>(body);
             }
             catch
             {
@@ -128,7 +128,7 @@ internal class JwtProviderMiddleware
     {
         _context.Response.ContentType = ContentTypes.JsonContentType;
         _context.Response.StatusCode = (int)HttpStatusCode.OK;
-        var json = JsonUtility.SerializeCamelCase(apiResult);
+        var json = JsonUtil.SerializeCamelCase(apiResult);
         return _context.Response.WriteAsync(json);
     }
 }

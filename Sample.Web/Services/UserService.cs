@@ -25,8 +25,6 @@ public class UserService : ServiceBase
 
         sql.OrderBy("Id").Page(page, size);
 
-        var test = sql.Count();
-
         var result = new PagedResult<UserDto>(page, size);
         result.Items = await Db.QueryAsync<UserDto>(sql, param);
         result.Total = await Db.QuerySingleAsync<int>(sql.Count(), param);

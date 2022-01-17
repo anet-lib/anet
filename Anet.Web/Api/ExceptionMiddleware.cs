@@ -75,6 +75,6 @@ public class ExceptionMiddleware
         }
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)HttpStatusCode.OK;
-        return context.Response.WriteAsync(JsonUtility.SerializeCamelCase(result));
+        return context.Response.WriteAsync(JsonUtil.SerializeCamelCase(result));
     }
 }

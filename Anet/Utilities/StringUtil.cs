@@ -1,6 +1,6 @@
 ﻿namespace Anet.Utilities;
 
-public static class StringUtility
+public static class StringUtil
 {
     public const string BASE36 = "0123456789abcdefghijklmnopqrstuvwxyz";
     public const string BASE64 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_";
