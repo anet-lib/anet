@@ -12,7 +12,7 @@ public class Db : IDisposable
 
     public DbDialect Dialect { get; }
 
-    public SqlString NewSql() => new(Dialect);
+    public SqlString NewSql(string value = null) => new(Dialect, value);
 
     /// <summary>
     /// The current transaction to use, if any.

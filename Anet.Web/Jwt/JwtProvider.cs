@@ -7,10 +7,10 @@ namespace Anet.Web.Jwt;
 
 public class JwtProvider
 {
-    private readonly JwtOptions _options;
+    private readonly JwtTokenOptions _options;
     private readonly IRefreshTokenStore _refreshTokenStore;
 
-    public JwtProvider(JwtOptions options, IRefreshTokenStore refreshTokenStore)
+    public JwtProvider(JwtTokenOptions options, IRefreshTokenStore refreshTokenStore)
     {
         _options = options;
         _refreshTokenStore = refreshTokenStore;

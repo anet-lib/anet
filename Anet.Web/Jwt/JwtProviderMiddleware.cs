@@ -9,14 +9,14 @@ namespace Anet.Web.Jwt;
 internal class JwtProviderMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly JwtOptions _options;
+    private readonly JwtTokenOptions _options;
     private readonly JwtProvider _provider;
     private HttpContext _context;
     private IAuthenticator _authenticator;
     private IRefreshTokenStore _refreshTokenStore;
 
     public JwtProviderMiddleware(
-        RequestDelegate next, JwtOptions options, JwtProvider provider)
+        RequestDelegate next, JwtTokenOptions options, JwtProvider provider)
     {
         _next = next;
         _options = options;

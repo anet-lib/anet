@@ -15,7 +15,7 @@ public class UserService : ServiceBase
     public async Task<PagedResult<UserDto>> GetAsync(int page, int size, string keyword = null)
     {
         var param = new SqlParams();
-        var sql = Db.NewSql().From("GkBid").Where();
+        var sql = Db.NewSql().Select("*").From("AnetUser").Where();
 
         if (!string.IsNullOrEmpty(keyword))
         {
@@ -25,9 +25,8 @@ public class UserService : ServiceBase
 
         var result = new PagedResult<UserDto>(page, size)
         {
-            Total = await Db.QuerySingleAsync<int>(sql.Count(), param),
-            Items = await Db.QueryAsync<UserDto>(
-                sql.Select("*").OrderBy("Id").Page(page, size), param)
+            Items = await Db.QueryAsync<UserDto>(sql.OrderBy("Id").Page(page, size), param),
+            Total = await Db.QuerySingleAsync<int>(sql.DePage().Count(), param),
         };
 
         return result;

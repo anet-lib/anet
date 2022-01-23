@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Anet.Web\Anet.Web.csproj" />
     <ProjectReference Include="..\Anet\Anet.csproj" />
   </ItemGroup>
 

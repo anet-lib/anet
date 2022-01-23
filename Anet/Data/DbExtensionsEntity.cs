@@ -16,7 +16,7 @@ public static class DbExtensionsEntity
 
     public static Task InsertAsync<T>(this Db db, T entity, string table = null)
     {
-        var sql = db.NewSql().Insert(table ?? typeof(T).Name).Values(entity);
+        var sql = db.NewSql().InsertValues(table ?? typeof(T).Name, entity);
         return db.ExecuteAsync(sql, entity);
     }
 
@@ -24,7 +24,7 @@ public static class DbExtensionsEntity
     {
         if (entities == null || !entities.Any())
             return Task.CompletedTask;
-        var sql = db.NewSql().Insert(table ?? typeof(T).Name, typeof(T));
+        var sql = db.NewSql().InsertValues(table ?? typeof(T).Name, typeof(T));
         return db.ExecuteAsync(sql, entities);
     }
 

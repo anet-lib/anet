@@ -10,11 +10,15 @@ public class SqlString
     public SqlString(DbDialect dialect) : this(dialect, null)
     {
     }
+
     public SqlString(DbDialect dialect, string value)
     {
         _sb = new StringBuilder(value);
         Dialect = dialect;
     }
+
+    public static implicit operator string(SqlString s) => s.ToString();
+    public override string ToString() => _sb.ToString();
 
     public int Length { get => _sb.Length; }
 
@@ -22,10 +26,6 @@ public class SqlString
 
     public DbDialect Dialect { get; init; }
 
-    public static implicit operator string(SqlString s) => s.ToString();
-    //public static implicit operator SqlString(string s) => new(s);
-
-    public override string ToString() => _sb.ToString();
     public SqlString Clone() => new(Dialect, this);
 
     public SqlString Append(char c)
@@ -38,6 +38,7 @@ public class SqlString
         _sb.Append(value);
         return this;
     }
+
     public SqlString Prepend(string value)
     {
         _sb.Insert(0, value);
@@ -54,10 +55,15 @@ public class SqlString
         return this;
     }
 
-    public SqlString AppendLine(string value = null) => Append(value).Append('\n');
-    public SqlString AppendSpace(string value = null) => Append(value).Append(' ');
-    public SqlString LineAppend(string value = null) => Append('\n').Append(value);
-    public SqlString TabAppend(string value = null) => Append("\n  ").Append(value);
+    public SqlString Line(string value = null)
+    {
+        if (Length > 0) Append('\n');
+        return Append(value);
+    }
+
+    public SqlString LineTab(string value = null) =>
+        Line().Append('\t').Append(value);
+
     public SqlString End() => Append(';');
 
     private int _selectLength = -1;
@@ -65,19 +71,27 @@ public class SqlString
     {
         if (Length > 0) // 已有部分SQL，在其前面插入
         {
+            var newSelect = new SqlString(Dialect).Select(cols, prefix);
             if (_selectLength > 0) // 已有SELECT，先移除
                 Remove(0, _selectLength);
-            var newSelect = new SqlString(Dialect).Select(cols, prefix);
+            else
+                newSelect.Line();
             Prepend(newSelect);
             _selectLength = newSelect.Length;
         }
         else
         {
-            Append("SELECT ").ForEachCol(cols, n => Column(n, prefix).Append(", ")).RemoveTrail(2);
+            Append("SELECT ")
+                .ForEachCol(cols, n => Column(n, prefix).Append(", "))
+                .RemoveTrail(2);
             _selectLength = Length;
         }
         return this;
     }
+
+    public SqlString Select(string table, object clause) =>
+        Select("*").From(table).Where(clause);
+
     public SqlString DeSelect()
     {
         if (_selectLength > 0)
@@ -88,25 +102,34 @@ public class SqlString
         return this;
     }
 
-    public SqlString Count(string col = "1") => Select($"COUNT({col})");
+    public SqlString Count(string col = "1") =>
+        Select($"COUNT({col})");
 
     public SqlString From(string table, string alias = null)
     {
-        LineAppend("FROM ").Append(table);
+        Line("FROM ").Append(table);
         if (!string.IsNullOrEmpty(alias))
             Append(" AS ").Append(alias);
-        return AppendSpace();
+        return this;
     }
 
-    public SqlString Update(string table) => Append("UPDATE ").AppendLine(table);
+    public SqlString Update(string table) =>
+        Line("UPDATE ").Append(table);
 
-    public SqlString Set(object obj) => ForEachCol(obj, name => Opt(name).Append(", ")).RemoveTrail(2);
+    public SqlString Set(object obj) =>
+        LineTab().ForEachCol(obj, name => Opt(name).Append(", ")).RemoveTrail(2);
 
-    public SqlString Insert(string table) => Append("INSERT INTO ").AppendSpace(table);
+    public SqlString Update(string table, object update, object clause) =>
+        Update(table).Set(update).Where(clause);
+
+    public SqlString Insert(string table, object cols) =>
+        Line("INSERT INTO ").Append(table).Append('(').ForEachCol(cols, n => Append(n).Append(", ")).RemoveTrail(2).Append(')');
 
     public SqlString Values(object obj) =>
-        Append('(').ForEachCol(obj, n => Append(n).Append(", ")).RemoveTrail(2).Append(") ")
-        .Append("VALUES(").ForEachCol(obj, n => Append('@').Append(n).Append(", ")).RemoveTrail(2);
+        Line("VALUES (").ForEachCol(obj, n => Append('@').Append(n).Append(", ")).RemoveTrail(2).Append(')');
+
+    public SqlString InsertValues(string table, object obj) =>
+        Insert(table, obj).Values(obj);
 
     public SqlString InsertedId()
     {
@@ -120,30 +143,53 @@ public class SqlString
         };
     }
 
-    public SqlString Delete(string table) => Append("DELETE FROME ").AppendSpace(table);
+    public SqlString Delete(string table) =>
+        Line("DELETE FROME ").Append(table);
 
-    public SqlString Where() => LineAppend("WHERE 1=1 ");
-    public SqlString Where(object obj, string prefix = null) => Where().And(obj, prefix);
+    public SqlString Delete(string table, object clause) =>
+        Delete(table).Where(clause);
 
-    public SqlString And() => TabAppend("AND ");
-    public SqlString And(object obj, string prefix = null) => ForEachCol(obj, name => And().Opt(name, "=", prefix));
-    public SqlString AndIn(string name, string prefix = null) => And().Opt(name, " IN ", prefix);
-    public SqlString AndLike(string name, string prefix = null) => And().Opt(name, " LIKE ", prefix);
-    public SqlString AndBetween(string name, string start, string end, string prefix = null) =>
-        And().Column(name, prefix).Append(" BETWEEN ").Append(start).Append(" AND ").AppendSpace(end);
-    public SqlString AndIsNull(string name, string prefix = null) => And().Column(name, prefix).Append(" IS NULL");
-    public SqlString AndIsNotNull(string name, string prefix = null) => And().Column(name, prefix).Append(" IS NOT NULL");
+    public SqlString Where() => Line("WHERE 1=1 ");
 
-    public SqlString Or() => TabAppend("OR ");
-    public SqlString Or(string name, string prefix = null) => Or().Opt(name, prefix);
+    public SqlString Where(object obj, string prefix = null) =>
+        Where().And(obj, prefix);
 
-    public SqlString OrderByDesc(object cols, string prefix = null) => OrderBy(cols, "DESC", prefix);
+    public SqlString And() => LineTab("AND ");
+
+    public SqlString And(object obj, string prefix = null) =>
+        ForEachCol(obj, name => And().Opt(name, "=", prefix));
+
+    public SqlString AndIn(string name, string prefix = null) =>
+        And().Opt(name, " IN ", prefix);
+
+    public SqlString AndLike(string name, string prefix = null) =>
+        And().Opt(name, " LIKE ", prefix);
+
+    public SqlString AndBetween(string name, string min, string max, string prefix = null) =>
+        And().Column(name, prefix).Append($" BETWEEN {min} ADN {max}");
+
+    public SqlString AndIsNull(string name, string prefix = null) =>
+        And().Column(name, prefix).Append(" IS NULL");
+
+    public SqlString AndIsNotNull(string name, string prefix = null) =>
+        And().Column(name, prefix).Append(" IS NOT NULL");
+
+    public SqlString Or() => LineTab("OR ");
+
+    public SqlString Or(string name, string prefix = null) =>
+        Or().Opt(name, prefix);
+
+    public SqlString OrderByDesc(object cols, string prefix = null) =>
+        OrderBy(cols, "DESC", prefix);
+
     public SqlString OrderBy(object cols, string dir = "ASC", string prefix = null) =>
-        LineAppend("ORDER BY ").ForEachCol(cols, col => Column(col, prefix).AppendSpace().Append(dir).Append(", ")).RemoveTrail(2);
+        Line("ORDER BY ").ForEachCol(cols, col => Column(col, prefix).Append($" {dir}, ")).RemoveTrail(2);
 
-    public SqlString ThenByDesc(object cols, string prefix = null) => ThenBy(cols, "DESC", prefix);
+    public SqlString ThenByDesc(object cols, string prefix = null) =>
+        ThenBy(cols, "DESC", prefix);
+
     public SqlString ThenBy(object cols, string dir = "ASC", string prefix = null) =>
-        AppendSpace().ForEachCol(cols, col => Append(", ").Column(col, prefix).AppendSpace().Append(dir).Append(", ")).RemoveTrail(2);
+        Append(", ").ForEachCol(cols, col => Column(col, prefix).Append($" {dir}, ")).RemoveTrail(2);
 
     private int _pageStart = -1;
     public SqlString Page(int pageNum, int pageSize)
@@ -151,16 +197,17 @@ public class SqlString
         _pageStart = _sb.Length;
         return Dialect switch
         {
-            DbDialect.MySQL => LineAppend($"LIMIT {pageSize * (pageNum - 1)},{pageSize}"),
-            DbDialect.SQLite => LineAppend($"LIMIT {pageSize} OFFSET {pageSize * (pageNum - 1)}"),
-            DbDialect.SQLServer => LineAppend($"OFFSET {pageSize * (pageNum - 1)} ROWS FETCH NEXT {pageSize} ROWS ONLY"),
-            DbDialect.PostgreSQL => LineAppend($"LIMIT {pageSize} OFFSET {pageSize * (pageNum - 1)}"),
+            DbDialect.MySQL => Line($"LIMIT {pageSize * (pageNum - 1)},{pageSize}"),
+            DbDialect.SQLite => Line($"LIMIT {pageSize} OFFSET {pageSize * (pageNum - 1)}"),
+            DbDialect.SQLServer => Line($"OFFSET {pageSize * (pageNum - 1)} ROWS FETCH NEXT {pageSize} ROWS ONLY"),
+            DbDialect.PostgreSQL => Line($"LIMIT {pageSize} OFFSET {pageSize * (pageNum - 1)}"),
             _ => throw new NotSupportedException("To call the InsertedId method, you need to set the DbDialect first.")
         };
     }
+
     public SqlString DePage()
     {
-        Remove(0, _pageStart);
+        Remove(_pageStart, Length - _pageStart);
         _pageStart = -1;
         return this;
     }
@@ -174,7 +221,8 @@ public class SqlString
         return Append(name);
     }
 
-    public SqlString Opt(string name, string opt = "=", string prefix = null) => Column(name, prefix).Append(opt).Append('@').Append(name);
+    public SqlString Opt(string name, string opt = "=", string prefix = null) =>
+        Column(name, prefix).Append(opt).Append('@').Append(name);
 
     public SqlString RemoveTrail(int charCount = 1)
     {
@@ -192,26 +240,6 @@ public class SqlString
         return this;
     }
 
-    public SqlString Select(string table, object clause)
-    {
-        return Select("*").From(table).Where(clause);
-    }
-
-    public SqlString Insert(string table, object columns)
-    {
-        return Insert(table).Values(columns);
-    }
-
-    public SqlString Update(string table, object update, object clause)
-    {
-        return Update(table).Values(update).Where(clause);
-    }
-
-    public SqlString Delete(string table, object clause)
-    {
-        return Delete(table).Where(clause);
-    }
-
     #region Static Methods
 
     static readonly BindingFlags _colBind = BindingFlags.Instance | BindingFlags.Public;
@@ -225,10 +253,6 @@ public class SqlString
     public static IEnumerable<string> ParamNames(object obj, Func<string, bool> predicate = null)
     {
         ArgumentNullException.ThrowIfNull(obj);
-
-        static IEnumerable<string> GetPropsFields(Type type) => type
-            .GetFields(_colBind).Select(x => x.Name)
-            .Concat(type.GetProperties(_colBind).Select(x => x.Name));
 
         IEnumerable<string> names;
 
@@ -246,9 +270,7 @@ public class SqlString
         }
         else
         {
-            // todo: 限制类型
-            // throw new NotSupportedException();
-            names = GetPropsFields(obj.GetType());
+            names = GetPropsFields(obj.GetType().GetElementType());
         }
 
         if (predicate != null)
@@ -258,6 +280,10 @@ public class SqlString
 
         return names;
     }
+
+    private static IEnumerable<string> GetPropsFields(Type type) => type
+        .GetFields(_colBind).Where(x => x.FieldType.IsSimpleType()).Select(x => x.Name)
+        .Concat(type.GetProperties(_colBind).Where(x => x.PropertyType.IsSimpleType()).Select(x => x.Name));
 
     #endregion
 }

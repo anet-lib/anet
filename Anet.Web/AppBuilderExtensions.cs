@@ -13,7 +13,6 @@ public static class AppBuilderExtensions
     public static IApplicationBuilder UseAnetJwtAuthentication(this IApplicationBuilder app)
     {
         app.UseMiddleware<JwtProviderMiddleware>();
-        app.UseAuthentication();
         return app;
     }
 }

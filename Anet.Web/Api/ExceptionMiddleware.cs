@@ -1,7 +1,7 @@
-﻿using Anet.Utilities;
+﻿using System.Net;
+using Anet.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using System.Net;
 
 namespace Anet.Web.Api;
 
@@ -9,9 +9,12 @@ public class ExceptionMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly ILogger<ExceptionMiddleware> _logger;
-    private readonly HashSet<string> _pathPrefixes;
+    private readonly IEnumerable<string> _pathPrefixes;
 
-    public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger, HashSet<string> pathPrefixes = null)
+    public ExceptionMiddleware(
+        RequestDelegate next, 
+        ILogger<ExceptionMiddleware> logger, 
+        IEnumerable<string> pathPrefixes = null)
     {
         _next = next;
         _logger = logger;
@@ -20,8 +23,8 @@ public class ExceptionMiddleware
 
     public async Task InvokeAsync(HttpContext httpContext)
     {
-        if (_pathPrefixes == null || _pathPrefixes.Count == 0
-            || _pathPrefixes.Any(x => httpContext.Request.Path.StartsWithSegments(x)))
+        if (_pathPrefixes == null || 
+            _pathPrefixes.Any(x => httpContext.Request.Path.StartsWithSegments(x)))
         {
             try
             {

@@ -1,4 +1,5 @@
 ﻿using Anet.Data;
+using Microsoft.AspNetCore.Builder;
 using Sample.Web.Services;
 using System.Data.SqlClient;
 
@@ -19,6 +20,7 @@ namespace Sample.Web
             var connStr = Configuration.GetConnectionString("DefaultConnection");
 
             services.AddAnet().AddDb<SqlConnection>(DbDialect.SQLServer, connStr);
+            //services.AddAnet().AddDb<MySqlConnector.MySqlConnection>(DbDialect.MySQL, connStr);
 
             services.AddControllers();
 
