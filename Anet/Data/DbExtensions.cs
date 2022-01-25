@@ -85,7 +85,7 @@ public static class DbExtensions
     /// <param name="param">The parameters to pass, if any.</param>
     /// <param name="commandType">The type of command to execute.</param>
     /// <remarks>Note: the row can be accessed via "dynamic", or by casting to an IDictionary&lt;string,object&gt;</remarks>
-    public static dynamic QueryFirst(this Db db, string sql, object param = null, CommandType? commandType = null) =>
+    public static dynamic First(this Db db, string sql, object param = null, CommandType? commandType = null) =>
         db.Connection.QueryFirst(sql, param, db.Transaction, db.CommandTimeout, commandType);
 
     /// <summary>
@@ -96,7 +96,7 @@ public static class DbExtensions
     /// <param name="param">The parameters to pass, if any.</param>
     /// <param name="commandType">The type of command to execute.</param>
     /// <remarks>Note: the row can be accessed via "dynamic", or by casting to an IDictionary&lt;string,object&gt;</remarks>
-    public static dynamic QueryFirstOrDefault(this Db db, string sql, object param = null, CommandType? commandType = null) =>
+    public static dynamic FirstOrDefault(this Db db, string sql, object param = null, CommandType? commandType = null) =>
         db.Connection.QueryFirstOrDefault(sql, param, db.Transaction, db.CommandTimeout, commandType);
 
     /// <summary>
@@ -107,7 +107,7 @@ public static class DbExtensions
     /// <param name="param">The parameters to pass, if any.</param>
     /// <param name="commandType">The type of command to execute.</param>
     /// <remarks>Note: the row can be accessed via "dynamic", or by casting to an IDictionary&lt;string,object&gt;</remarks>
-    public static dynamic QuerySingle(this Db db, string sql, object param = null, CommandType? commandType = null) =>
+    public static dynamic Single(this Db db, string sql, object param = null, CommandType? commandType = null) =>
         db.Connection.QuerySingle(sql, param, db.Transaction, db.CommandTimeout, commandType);
 
     /// <summary>
@@ -118,7 +118,7 @@ public static class DbExtensions
     /// <param name="param">The parameters to pass, if any.</param>
     /// <param name="commandType">The type of command to execute.</param>
     /// <remarks>Note: the row can be accessed via "dynamic", or by casting to an IDictionary&lt;string,object&gt;</remarks>
-    public static dynamic QuerySingleOrDefault(this Db db, string sql, object param = null, CommandType? commandType = null) =>
+    public static dynamic SingleOrDefault(this Db db, string sql, object param = null, CommandType? commandType = null) =>
         db.Connection.QuerySingleOrDefault(sql, param, db.Transaction, db.CommandTimeout, commandType);
 
     /// <summary>
@@ -149,7 +149,7 @@ public static class DbExtensions
     /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column is assumed, otherwise an instance is
     /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
     /// </returns>
-    public static T QueryFirst<T>(this Db db, string sql, object param = null, CommandType? commandType = null) =>
+    public static T First<T>(this Db db, string sql, object param = null, CommandType? commandType = null) =>
         db.Connection.QueryFirst<T>(sql, param, db.Transaction, db.CommandTimeout, commandType);
 
     /// <summary>
@@ -164,7 +164,7 @@ public static class DbExtensions
     /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column is assumed, otherwise an instance is
     /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
     /// </returns>
-    public static T QueryFirstOrDefault<T>(this Db db, string sql, object param = null, CommandType? commandType = null) =>
+    public static T FirstOrDefault<T>(this Db db, string sql, object param = null, CommandType? commandType = null) =>
         db.Connection.QueryFirstOrDefault<T>(sql, param, db.Transaction, db.CommandTimeout, commandType);
 
     /// <summary>
@@ -179,7 +179,7 @@ public static class DbExtensions
     /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column is assumed, otherwise an instance is
     /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
     /// </returns>
-    public static T QuerySingle<T>(this Db db, string sql, object param = null, CommandType? commandType = null) =>
+    public static T Single<T>(this Db db, string sql, object param = null, CommandType? commandType = null) =>
        db.Connection.QuerySingle<T>(sql, param, db.Transaction, db.CommandTimeout, commandType);
 
     /// <summary>
@@ -194,7 +194,7 @@ public static class DbExtensions
     /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column is assumed, otherwise an instance is
     /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
     /// </returns>
-    public static T QuerySingleOrDefault<T>(this Db db, string sql, object param = null, CommandType? commandType = null) =>
+    public static T SingleOrDefault<T>(this Db db, string sql, object param = null, CommandType? commandType = null) =>
        db.Connection.QuerySingleOrDefault<T>(sql, param, db.Transaction, db.CommandTimeout, commandType);
 
     /// <summary>

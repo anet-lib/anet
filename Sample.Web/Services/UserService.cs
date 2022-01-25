@@ -15,18 +15,18 @@ public class UserService : ServiceBase
     public async Task<PagedResult<UserDto>> GetAsync(int page, int size, string keyword = null)
     {
         var param = new SqlParams();
-        var sql = Db.NewSql().Select("*").From("AnetUser").Where();
+        var sql = Db.NewSql().From("AnetUser").Where();
 
         if (!string.IsNullOrEmpty(keyword))
         {
-            sql.AndLike("Name");
+            sql.Line("AND Name=@Name");
             param.Add("Name", $"'%{keyword}%'");
         }
 
         var result = new PagedResult<UserDto>(page, size)
         {
-            Items = await Db.QueryAsync<UserDto>(sql.OrderBy("Id").Page(page, size), param),
-            Total = await Db.QuerySingleAsync<int>(sql.DePage().Count(), param),
+            Total = await Db.SingleAsync<int>(sql.Select("COUNT(1)"), param),
+            Items = await Db.QueryAsync<UserDto>(sql.Select("*").Line("ORDER BY Id").Page(page, size), param),
         };
 
         return result;
@@ -36,7 +36,7 @@ public class UserService : ServiceBase
     {
         var param = new { Id = id };
         var sql = Db.NewSql().Select("AnetUser", param);
-        return Db.QueryFirstOrDefaultAsync<UserDto>(sql, param);
+        return Db.SingleAsync<UserDto>(sql, param);
     }
 
     public async Task CreateAsync(UserEditDto dto)
@@ -71,7 +71,7 @@ public class UserService : ServiceBase
 
     public async Task DeleteAsync(long id)
     {
-        var rows = await Db.DeleteAsync("AnetUser", new { Id = id });
+        var rows = await Db.DeleteAsync<AnetUser>(new { Id = id });
         if (rows == 0)
             throw new NotFoundException();
     }

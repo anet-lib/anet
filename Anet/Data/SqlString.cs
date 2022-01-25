@@ -6,6 +6,8 @@ namespace Anet.Data;
 public class SqlString
 {
     readonly StringBuilder _sb;
+    private int _selectLength = -1;
+    private int _orderStart = -1;
 
     public SqlString(DbDialect dialect) : this(dialect, null)
     {
@@ -52,32 +54,36 @@ public class SqlString
     public SqlString Clear()
     {
         _sb.Clear();
+        _selectLength = -1;
+        _orderStart = -1;
         return this;
     }
 
     public SqlString Line(string value = null)
     {
-        if (Length > 0) Append('\n');
+        if (Length > 0) Append(Environment.NewLine);
         return Append(value);
     }
 
     public SqlString LineTab(string value = null) =>
-        Line().Append('\t').Append(value);
+        Line("  ").Append(value);
 
-    public SqlString End() => Append(';');
-
-    private int _selectLength = -1;
     public SqlString Select(object cols, string prefix = null)
     {
         if (Length > 0) // 已有部分SQL，在其前面插入
         {
             var newSelect = new SqlString(Dialect).Select(cols, prefix);
             if (_selectLength > 0) // 已有SELECT，先移除
+            {
                 Remove(0, _selectLength);
+                _selectLength = newSelect.Length;
+            }
             else
+            {
+                _selectLength = newSelect.Length;
                 newSelect.Line();
+            }
             Prepend(newSelect);
-            _selectLength = newSelect.Length;
         }
         else
         {
@@ -92,59 +98,35 @@ public class SqlString
     public SqlString Select(string table, object clause) =>
         Select("*").From(table).Where(clause);
 
-    public SqlString DeSelect()
-    {
-        if (_selectLength > 0)
-        {
-            Remove(0, _selectLength);
-            _selectLength = -1;
-        }
-        return this;
-    }
+    public string Count(string col = "1") =>
+        DeOrder().Select($"COUNT({col})");
 
-    public SqlString Count(string col = "1") =>
-        Select($"COUNT({col})");
-
-    public SqlString From(string table, string alias = null)
-    {
-        Line("FROM ").Append(table);
-        if (!string.IsNullOrEmpty(alias))
-            Append(" AS ").Append(alias);
-        return this;
-    }
-
-    public SqlString Update(string table) =>
-        Line("UPDATE ").Append(table);
-
-    public SqlString Set(object obj) =>
-        LineTab().ForEachCol(obj, name => Opt(name).Append(", ")).RemoveTrail(2);
+    public SqlString From(string table) =>
+         Line("FROM ").Append(table);
 
     public SqlString Update(string table, object update, object clause) =>
-        Update(table).Set(update).Where(clause);
+        Line("UPDATE ").Append(table).
+        Line("SET ").ForEachCol(update, name => Opt(name).Append(", ")).RemoveTrail(2).
+        Where(clause);
 
-    public SqlString Insert(string table, object cols) =>
-        Line("INSERT INTO ").Append(table).Append('(').ForEachCol(cols, n => Append(n).Append(", ")).RemoveTrail(2).Append(')');
-
-    public SqlString Values(object obj) =>
+    public SqlString Insert(string table, object obj) =>
+        Line("INSERT INTO ").Append(table).Append('(').ForEachCol(obj, n => Append(n).Append(", ")).RemoveTrail(2).Append(')').
         Line("VALUES (").ForEachCol(obj, n => Append('@').Append(n).Append(", ")).RemoveTrail(2).Append(')');
-
-    public SqlString InsertValues(string table, object obj) =>
-        Insert(table, obj).Values(obj);
 
     public SqlString InsertedId()
     {
         return Dialect switch
         {
-            DbDialect.MySQL => End().Select("LAST_INSERT_ID()"),
-            DbDialect.SQLite => End().Select("LAST_INSERT_ROWID()"),
-            DbDialect.SQLServer => End().Select("SCOPE_IDENTITY()"),
-            DbDialect.PostgreSQL => End().Select("LASTVAL()"),
-            _ => throw new NotSupportedException("To call the InsertedId method, you need to set the DbDialect first."),
+            DbDialect.MySQL => Select(";LAST_INSERT_ID()"),
+            DbDialect.SQLite => Select(";LAST_INSERT_ROWID()"),
+            DbDialect.SQLServer => Select(";SCOPE_IDENTITY()"),
+            DbDialect.PostgreSQL => Select(";LASTVAL()"),
+            _ => throw new NotSupportedException("Not supported DbDialect."),
         };
     }
 
     public SqlString Delete(string table) =>
-        Line("DELETE FROME ").Append(table);
+        Line("DELETE FROM ").Append(table);
 
     public SqlString Delete(string table, object clause) =>
         Delete(table).Where(clause);
@@ -154,62 +136,40 @@ public class SqlString
     public SqlString Where(object obj, string prefix = null) =>
         Where().And(obj, prefix);
 
-    public SqlString And() => LineTab("AND ");
-
     public SqlString And(object obj, string prefix = null) =>
-        ForEachCol(obj, name => And().Opt(name, "=", prefix));
+        ForEachCol(obj, name => Append("AND ").Opt(name, "=", prefix));
 
-    public SqlString AndIn(string name, string prefix = null) =>
-        And().Opt(name, " IN ", prefix);
-
-    public SqlString AndLike(string name, string prefix = null) =>
-        And().Opt(name, " LIKE ", prefix);
-
-    public SqlString AndBetween(string name, string min, string max, string prefix = null) =>
-        And().Column(name, prefix).Append($" BETWEEN {min} ADN {max}");
-
-    public SqlString AndIsNull(string name, string prefix = null) =>
-        And().Column(name, prefix).Append(" IS NULL");
-
-    public SqlString AndIsNotNull(string name, string prefix = null) =>
-        And().Column(name, prefix).Append(" IS NOT NULL");
-
-    public SqlString Or() => LineTab("OR ");
-
-    public SqlString Or(string name, string prefix = null) =>
-        Or().Opt(name, prefix);
-
-    public SqlString OrderByDesc(object cols, string prefix = null) =>
-        OrderBy(cols, "DESC", prefix);
-
-    public SqlString OrderBy(object cols, string dir = "ASC", string prefix = null) =>
-        Line("ORDER BY ").ForEachCol(cols, col => Column(col, prefix).Append($" {dir}, ")).RemoveTrail(2);
-
-    public SqlString ThenByDesc(object cols, string prefix = null) =>
-        ThenBy(cols, "DESC", prefix);
-
-    public SqlString ThenBy(object cols, string dir = "ASC", string prefix = null) =>
-        Append(", ").ForEachCol(cols, col => Column(col, prefix).Append($" {dir}, ")).RemoveTrail(2);
-
-    private int _pageStart = -1;
-    public SqlString Page(int pageNum, int pageSize)
+    public SqlString Order(string by)
     {
-        _pageStart = _sb.Length;
-        return Dialect switch
-        {
-            DbDialect.MySQL => Line($"LIMIT {pageSize * (pageNum - 1)},{pageSize}"),
-            DbDialect.SQLite => Line($"LIMIT {pageSize} OFFSET {pageSize * (pageNum - 1)}"),
-            DbDialect.SQLServer => Line($"OFFSET {pageSize * (pageNum - 1)} ROWS FETCH NEXT {pageSize} ROWS ONLY"),
-            DbDialect.PostgreSQL => Line($"LIMIT {pageSize} OFFSET {pageSize * (pageNum - 1)}"),
-            _ => throw new NotSupportedException("To call the InsertedId method, you need to set the DbDialect first.")
-        };
+        _orderStart = _sb.Length;
+        return Line("ORDER BY ").Append(by);
     }
 
-    public SqlString DePage()
+    public SqlString DeOrder()
     {
-        Remove(_pageStart, Length - _pageStart);
-        _pageStart = -1;
+        if (_orderStart != -1)
+        {
+            Remove(_orderStart, _sb.Length - _orderStart);
+            _orderStart = -1;
+        }
         return this;
+    }
+
+    public SqlString Page(int pageNo, int pageSize)
+    {
+        if (_orderStart < 0)
+        {
+            throw new InvalidOperationException("Missing the Order method before the Page method.");
+        }
+        var offset = pageSize * (pageNo - 1);
+        return Dialect switch
+        {
+            DbDialect.MySQL => Line($"LIMIT {offset},{pageSize}"),
+            DbDialect.SQLite => Line($"LIMIT {pageSize} OFFSET {offset}"),
+            DbDialect.SQLServer => Line($"OFFSET {offset} ROWS FETCH NEXT {pageSize} ROWS ONLY"),
+            DbDialect.PostgreSQL => Line($"LIMIT {pageSize} OFFSET {offset}"),
+            _ => throw new NotSupportedException("Not supported DbDialect."),
+        };
     }
 
     public SqlString Column(string name, string prefix = null)
@@ -262,7 +222,7 @@ public class SqlString
         }
         else if (obj is IEnumerable<string> list)
         {
-            names = list.Where(predicate);
+            names = list;
         }
         else if (obj is Type type)
         {
@@ -270,7 +230,7 @@ public class SqlString
         }
         else
         {
-            names = GetPropsFields(obj.GetType().GetElementType());
+            names = GetPropsFields(obj.GetType().GetAnyElementType());
         }
 
         if (predicate != null)

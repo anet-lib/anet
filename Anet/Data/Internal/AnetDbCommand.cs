@@ -11,8 +11,8 @@ internal class AnetDbCommand : DbCommand
     private readonly IDbAccessHooks _hooks;
 
     public AnetDbCommand(
-        AnetDbConnection connection, 
-        DbCommand command, 
+        AnetDbConnection connection,
+        DbCommand command,
         IDbAccessHooks hooks)
     {
         _connection = connection;
@@ -102,7 +102,7 @@ internal class AnetDbCommand : DbCommand
     public override string CommandText { get => _command.CommandText; set => _command.CommandText = value; }
     public override int CommandTimeout { get => _command.CommandTimeout; set => _command.CommandTimeout = value; }
     public override CommandType CommandType { get => _command.CommandType; set => _command.CommandType = value; }
-    protected override DbConnection DbConnection { get => _connection; set => _connection.SetConnection(value); }
+    protected override DbConnection DbConnection { get => _connection; set => _connection.Connection = value; }
     protected override DbTransaction DbTransaction { get => _command.Transaction; set => _command.Transaction = value; }
     public override bool DesignTimeVisible { get => _command.DesignTimeVisible; set => _command.DesignTimeVisible = value; }
     public override UpdateRowSource UpdatedRowSource { get => _command.UpdatedRowSource; set => _command.UpdatedRowSource = value; }

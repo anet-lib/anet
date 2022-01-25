@@ -12,7 +12,7 @@ public class DecimalAttribute : ColumnAttribute
     /// D is the number of digits to the right of the decimal point (the scale). 
     /// It has a range of 0 to 30 and must be no larger than M.
     /// </param>
-    public DecimalAttribute(int M, int D)
+    public DecimalAttribute(ushort M, ushort D)
     {
         TypeName = $"decimal({M},{D})";
     }
@@ -27,7 +27,7 @@ public class VarcharAttribute : MaxLengthAttribute
 
 public class CharAttribute : ColumnAttribute
 {
-    public CharAttribute(int length)
+    public CharAttribute(ushort length)
     {
         TypeName = $"char({length})";
     }
@@ -46,5 +46,13 @@ public class DateAttribute : ColumnAttribute
     public DateAttribute()
     {
         TypeName = "date";
+    }
+}
+
+public class DatetimeAttribute : ColumnAttribute
+{
+    public DatetimeAttribute(ushort precision = 0)
+    {
+        TypeName = $"datetime({precision})";
     }
 }

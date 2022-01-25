@@ -39,7 +39,7 @@ public static class TypeExtensions
         };
     }
 
-    public static Type GetElementType(this Type type)
+    public static Type GetAnyElementType(this Type type)
     {
         // short-circuit if you expect lots of arrays 
         if (type.IsArray)

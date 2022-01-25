@@ -1,16 +1,26 @@
 ﻿using System.Data;
+using Microsoft.Extensions.Logging;
 
 namespace Anet.Data;
 
 public class Db : IDisposable
 {
-    public Db(DbDialect dialect, IDbConnection connection)
+    private readonly ILogger<Db> _logger;
+
+    public Db(DbDialect dialect, 
+        IDbConnection connection, 
+        DbOptions options = null,
+        ILogger<Db> logger = null)
     {
         Dialect = dialect;
         Connection = connection;
+        Options = options ?? new DbOptions();
+        _logger = logger;
     }
 
     public DbDialect Dialect { get; }
+
+    public DbOptions Options { get; }
 
     public SqlString NewSql(string value = null) => new(Dialect, value);
 
@@ -20,11 +30,18 @@ public class Db : IDisposable
     public IDbConnection Connection { get; }
 
     /// <summary>
+    /// Manually open the connection, later command will use the same connection.
+    /// Otherwise, Dapper auto open and close the connection every command by default.
+    /// </summary>
+    public void OpenConnection() => Connection.Open();
+
+    /// <summary>
     /// Number of seconds before command execution timeout.
     /// </summary>
     public int? CommandTimeout { get; set; }
 
     private IDbTransaction _transaction;
+    
     public IDbTransaction Transaction
     {
         // return null if transaction is disposed.
@@ -60,6 +77,7 @@ public class Db : IDisposable
         Transaction?.Dispose();
         Connection?.Dispose();
         GC.SuppressFinalize(this);
+        _logger?.Log(Options.LogLevel, "Connection: disposed");
     }
 }
 

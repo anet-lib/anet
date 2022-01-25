@@ -39,7 +39,7 @@ public static class DbExtensionsAsync
     /// <param name="sql">The SQL to execute for the query.</param>
     /// <param name="param">The parameters to pass, if any.</param>
     /// <param name="commandType">The type of command to execute.</param>
-    public static Task<T> QueryFirstAsync<T>(this Db db, string sql, object param = null, CommandType? commandType = null) =>
+    public static Task<T> FirstAsync<T>(this Db db, string sql, object param = null, CommandType? commandType = null) =>
         db.Connection.QueryFirstAsync<T>(sql, param, db.Transaction, db.CommandTimeout, commandType);
 
     /// <summary>
@@ -50,7 +50,7 @@ public static class DbExtensionsAsync
     /// <param name="sql">The SQL to execute for the query.</param>
     /// <param name="param">The parameters to pass, if any.</param>
     /// <param name="commandType">The type of command to execute.</param>
-    public static Task<T> QueryFirstOrDefaultAsync<T>(this Db db, string sql, object param = null, CommandType? commandType = null) =>
+    public static Task<T> FirstOrDefaultAsync<T>(this Db db, string sql, object param = null, CommandType? commandType = null) =>
         db.Connection.QueryFirstOrDefaultAsync<T>(sql, param, db.Transaction, db.CommandTimeout, commandType);
 
     /// <summary>
@@ -61,7 +61,7 @@ public static class DbExtensionsAsync
     /// <param name="sql">The SQL to execute for the query.</param>
     /// <param name="param">The parameters to pass, if any.</param>
     /// <param name="commandType">The type of command to execute.</param>
-    public static Task<T> QuerySingleAsync<T>(this Db db, string sql, object param = null, CommandType? commandType = null) =>
+    public static Task<T> SingleAsync<T>(this Db db, string sql, object param = null, CommandType? commandType = null) =>
         db.Connection.QuerySingleAsync<T>(sql, param, db.Transaction, db.CommandTimeout, commandType);
 
     /// <summary>
@@ -72,7 +72,7 @@ public static class DbExtensionsAsync
     /// <param name="sql">The SQL to execute for the query.</param>
     /// <param name="param">The parameters to pass, if any.</param>
     /// <param name="commandType">The type of command to execute.</param>
-    public static Task<T> QuerySingleOrDefaultAsync<T>(this Db db, string sql, object param = null, CommandType? commandType = null) =>
+    public static Task<T> SingleOrDefaultAsync<T>(this Db db, string sql, object param = null, CommandType? commandType = null) =>
        db.Connection.QuerySingleOrDefaultAsync<T>(sql, param, db.Transaction, db.CommandTimeout, commandType);
 
     /// <summary>
@@ -82,7 +82,7 @@ public static class DbExtensionsAsync
     /// <param name="sql">The SQL to execute for the query.</param>
     /// <param name="param">The parameters to pass, if any.</param>
     /// <param name="commandType">The type of command to execute.</param>
-    public static Task<dynamic> QueryFirstAsync(this Db db, string sql, object param = null, CommandType? commandType = null) =>
+    public static Task<dynamic> FirstAsync(this Db db, string sql, object param = null, CommandType? commandType = null) =>
        db.Connection.QueryFirstAsync(sql, param, db.Transaction, db.CommandTimeout, commandType);
 
     /// <summary>
@@ -92,7 +92,7 @@ public static class DbExtensionsAsync
     /// <param name="sql">The SQL to execute for the query.</param>
     /// <param name="param">The parameters to pass, if any.</param>
     /// <param name="commandType">The type of command to execute.</param>
-    public static Task<dynamic> QueryFirstOrDefaultAsync(this Db db, string sql, object param = null, CommandType? commandType = null) =>
+    public static Task<dynamic> FirstOrDefaultAsync(this Db db, string sql, object param = null, CommandType? commandType = null) =>
        db.Connection.QueryFirstOrDefaultAsync(sql, param, db.Transaction, db.CommandTimeout, commandType);
 
     /// <summary>
@@ -102,7 +102,7 @@ public static class DbExtensionsAsync
     /// <param name="sql">The SQL to execute for the query.</param>
     /// <param name="param">The parameters to pass, if any.</param>
     /// <param name="commandType">The type of command to execute.</param>
-    public static Task<dynamic> QuerySingleAsync(this Db db, string sql, object param = null, CommandType? commandType = null) =>
+    public static Task<dynamic> SingleAsync(this Db db, string sql, object param = null, CommandType? commandType = null) =>
         db.Connection.QuerySingleAsync(sql, param, db.Transaction, db.CommandTimeout, commandType);
 
     /// <summary>
@@ -112,7 +112,7 @@ public static class DbExtensionsAsync
     /// <param name="sql">The SQL to execute for the query.</param>
     /// <param name="param">The parameters to pass, if any.</param>
     /// <param name="commandType">The type of command to execute.</param>
-    public static Task<dynamic> QuerySingleOrDefaultAsync(this Db db, string sql, object param = null, CommandType? commandType = null) =>
+    public static Task<dynamic> SingleOrDefaultAsync(this Db db, string sql, object param = null, CommandType? commandType = null) =>
        db.Connection.QuerySingleOrDefaultAsync(sql, param, db.Transaction, db.CommandTimeout, commandType);
 
     /// <summary>

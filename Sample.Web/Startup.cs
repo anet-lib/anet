@@ -1,5 +1,6 @@
 ﻿using Anet.Data;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
 using Sample.Web.Services;
 using System.Data.SqlClient;
 
@@ -14,10 +15,13 @@ namespace Sample.Web
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             var connStr = Configuration.GetConnectionString("DefaultConnection");
+
+            // This just for setup demo database.
+            services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlServer(connStr));
 
             services.AddAnet().AddDb<SqlConnection>(DbDialect.SQLServer, connStr);
             //services.AddAnet().AddDb<MySqlConnector.MySqlConnection>(DbDialect.MySQL, connStr);
@@ -27,7 +31,6 @@ namespace Sample.Web
             services.AddTransient<UserService>();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
