@@ -8,6 +8,7 @@ public enum DbDialect
     MySQL = 1,
     SQLite = 2,
     SQLServer = 3,
-    PostgreSQL = 4
+    PostgreSQL = 4,
+    Oracle = 5,
 }
 

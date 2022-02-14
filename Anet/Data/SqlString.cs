@@ -5,9 +5,11 @@ namespace Anet.Data;
 
 public class SqlString
 {
-    readonly StringBuilder _sb;
     private int _selectLength = -1;
     private int _orderStart = -1;
+
+    private readonly char _paramPrefix;
+    private readonly StringBuilder _sb;
 
     public SqlString(DbDialect dialect) : this(dialect, null)
     {
@@ -16,6 +18,15 @@ public class SqlString
     public SqlString(DbDialect dialect, string value)
     {
         _sb = new StringBuilder(value);
+        _paramPrefix = dialect switch
+        {
+            DbDialect.MySQL => '@',
+            DbDialect.SQLite => '@',
+            DbDialect.SQLServer => '@',
+            DbDialect.PostgreSQL => ':',
+            DbDialect.Oracle => ':',
+            _ => throw new NotSupportedException($"Not expected value: {dialect}")
+        };
         Dialect = dialect;
     }
 
@@ -44,6 +55,10 @@ public class SqlString
     public SqlString Prepend(string value)
     {
         _sb.Insert(0, value);
+        if (_orderStart > 0)
+        {
+            _orderStart += value.Length;
+        }
         return this;
     }
     public SqlString Remove(int start, int length)
@@ -111,17 +126,17 @@ public class SqlString
 
     public SqlString Insert(string table, object obj) =>
         Line("INSERT INTO ").Append(table).Append('(').ForEachCol(obj, n => Append(n).Append(", ")).RemoveTrail(2).Append(')').
-        Line("VALUES (").ForEachCol(obj, n => Append('@').Append(n).Append(", ")).RemoveTrail(2).Append(')');
+        Line("VALUES (").ForEachCol(obj, n => Append(_paramPrefix).Append(n).Append(", ")).RemoveTrail(2).Append(')');
 
     public SqlString InsertedId()
     {
         return Dialect switch
         {
-            DbDialect.MySQL => Select(";LAST_INSERT_ID()"),
-            DbDialect.SQLite => Select(";LAST_INSERT_ROWID()"),
-            DbDialect.SQLServer => Select(";SCOPE_IDENTITY()"),
-            DbDialect.PostgreSQL => Select(";LASTVAL()"),
-            _ => throw new NotSupportedException("Not supported DbDialect."),
+            DbDialect.MySQL => Append(";SELECT LAST_INSERT_ID()"),
+            DbDialect.SQLite => Append(";SELECT LAST_INSERT_ROWID()"),
+            DbDialect.SQLServer => Append(";SELECT SCOPE_IDENTITY()"),
+            DbDialect.PostgreSQL => Append(";SELECT LASTVAL()"),
+            _ => throw new NotSupportedException($"The InsertedId method is not supported in {Dialect}."),
         };
     }
 
@@ -168,7 +183,9 @@ public class SqlString
             DbDialect.SQLite => Line($"LIMIT {pageSize} OFFSET {offset}"),
             DbDialect.SQLServer => Line($"OFFSET {offset} ROWS FETCH NEXT {pageSize} ROWS ONLY"),
             DbDialect.PostgreSQL => Line($"LIMIT {pageSize} OFFSET {offset}"),
-            _ => throw new NotSupportedException("Not supported DbDialect."),
+            DbDialect.Oracle => Prepend($"SELECT * FROM (SEELCT ROWNUM RN, T.* FROM ({Environment.NewLine}  ")
+                .Line($") T WHERE ROWNUM <= {pageNo}*{pageSize}) TT WHERE TT.RN>({pageNo}-1)*{pageSize}"),
+            _ => throw new NotSupportedException($"The Page method is not supported in {Dialect}."),
         };
     }
 
@@ -182,7 +199,7 @@ public class SqlString
     }
 
     public SqlString Opt(string name, string opt = "=", string prefix = null) =>
-        Column(name, prefix).Append(opt).Append('@').Append(name);
+        Column(name, prefix).Append(opt).Append(_paramPrefix).Append(name);
 
     public SqlString RemoveTrail(int charCount = 1)
     {
