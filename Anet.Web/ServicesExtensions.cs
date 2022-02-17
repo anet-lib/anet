@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using Anet;
 using Anet.Web.Api;
 using Anet.Web.Jwt;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -8,10 +7,10 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
-public static class AnetBuilderExtensions
+public static class ServicesExtensions
 {
-    public static AnetBuilder AddApi(
-        this AnetBuilder builder,
+    public static IServiceCollection AddAnetApi(
+        this IServiceCollection services,
         Action<MvcOptions> configureMvc = null, 
         Action<ApiBehaviorOptions> configureApiBehavior = null, 
         bool withViews = false)
@@ -25,38 +24,38 @@ public static class AnetBuilderExtensions
 
         if (withViews)
         {
-            builder.Services.AddControllersWithViews(configMvcOptions);
+            services.AddControllersWithViews(configMvcOptions);
         }
         else
         {
-            builder.Services.AddControllers(configMvcOptions);
+            services.AddControllers(configMvcOptions);
         }
 
-        builder.Services.Configure<ApiBehaviorOptions>(apiBehaviorOptions =>
+        services.Configure<ApiBehaviorOptions>(apiBehaviorOptions =>
         {
             apiBehaviorOptions.SuppressModelStateInvalidFilter = true;
             configureApiBehavior?.Invoke(apiBehaviorOptions);
         });
 
-        return builder;
+        return services;
     }
 
-    public static AnetBuilder AddJwt<TAuthenticator>(
-        this AnetBuilder builder,
+    public static IServiceCollection AddAnetJwt<TAuthenticator>(
+        this IServiceCollection services,
         Action<JwtTokenOptions> configure)
         where TAuthenticator : class, IAuthenticator
     {
-        return builder.AddJwt<TAuthenticator, DefaultRefreshTokenStore>(configure);
+        return services.AddAnetJwt<TAuthenticator, DefaultRefreshTokenStore>(configure);
     }
 
-    public static AnetBuilder AddJwt(
-        this AnetBuilder builder, Action<JwtTokenOptions> configure)
+    public static IServiceCollection AddAnetJwt(
+        this IServiceCollection services, Action<JwtTokenOptions> configure)
     {
-        return builder.AddJwt<NoopAuthenticator, DefaultRefreshTokenStore>(configure);
+        return services.AddAnetJwt<NoopAuthenticator, DefaultRefreshTokenStore>(configure);
     }
 
-    public static AnetBuilder AddJwt<TAuthenticator, TRefreshTokenStore>(
-        this AnetBuilder builder,
+    public static IServiceCollection AddAnetJwt<TAuthenticator, TRefreshTokenStore>(
+        this IServiceCollection services,
         Action<JwtTokenOptions> configure,
         Action<JwtBearerOptions> configureJwtBearer = null)
         where TAuthenticator : class, IAuthenticator
@@ -68,11 +67,11 @@ public static class AnetBuilderExtensions
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(options.Key);
 
-        builder.Services.AddSingleton(options);
-        builder.Services.AddSingleton<JwtProvider>();
-        builder.Services.AddTransient<IAuthenticator, TAuthenticator>();
-        builder.Services.AddTransient<IRefreshTokenStore, TRefreshTokenStore>();
-        builder.Services.AddAuthentication(options =>
+        services.AddSingleton(options);
+        services.AddSingleton<JwtProvider>();
+        services.AddTransient<IAuthenticator, TAuthenticator>();
+        services.AddTransient<IRefreshTokenStore, TRefreshTokenStore>();
+        services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -100,7 +99,7 @@ public static class AnetBuilderExtensions
                 configureJwtBearer?.Invoke(jwtBearerOptions);
             });
 
-        return builder;
+        return services;
     }
 }
 

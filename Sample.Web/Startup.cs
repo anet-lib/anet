@@ -23,7 +23,7 @@ namespace Sample.Web
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(connStr));
 
-            services.AddAnet().AddDb<SqlConnection>(DbDialect.SQLServer, connStr);
+            services.AddAnet().AddAnetDb<SqlConnection>(DbDialect.SQLServer, connStr);
             //services.AddAnet().AddDb<MySqlConnector.MySqlConnection>(DbDialect.MySQL, connStr);
 
             services.AddControllers();

@@ -19,7 +19,7 @@ public class PasswordHasher
     /// </summary>
     /// <param name="password">The password to hash.</param>
     /// <returns>Salted hash result.</returns>
-    public static string HashPassword(string password)
+    public static string Hash(string password)
     {
         using var rng = RandomNumberGenerator.Create();
         var salt = new byte[_salt_size];
@@ -40,7 +40,7 @@ public class PasswordHasher
     /// <param name="password">The password to check.</param>
     /// <param name="hash">A hash of the correct password.</param>
     /// <returns>True if the password is correct. False otherwise.</returns>
-    public static bool VerifyPassword(string password, string hash)
+    public static bool Verify(string password, string hash)
     {
         byte[] decoded = Convert.FromBase64String(hash);
         if (decoded.Length != _salt_size + _subkey_size)

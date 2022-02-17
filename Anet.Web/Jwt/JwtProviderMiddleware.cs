@@ -43,7 +43,7 @@ internal class JwtProviderMiddleware
         var requestParams = await ResolveTokenRequest(request);
         if (requestParams == null) return;
 
-        if (GrantTypes.REFRESH_TOKEN.Equals(requestParams.GrantType, StringComparison.OrdinalIgnoreCase))
+        if (GrantTypes.REFRESH_TOKEN.Equals(requestParams.GrantType, true))
         {
             await RefreshToken(requestParams);
         }
