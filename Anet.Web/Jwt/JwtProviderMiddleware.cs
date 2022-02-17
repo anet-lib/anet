@@ -8,34 +8,35 @@ namespace Anet.Web.Jwt;
 
 internal class JwtProviderMiddleware
 {
+    private readonly string _path;
     private readonly RequestDelegate _next;
-    private readonly JwtTokenOptions _options;
-    private readonly JwtProvider _provider;
+    private JwtProvider _provider;
     private HttpContext _context;
     private IAuthenticator _authenticator;
     private IRefreshTokenStore _refreshTokenStore;
 
     public JwtProviderMiddleware(
-        RequestDelegate next, JwtTokenOptions options, JwtProvider provider)
+        RequestDelegate next, string tokenPath)
     {
         _next = next;
-        _options = options;
-        _provider = provider;
+        _path = tokenPath;
     }
 
     public async Task InvokeAsync(
         HttpContext context,
+        JwtProvider provider,
         IAuthenticator authenticator,
         IRefreshTokenStore refreshTokenStore)
     {
         var request = context.Request;
-        if (request.Path != _options.Path || request.Method != HttpMethods.Post)
+        if (!request.Path.Equals(_path, StringComparison.OrdinalIgnoreCase) || request.Method != HttpMethods.Post)
         {
             await _next(context);
             return;
         }
 
         _context = context;
+        _provider = provider;
         _authenticator = authenticator;
         _refreshTokenStore = refreshTokenStore;
 

@@ -26,7 +26,7 @@ public class JwtProvider
                 ? DateTime.UtcNow.AddSeconds(_options.Expiration)
                 : default(DateTime?),
             signingCredentials: new SigningCredentials(
-                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SigningKey)),
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Key)),
                 SecurityAlgorithms.HmacSha256)
         );
 

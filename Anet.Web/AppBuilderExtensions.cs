@@ -10,9 +10,9 @@ public static class AppBuilderExtensions
         app.UseMiddleware<ExceptionMiddleware>(pathPrefixes?.ToHashSet());
     }
 
-    public static IApplicationBuilder UseAnetJwtAuthentication(this IApplicationBuilder app)
+    public static IApplicationBuilder UseAnetJwtAuthentication(this IApplicationBuilder app, string tokenPath)
     {
-        app.UseMiddleware<JwtProviderMiddleware>();
+        app.UseMiddleware<JwtProviderMiddleware>(tokenPath);
         return app;
     }
 }

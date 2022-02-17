@@ -4,6 +4,11 @@ namespace System;
 
 public static class StringExtensions
 {
+    public static bool Equals(this string source, string value, bool ignoreCase)
+    {
+        return source.Equals(value, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
+    }
+
     public static string ToSnakeCase(this string source)
     {
         if (string.IsNullOrEmpty(source)) return source;

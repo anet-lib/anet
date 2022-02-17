@@ -5,12 +5,10 @@
 /// </summary>
 public class JwtTokenOptions
 {
-    public string Path { get; set; } = "/token";
-
     /// <summary>
     /// The key for signature validation.
     /// </summary>
-    public string SigningKey { get; set; }
+    public string Key { get; set; }
 
     /// <summary>
     ///  The Issuer (iss) claim for generated tokens.

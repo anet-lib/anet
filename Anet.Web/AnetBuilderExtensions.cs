@@ -66,7 +66,7 @@ public static class AnetBuilderExtensions
         configure(options);
 
         ArgumentNullException.ThrowIfNull(options);
-        ArgumentNullException.ThrowIfNull(options.SigningKey);
+        ArgumentNullException.ThrowIfNull(options.Key);
 
         builder.Services.AddSingleton(options);
         builder.Services.AddSingleton<JwtProvider>();
@@ -87,7 +87,7 @@ public static class AnetBuilderExtensions
                     ValidateAudience = !string.IsNullOrEmpty(options.Audience),
                     ValidateLifetime = options.Expiration > 0,
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.SigningKey)),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Key)),
                 };
                 jwtBearerOptions.Events = new JwtBearerEvents
                 {
