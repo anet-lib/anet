@@ -1,6 +1,5 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Reflection;
+﻿using System.Reflection;
+using Anet.Atrributes;
 
 namespace System;
 
@@ -21,12 +20,6 @@ public static class EnumExtenstions
     public static string GetDisplayDescription(this Enum value)
     {
         var attribute = value.GetCustomAttribute<DisplayAttribute>();
-        return attribute == null ? value.ToString() : attribute.Description;
-    }
-
-    public static string GetDescription(this Enum value)
-    {
-        var attribute = value.GetCustomAttribute<DescriptionAttribute>();
         return attribute == null ? value.ToString() : attribute.Description;
     }
 }
