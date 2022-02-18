@@ -1,41 +1,26 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Reflection;
+﻿using System.Reflection;
+using Anet.Atrributes;
+using Anet.Models;
 
 namespace Anet.Utilities;
 
-public class EnumDisplay
-{
-    public int Value { get; set; }
-    public string Field { get; set; }
-    public string Name { get; set; }
-    public int Order { get; set; }
-    public string Group { get; set; }
-    public bool Checked { get; set; }
-}
-
 public class EnumUtil
 {
-    public static IEnumerable<EnumDisplay> GetDisplayList(Type enumType)
+    public static IEnumerable<SelectOption> GetSelectOptions(Type enumType)
     {
         foreach (var name in Enum.GetNames(enumType))
         {
             var member = enumType.GetMember(name);
-            // 忽略过时枚举值
-            var obsoleteAttribute = member[0].GetCustomAttribute<ObsoleteAttribute>();
-            if (obsoleteAttribute != null)
-                continue;
-            // 忽略没有 DisplayAttribute 的枚举值
-            var displayAttribute = member[0].GetCustomAttribute<DisplayAttribute>();
-            if (displayAttribute == null)
-                continue;
+            var display = member[0].GetCustomAttribute<DisplayAttribute>();
 
-            yield return new EnumDisplay
+            if (display == null || !display.Visible) continue;
+
+            yield return new SelectOption
             {
                 Value = Convert.ToInt32(Enum.Parse(enumType, name)),
-                Field = name,
-                Name = displayAttribute.GetName(),
-                Order = displayAttribute.GetOrder() ?? 0,
-                Group = displayAttribute.GetGroupName()
+                Label = display.Name ?? name,
+                Order = display.Order,
+                Group = display.Group
             };
         }
     }
