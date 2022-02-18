@@ -20,8 +20,7 @@ namespace Sample.Web
             var connStr = Configuration.GetConnectionString("DefaultConnection");
 
             // This just for setup demo database.
-            services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(connStr));
+            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connStr));
 
             services.AddAnet().AddAnetDb<SqlConnection>(DbDialect.SQLServer, connStr);
             //services.AddAnet().AddDb<MySqlConnector.MySqlConnection>(DbDialect.MySQL, connStr);

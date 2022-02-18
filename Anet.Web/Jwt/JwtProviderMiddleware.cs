@@ -13,7 +13,6 @@ internal class JwtProviderMiddleware
     private JwtProvider _provider;
     private HttpContext _context;
     private IAuthenticator _authenticator;
-    private IRefreshTokenStore _refreshTokenStore;
 
     public JwtProviderMiddleware(
         RequestDelegate next, string tokenPath)
@@ -25,8 +24,7 @@ internal class JwtProviderMiddleware
     public async Task InvokeAsync(
         HttpContext context,
         JwtProvider provider,
-        IAuthenticator authenticator,
-        IRefreshTokenStore refreshTokenStore)
+        IAuthenticator authenticator)
     {
         var request = context.Request;
         if (!request.Path.Equals(_path, StringComparison.OrdinalIgnoreCase) || request.Method != HttpMethods.Post)
@@ -38,7 +36,6 @@ internal class JwtProviderMiddleware
         _context = context;
         _provider = provider;
         _authenticator = authenticator;
-        _refreshTokenStore = refreshTokenStore;
 
         var requestParams = await ResolveTokenRequest(request);
         if (requestParams == null) return;
@@ -95,9 +92,7 @@ internal class JwtProviderMiddleware
             return;
         }
 
-        var jwtResult = _provider.GenerateToken(authResult.Claims);
-
-        await _refreshTokenStore.SaveTokenAsync(jwtResult);
+        var jwtResult = await _provider.GenerateToken(authResult.Claims);
 
         jwtResult.UserInfo = authResult.UserInfo;
 

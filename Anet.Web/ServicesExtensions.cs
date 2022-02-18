@@ -68,7 +68,8 @@ public static class ServicesExtensions
         ArgumentNullException.ThrowIfNull(options.Key);
 
         services.AddSingleton(options);
-        services.AddSingleton<JwtProvider>();
+        services.AddHttpContextAccessor();
+        services.AddTransient<JwtProvider>();
         services.AddTransient<IAuthenticator, TAuthenticator>();
         services.AddTransient<IRefreshTokenStore, TRefreshTokenStore>();
         services.AddAuthentication(options =>

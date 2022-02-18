@@ -16,7 +16,7 @@ public class JwtProvider
         _refreshTokenStore = refreshTokenStore;
     }
 
-    public JwtResult GenerateToken(IEnumerable<Claim> claims)
+    public async Task<JwtResult> GenerateToken(IEnumerable<Claim> claims)
     {
         var jwtSecurityToken = new JwtSecurityToken(
             claims: claims,
@@ -32,11 +32,15 @@ public class JwtProvider
 
         var accessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
 
-        return new JwtResult
+        var result = new JwtResult
         {
             AccessToken = accessToken,
             ExpiresAt = DateTime.UtcNow.AddSeconds(_options.Expiration).ToTimestamp()
         };
+
+        await _refreshTokenStore.SaveTokenAsync(result);
+
+        return result;
     }
 
     public async Task<JwtResult> RefreshToken(string refreshToken)
@@ -45,7 +49,7 @@ public class JwtProvider
         if (token == null) return null;
 
         var securityToken = new JwtSecurityTokenHandler().ReadJwtToken(token);
-        var newToken = GenerateToken(securityToken.Claims.ToList());
+        var newToken = await GenerateToken(securityToken.Claims.ToList());
 
         await _refreshTokenStore.DeleteTokenAsync(refreshToken);
         await _refreshTokenStore.SaveTokenAsync(newToken);
