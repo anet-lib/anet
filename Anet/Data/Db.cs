@@ -1,28 +1,58 @@
 ﻿using System.Data;
+using System.Data.Common;
 using Microsoft.Extensions.Logging;
 
 namespace Anet.Data;
 
 public class Db : IDisposable
 {
-    private readonly ILogger<Db> _logger;
+    private IDbTransaction _transaction;
 
-    public Db(DbDialect dialect, 
-        IDbConnection connection, 
-        DbOptions options = null,
-        ILogger<Db> logger = null)
+    public Db(IDbConnection connection, DbOptions options, ILogger logger)
     {
-        Dialect = dialect;
-        Connection = connection;
         Options = options ?? new DbOptions();
-        _logger = logger;
+        if (Options.Dialect == DbDialect.Auto)
+        {
+            Options.Dialect = ResolveDialect(connection);
+        }
+
+        if (logger == null)
+        {
+            Connection = connection;
+        }
+        else
+        {
+            var hooks = new LoggingHooks(logger, options);
+            Connection = new AnetDbConnection(connection as DbConnection, hooks)
+            {
+                MetricsEnabled = options.EnableMetrics
+            };
+        }
+
+        Logger = logger;
     }
 
-    public DbDialect Dialect { get; }
+    internal static DbDialect ResolveDialect(IDbConnection connection)
+    {
+        var name = connection.GetType().Name;
+        if (name.StartsWith("MySql", StringComparison.OrdinalIgnoreCase))
+            return DbDialect.MySQL;
+        else if (name.StartsWith("Npgsql", StringComparison.OrdinalIgnoreCase))
+            return DbDialect.PostgreSQL;
+        else if (name.StartsWith("Oracle", StringComparison.OrdinalIgnoreCase))
+            return DbDialect.Oracle;
+        else if (name.StartsWith("Sqlite", StringComparison.OrdinalIgnoreCase))
+            return DbDialect.SQLite;
+        else if (name.StartsWith("Sql"))
+            return DbDialect.SQLServer;
+        throw new NotSupportedException($"Cannot recognize DbDialect of '{name}', please specify the DbDialect parameter manually.");
+    }
+
+    public ILogger Logger { get; }
 
     public DbOptions Options { get; }
 
-    public SqlString NewSql(string value = null) => new(Dialect, value);
+    public SqlString NewSql(string value = null) => new(Options.Dialect, value);
 
     /// <summary>
     /// The current transaction to use, if any.
@@ -40,8 +70,6 @@ public class Db : IDisposable
     /// </summary>
     public int? CommandTimeout { get; set; }
 
-    private IDbTransaction _transaction;
-    
     public IDbTransaction Transaction
     {
         // return null if transaction is disposed.
@@ -77,7 +105,7 @@ public class Db : IDisposable
         Transaction?.Dispose();
         Connection?.Dispose();
         GC.SuppressFinalize(this);
-        _logger?.Log(Options.LogLevel, "Connection: disposed");
+        Logger?.Log(Options.LogLevel, "Connection: disposed");
     }
 }
 

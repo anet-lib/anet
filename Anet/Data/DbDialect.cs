@@ -5,6 +5,7 @@
 /// </summary>
 public enum DbDialect
 {
+    Auto = 0,
     MySQL = 1,
     SQLite = 2,
     SQLServer = 3,
