@@ -23,7 +23,8 @@ public class ExceptionMiddleware
 
     public async Task InvokeAsync(HttpContext httpContext)
     {
-        if (_pathPrefixes == null || 
+        if (_pathPrefixes == null ||
+            !_pathPrefixes.Any() ||
             _pathPrefixes.Any(x => httpContext.Request.Path.StartsWithSegments(x)))
         {
             try
