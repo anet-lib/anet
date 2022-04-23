@@ -22,13 +22,13 @@ public class JwtTokenOptions
 
     /// <summary>
     /// The expiration time for the generated tokens.
+    /// Set to 0 to never expire.
     /// </summary>
-    /// <remarks>The default is 60 minutes (3600 seconds).</remarks>
-    public int Expiration { get; set; } = (int)TimeSpan.FromMinutes(60).TotalSeconds;
+    public int ExpireSeconds { get; set; }
 
     /// <summary>
     /// The fallback cookie key that read token from.
-    /// Default value is "Authorization".
+    /// This will give the application an opportunity to retrieve a token from cookies as an alternative location.
     /// </summary>
     public string FallbackCookieKey { get; set; } = "Authorization";
 }

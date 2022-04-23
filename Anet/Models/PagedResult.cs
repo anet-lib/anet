@@ -17,5 +17,5 @@ public class PagedResult<T>
     public int Total { get; set; }
     public IEnumerable<T> Items { get; set; } = new List<T>();
 
-    public int TotalPages => (int)Math.Ceiling((decimal)Total / Size);
+    public int TotalPages => Size == 0 ? 0 : (int)Math.Ceiling((decimal)Total / Size);
 }

@@ -6,11 +6,11 @@ public class DisplayAttribute : Attribute
     public DisplayAttribute()
     {
     }
-    public DisplayAttribute(string label)
+    public DisplayAttribute(string name)
     {
-        Label = label;
+        Name = name;
     }
-    public string Label { get; set; }
+    public string Name { get; set; }
     public int Order { get; set; }
     public bool Visible { get; set; } = true;
     public string Group { get; set; }

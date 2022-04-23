@@ -11,8 +11,8 @@ public static class ServicesExtensions
 {
     public static IServiceCollection AddAnetApi(
         this IServiceCollection services,
-        Action<MvcOptions> configureMvc = null, 
-        Action<ApiBehaviorOptions> configureApiBehavior = null, 
+        Action<MvcOptions> configureMvc = null,
+        Action<ApiBehaviorOptions> configureApiBehavior = null,
         bool withViews = false)
     {
         void configMvcOptions(MvcOptions mvcOptions)
@@ -85,18 +85,21 @@ public static class ServicesExtensions
                     ValidateIssuer = !string.IsNullOrEmpty(options.Issuer),
                     ValidAudience = options.Audience,
                     ValidateAudience = !string.IsNullOrEmpty(options.Audience),
-                    ValidateLifetime = options.Expiration > 0,
+                    ValidateLifetime = options.ExpireSeconds > 0,
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Key)),
                 };
-                jwtBearerOptions.Events = new JwtBearerEvents
+                if (!string.IsNullOrEmpty(options.FallbackCookieKey))
                 {
-                    OnMessageReceived = context =>
+                    jwtBearerOptions.Events = new JwtBearerEvents
                     {
-                        context.Token = context.Request.Cookies[options.FallbackCookieKey];
-                        return Task.CompletedTask;
-                    }
-                };
+                        OnMessageReceived = context =>
+                        {
+                            context.Token = context.Request.Cookies[options.FallbackCookieKey];
+                            return Task.CompletedTask;
+                        }
+                    };
+                }
                 configureJwtBearer?.Invoke(jwtBearerOptions);
             });
 

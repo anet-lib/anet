@@ -21,7 +21,7 @@ public class EnumUtil
             {
                 Value = Convert.ToInt32(Enum.Parse<TEnum>(name)),
                 Name = name,
-                Label = display.Label ?? name,
+                Label = display.Name ?? name,
                 Order = display.Order,
                 Group = display.Group
             };

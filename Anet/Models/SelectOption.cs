@@ -30,4 +30,6 @@ public class SelectOption<TValue> : IValueLabel<TValue>
     public int Order { get; set; }
     public string Group { get; set; }
     public bool Checked { get; set; }
+
+    public List<SelectOption<TValue>> Children { get; set; }
 }

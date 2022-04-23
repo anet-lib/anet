@@ -14,7 +14,7 @@ public static class EnumExtenstions
     public static string GetDisplayName(this Enum value)
     {
         var attribute = value.GetCustomAttribute<DisplayAttribute>();
-        return attribute == null ? value.ToString() : attribute.Label;
+        return attribute == null ? value.ToString() : attribute.Name;
     }
 
     public static string GetDisplayDescription(this Enum value)

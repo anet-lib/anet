@@ -22,8 +22,8 @@ public class JwtProvider
             claims: claims,
             issuer: _options.Issuer,
             audience: _options.Audience,
-            expires: _options.Expiration > 0
-                ? DateTime.UtcNow.AddSeconds(_options.Expiration)
+            expires: _options.ExpireSeconds > 0
+                ? DateTime.UtcNow.AddSeconds(_options.ExpireSeconds)
                 : default(DateTime?),
             signingCredentials: new SigningCredentials(
                 new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Key)),
@@ -35,7 +35,7 @@ public class JwtProvider
         var result = new JwtResult
         {
             AccessToken = accessToken,
-            ExpiresAt = DateTime.UtcNow.AddSeconds(_options.Expiration).ToTimestamp()
+            ExpiresAt = DateTime.UtcNow.AddSeconds(_options.ExpireSeconds).ToTimestamp()
         };
 
         await _refreshTokenStore.SaveTokenAsync(result);
@@ -49,6 +49,8 @@ public class JwtProvider
         if (token == null) return null;
 
         var securityToken = new JwtSecurityTokenHandler().ReadJwtToken(token);
+        if (securityToken == null || securityToken.ValidTo < DateTime.Now)
+            return null;
         var newToken = await GenerateToken(securityToken.Claims.ToList());
 
         await _refreshTokenStore.DeleteTokenAsync(refreshToken);
