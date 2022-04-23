@@ -1,6 +1,6 @@
 ﻿namespace Anet.Models;
 
-public class SelectOption : SelectOption<int>, IValueLabel
+public class SelectOption : SelectOption<int>
 {
     public SelectOption()
         : base()
@@ -12,7 +12,7 @@ public class SelectOption : SelectOption<int>, IValueLabel
     }
 }
 
-public class SelectOption<TValue> : IValueLabel<TValue>
+public class SelectOption<TValue>
     where TValue : IEquatable<TValue>
 {
     public SelectOption()
