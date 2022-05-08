@@ -42,26 +42,26 @@ public static class ServicesExtensions
 
     public static IServiceCollection AddAnetJwt<TAuthenticator>(
         this IServiceCollection services,
-        Action<JwtTokenOptions> configure)
+        Action<JwtOptions> configure)
         where TAuthenticator : class, IAuthenticator
     {
         return services.AddAnetJwt<TAuthenticator, DefaultRefreshTokenStore>(configure);
     }
 
     public static IServiceCollection AddAnetJwt(
-        this IServiceCollection services, Action<JwtTokenOptions> configure)
+        this IServiceCollection services, Action<JwtOptions> configure)
     {
         return services.AddAnetJwt<NoopAuthenticator, DefaultRefreshTokenStore>(configure);
     }
 
     public static IServiceCollection AddAnetJwt<TAuthenticator, TRefreshTokenStore>(
         this IServiceCollection services,
-        Action<JwtTokenOptions> configure,
+        Action<JwtOptions> configure,
         Action<JwtBearerOptions> configureJwtBearer = null)
         where TAuthenticator : class, IAuthenticator
         where TRefreshTokenStore : class, IRefreshTokenStore
     {
-        var options = new JwtTokenOptions();
+        var options = new JwtOptions();
         configure(options);
 
         ArgumentNullException.ThrowIfNull(options);
@@ -85,9 +85,10 @@ public static class ServicesExtensions
                     ValidateIssuer = !string.IsNullOrEmpty(options.Issuer),
                     ValidAudience = options.Audience,
                     ValidateAudience = !string.IsNullOrEmpty(options.Audience),
-                    ValidateLifetime = options.ExpireSeconds > 0,
+                    ValidateLifetime = options.Lifetime > 0,
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Key)),
+                    ClockSkew = TimeSpan.FromSeconds(options.ClockSkew)
                 };
                 if (!string.IsNullOrEmpty(options.FallbackCookieKey))
                 {

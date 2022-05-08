@@ -7,10 +7,10 @@ namespace Anet.Web.Jwt;
 
 public class JwtProvider
 {
-    private readonly JwtTokenOptions _options;
+    private readonly JwtOptions _options;
     private readonly IRefreshTokenStore _refreshTokenStore;
 
-    public JwtProvider(JwtTokenOptions options, IRefreshTokenStore refreshTokenStore)
+    public JwtProvider(JwtOptions options, IRefreshTokenStore refreshTokenStore)
     {
         _options = options;
         _refreshTokenStore = refreshTokenStore;
@@ -18,13 +18,13 @@ public class JwtProvider
 
     public async Task<JwtResult> GenerateToken(IEnumerable<Claim> claims)
     {
+        var expires = DateTime.UtcNow.AddSeconds(_options.Lifetime);
+
         var jwtSecurityToken = new JwtSecurityToken(
             claims: claims,
             issuer: _options.Issuer,
             audience: _options.Audience,
-            expires: _options.ExpireSeconds > 0
-                ? DateTime.UtcNow.AddSeconds(_options.ExpireSeconds)
-                : default(DateTime?),
+            expires: _options.Lifetime > 0 ? expires : null,
             signingCredentials: new SigningCredentials(
                 new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Key)),
                 SecurityAlgorithms.HmacSha256)
@@ -35,7 +35,7 @@ public class JwtProvider
         var result = new JwtResult
         {
             AccessToken = accessToken,
-            ExpiresAt = DateTime.UtcNow.AddSeconds(_options.ExpireSeconds).ToTimestamp()
+            ExpiresAt = expires.ToTimestamp()
         };
 
         await _refreshTokenStore.SaveTokenAsync(result);

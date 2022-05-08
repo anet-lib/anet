@@ -10,5 +10,5 @@ public class JwtParams
 
     public string RefreshToken { get; set; }
 
-    public string Payload { get; set; }
+    public Dictionary<string, object> Payload { get; set; }
 }

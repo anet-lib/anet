@@ -5,9 +5,8 @@ public static class StringUtil
     public const string BASE36 = "0123456789abcdefghijklmnopqrstuvwxyz";
     public const string BASE64 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_";
     public const string BASE64_CLUTTER = "r4DMplQZJXPqe_bE0WSjBn7wVzmN2Gc6THCAKuts9LFk-gy5RovixI1aOf8UhdY3";
-    public const string BASE_DEFAULT = BASE36;
 
-    public static string BaseEncode(long number, string baseChars = BASE_DEFAULT)
+    public static string BaseEncode(long number, string baseChars = BASE36)
     {
         var stack = new Stack<char>();
         while (number >= baseChars.Length)
@@ -20,7 +19,7 @@ public static class StringUtil
         return new string(stack.ToArray());
     }
 
-    public static long BaseDecode(string text, string baseChars = BASE_DEFAULT)
+    public static long BaseDecode(string text, string baseChars = BASE36)
     {
         long result = 0;
         for (int i = 0; i < text.Length; i++)

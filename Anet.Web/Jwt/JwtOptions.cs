@@ -3,7 +3,7 @@
 /// <summary>
 /// Provides options for <see cref="JwtProvider"/>.
 /// </summary>
-public class JwtTokenOptions
+public class JwtOptions
 {
     /// <summary>
     /// The key for signature validation.
@@ -21,10 +21,14 @@ public class JwtTokenOptions
     public string Audience { get; set; }
 
     /// <summary>
-    /// The expiration time for the generated tokens.
-    /// Set to 0 to never expire.
+    /// Lifetime of the the token, in seconds. Set to 0 to never expire.
     /// </summary>
-    public int ExpireSeconds { get; set; }
+    public int Lifetime { get; set; }
+
+    /// <summary>
+    /// Gets or sets the clock skew seconds to apply when validating the token lifetime.
+    /// </summary>
+    public int ClockSkew { get; set; }
 
     /// <summary>
     /// The fallback cookie key that read token from.
