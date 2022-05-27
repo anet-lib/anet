@@ -59,7 +59,7 @@ internal class JwtProviderMiddleware
             {
                 Username = request.Form[nameof(JwtParams.Username)].FirstOrDefault(),
                 Password = request.Form[nameof(JwtParams.Password)].FirstOrDefault(),
-                Payload = request.Form[nameof(JwtParams.Payload)].FirstOrDefault(),
+                // Payload = request.Form[nameof(JwtParams.Payload)].FirstOrDefault(),
                 GrantType = request.Form[nameof(JwtParams.GrantType)].FirstOrDefault(),
                 RefreshToken = request.Form[nameof(JwtParams.RefreshToken)].FirstOrDefault()
             };
@@ -70,7 +70,7 @@ internal class JwtProviderMiddleware
             string body = await reader.ReadToEndAsync();
             try
             {
-                return JsonUtil.DeserializeCamelCase<JwtParams>(body);
+                return Json.DeserializeCamelCase<JwtParams>(body);
             }
             catch
             {
@@ -117,14 +117,14 @@ internal class JwtProviderMiddleware
 
     private Task ResponseErrorAsync(string message)
     {
-        return ResponseAsync(ApiResult.Error(message));
+        return ResponseAsync(ApiResult.Error(message, ErrorCode.BadRequest));
     }
 
     private Task ResponseAsync(ApiResult apiResult)
     {
         _context.Response.ContentType = ContentTypes.JsonContentType;
         _context.Response.StatusCode = (int)HttpStatusCode.OK;
-        var json = JsonUtil.SerializeCamelCase(apiResult);
+        var json = Json.SerializeCamelCase(apiResult);
         return _context.Response.WriteAsync(json);
     }
 }

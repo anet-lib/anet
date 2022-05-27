@@ -55,8 +55,7 @@ public class UserService : ServiceBase
     public async Task UpdateAsync(long userId, UserEditDto dto)
     {
         var user = await Db.FindAsync<AnetUser>(new { Id = userId });
-        if (user == null)
-            throw new NotFoundException();
+        Error.ThrowNotFound(user == null);
 
         using var tran = Db.BeginTransaction();
 
@@ -72,7 +71,6 @@ public class UserService : ServiceBase
     public async Task DeleteAsync(long id)
     {
         var rows = await Db.DeleteAsync<AnetUser>(new { Id = id });
-        if (rows == 0)
-            throw new NotFoundException();
+        Error.ThrowNotFound(rows == 0);
     }
 }

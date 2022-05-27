@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using Anet.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
@@ -12,8 +11,8 @@ public class ExceptionMiddleware
     private readonly IEnumerable<string> _pathPrefixes;
 
     public ExceptionMiddleware(
-        RequestDelegate next, 
-        ILogger<ExceptionMiddleware> logger, 
+        RequestDelegate next,
+        ILogger<ExceptionMiddleware> logger,
         IEnumerable<string> pathPrefixes = null)
     {
         _next = next;
@@ -44,41 +43,25 @@ public class ExceptionMiddleware
 
     private Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
-        var message = exception.Message;
+        var result = new ApiResult
+        {
+            Message = exception.Message,
+            Code = 500
+        };
 
-        ApiResult result;
-        if (exception is BadRequestException)
+        if (exception is Error err)
         {
-            result = ApiResult.Error(exception.Message, 400);
+            result.Code = (ushort)err.Code;
         }
-        else if (exception is NotFoundException)
+
+        if (result.Code < 400 || result.Code > 499)
         {
-            message = string.IsNullOrEmpty(message) ? "Not Found" : message;
-            result = ApiResult.Error(message, 404);
+            _logger.LogError(exception, exception.Message);
         }
-        else if (exception is UnauthorizedAccessException)
-        {
-            message = string.IsNullOrEmpty(message) ? "Unauthorized" : message;
-            result = ApiResult.Error(message, 401);
-        }
-        else if (exception is GatewayException ex)
-        {
-            message = string.IsNullOrEmpty(message) ? "Call API Error" : message;
-            _logger.LogError("============= Error Info Begin =============");
-            _logger.LogError(exception, message);
-            _logger.LogError("Url:{0}", ex.Url);
-            _logger.LogError("Response:{0}", ex.Response);
-            _logger.LogError("============= Error Info End   =============");
-            result = ApiResult.Error(message, 500);
-        }
-        else
-        {
-            message = string.IsNullOrEmpty(message) ? "Internal Server Error" : message;
-            _logger.LogError(exception, message);
-            result = ApiResult.Error(message, 500);
-        }
+
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)HttpStatusCode.OK;
-        return context.Response.WriteAsync(JsonUtil.SerializeCamelCase(result));
+
+        return context.Response.WriteAsJsonAsync(result);
     }
 }

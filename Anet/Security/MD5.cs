@@ -27,6 +27,6 @@ public abstract class MD5
 
     private static string HashToCompactString(byte[] hash)
     {
-        return BitConverter.ToString(hash).Replace("-", "").ToLower();
+        return BitConverter.ToString(hash).Replace("-", string.Empty).ToLower();
     }
 }

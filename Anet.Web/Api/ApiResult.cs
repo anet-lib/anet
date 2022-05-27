@@ -4,7 +4,7 @@ public class ApiResult<T> : IApiResult
 {
     public ApiResult() { }
 
-    public virtual short Code { get; set; }
+    public virtual ushort Code { get; set; }
 
     public virtual string Message { get; set; }
 
@@ -13,16 +13,13 @@ public class ApiResult<T> : IApiResult
 
 public class ApiResult : ApiResult<object>
 {
-    public const short DefaultSuccessCode = 0;
-    public const short DefaultErrorCode = 400;
-
-    public static ApiResult Success(object data = default, short code = DefaultSuccessCode)
+    public static ApiResult Success(object data = default)
     {
-        return new ApiResult { Data = data, Code = code };
+        return new ApiResult { Data = data };
     }
 
-    public static ApiResult Error(string message, short code = DefaultErrorCode)
+    public static ApiResult Error(string message, ErrorCode code)
     {
-        return new ApiResult { Message = message, Code = code };
+        return new ApiResult { Message = message, Code = (ushort)code };
     }
 }

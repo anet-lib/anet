@@ -2,6 +2,6 @@
 
 public interface IApiResult
 {
-    public short Code { get; set; }
+    public ushort Code { get; set; }
     public string Message { get; set; }
 }

@@ -2,7 +2,7 @@
 
 namespace Anet.Utilities;
 
-public class JsonUtil
+public class Json
 {
     private static readonly JsonSerializerOptions _camelCaseOptions = new()
     {

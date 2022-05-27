@@ -24,7 +24,7 @@ public class ModelValidationFilterAttribute : ActionFilterAttribute
             }
         }
 
-        context.Result = new JsonResult(ApiResult.Error(errorMessage, 400))
+        context.Result = new JsonResult(ApiResult.Error(errorMessage, ErrorCode.BadRequest))
         {
             StatusCode = StatusCodes.Status200OK
         };

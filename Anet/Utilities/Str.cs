@@ -1,36 +1,9 @@
 ﻿namespace Anet.Utilities;
 
-public static class StringUtil
+public static class Str
 {
-    public const string BASE36 = "0123456789abcdefghijklmnopqrstuvwxyz";
-    public const string BASE64 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_";
-    public const string BASE64_CLUTTER = "r4DMplQZJXPqe_bE0WSjBn7wVzmN2Gc6THCAKuts9LFk-gy5RovixI1aOf8UhdY3";
-
-    public static string BaseEncode(long number, string baseChars = BASE36)
-    {
-        var stack = new Stack<char>();
-        while (number >= baseChars.Length)
-        {
-            var remainder = (byte)(number % baseChars.Length);
-            stack.Push(baseChars[remainder]);
-            number /= baseChars.Length;
-        }
-        stack.Push(baseChars[(byte)number]);
-        return new string(stack.ToArray());
-    }
-
-    public static long BaseDecode(string text, string baseChars = BASE36)
-    {
-        long result = 0;
-        for (int i = 0; i < text.Length; i++)
-        {
-            result += (long)Math.Pow(baseChars.Length, text.Length - i - 1) * baseChars.IndexOf(text[i]);
-        }
-        return result;
-    }
-
     /// <summary>
-    /// 混淆数字为字符串
+    /// 打乱字符串
     /// </summary>
     public static string Mixup(string text)
     {
@@ -48,7 +21,7 @@ public static class StringUtil
     }
 
     /// <summary>
-    /// 解开混淆字符串
+    /// 恢复打乱的字符串
     /// </summary>
     public static string UnMixup(string cipher)
     {
