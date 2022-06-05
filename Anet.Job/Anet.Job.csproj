@@ -4,6 +4,7 @@
 
   <PropertyGroup>
     <PackageId>Anet.Job</PackageId>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

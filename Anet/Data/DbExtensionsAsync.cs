@@ -168,7 +168,7 @@ public static class DbExtensionsAsync
     /// This returns a single type, combined from the raw types via <paramref name="map"/>.
     /// </summary>
     /// <typeparam name="TReturn">The combined type to return.</typeparam>
-    /// <param name="cnn">The connection to query on.</param>
+    /// <param name="db">The connection to query on.</param>
     /// <param name="sql">The SQL to execute for this query.</param>
     /// <param name="types">Array of types in the recordset.</param>
     /// <param name="map">The function to map row types to the return type.</param>

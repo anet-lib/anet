@@ -117,7 +117,7 @@ internal class JwtProviderMiddleware
 
     private Task ResponseErrorAsync(string message)
     {
-        return ResponseAsync(ApiResult.Error(message, ErrorCode.BadRequest));
+        return ResponseAsync(ApiResult.Error(message, HttpStatusCode.BadRequest));
     }
 
     private Task ResponseAsync(ApiResult apiResult)

@@ -1,28 +1,30 @@
-﻿namespace Anet;
+﻿using System.Runtime.CompilerServices;
+
+namespace Anet;
 
 public static class Guard
 {
-    public static void NotNull(object param, string paramName)
+    public static void NotNull(object argument, [CallerArgumentExpression("argument")] string paramName = null)
     {
-        if (param is null)
+        if (argument is null)
         {
             throw new ArgumentNullException(paramName);
         }
     }
 
-    public static void NotNullOrEmpty(string param, string paramName)
+    public static void NotNullOrEmpty(string argument, [CallerArgumentExpression("argument")] string paramName = null)
     {
-        NotNull(param, paramName);
-        if (param == string.Empty)
+        NotNull(argument, paramName);
+        if (argument == string.Empty)
         {
-            throw new ArgumentException($"The string can not be empty.", paramName);
+            throw new ArgumentException($"The argument can not be empty.", paramName);
         }
     }
 
-    public static void NotNullOrEmpty<T>(IEnumerable<T> param, string paramName)
+    public static void NotNullOrEmpty<T>(IEnumerable<T> argument, [CallerArgumentExpression("argument")] string paramName = null)
     {
-        NotNull(param, paramName);
-        if (!param.Any())
+        NotNull(argument, paramName);
+        if (!argument.Any())
         {
             throw new ArgumentException("The collection can not be empty.", paramName);
         }

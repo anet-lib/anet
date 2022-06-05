@@ -4,6 +4,7 @@
 
   <PropertyGroup>
     <PackageId>Anet.Web</PackageId>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

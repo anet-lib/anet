@@ -54,7 +54,7 @@ public class ExceptionMiddleware
             result.Code = (ushort)err.Code;
         }
 
-        if (result.Code < 400 || result.Code > 499)
+        if (result.Code >= 500)
         {
             _logger.LogError(exception, exception.Message);
         }

@@ -1,4 +1,6 @@
-﻿namespace Anet.Web.Api;
+﻿using System.Net;
+
+namespace Anet.Web.Api;
 
 public class ApiResult<T> : IApiResult
 {
@@ -18,7 +20,7 @@ public class ApiResult : ApiResult<object>
         return new ApiResult { Data = data };
     }
 
-    public static ApiResult Error(string message, ErrorCode code)
+    public static ApiResult Error(string message, HttpStatusCode code)
     {
         return new ApiResult { Message = message, Code = (ushort)code };
     }

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -24,9 +24,6 @@ public class ModelValidationFilterAttribute : ActionFilterAttribute
             }
         }
 
-        context.Result = new JsonResult(ApiResult.Error(errorMessage, ErrorCode.BadRequest))
-        {
-            StatusCode = StatusCodes.Status200OK
-        };
+        context.Result = new JsonResult(ApiResult.Error(errorMessage, HttpStatusCode.BadRequest));
     }
 }
