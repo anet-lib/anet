@@ -9,7 +9,7 @@ public static class EnumEx
     public static T GetCustomAttribute<T>(this Enum value) where T : Attribute
     {
         var field = value.GetType().GetField(value.ToString());
-        return field.GetCustomAttribute<T>();
+        return field == null ? default : field.GetCustomAttribute<T>();
     }
 
     public static string GetDisplayName(this Enum value)
