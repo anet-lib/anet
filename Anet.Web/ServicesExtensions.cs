@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Anet.Utilities;
 using Anet.Web.Api;
 using Anet.Web.Jwt;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -28,7 +29,19 @@ public static class ServicesExtensions
             configureApiBehavior?.Invoke(apiBehaviorOptions);
         });
 
-        return withViews ? services.AddControllersWithViews(configMvcOptions) : services.AddControllers(configMvcOptions);
+        var builder = withViews ?
+            services.AddControllersWithViews(configMvcOptions) :
+            services.AddControllers(configMvcOptions);
+
+        return builder;
+    }
+
+    public static IMvcBuilder AddAnetJsonOptions(this IMvcBuilder builder, string dateTimeFormat = null)
+    {
+        return builder.AddJsonOptions(opt =>
+        {
+            opt.JsonSerializerOptions.Converters.Add(new Json.DateTimeConverter(dateTimeFormat));
+        });
     }
 
     public static IServiceCollection AddAnetJwt<TAuthenticator>(
