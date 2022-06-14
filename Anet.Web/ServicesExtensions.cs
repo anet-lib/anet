@@ -9,7 +9,7 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class ServicesExtensions
 {
-    public static IServiceCollection AddAnetApi(
+    public static IMvcBuilder AddAnetApi(
         this IServiceCollection services,
         Action<MvcOptions> configureMvc = null,
         Action<ApiBehaviorOptions> configureApiBehavior = null,
@@ -22,22 +22,13 @@ public static class ServicesExtensions
             configureMvc?.Invoke(mvcOptions);
         };
 
-        if (withViews)
-        {
-            services.AddControllersWithViews(configMvcOptions);
-        }
-        else
-        {
-            services.AddControllers(configMvcOptions);
-        }
-
         services.Configure<ApiBehaviorOptions>(apiBehaviorOptions =>
         {
             apiBehaviorOptions.SuppressModelStateInvalidFilter = true;
             configureApiBehavior?.Invoke(apiBehaviorOptions);
         });
 
-        return services;
+        return withViews ? services.AddControllersWithViews(configMvcOptions) : services.AddControllers(configMvcOptions);
     }
 
     public static IServiceCollection AddAnetJwt<TAuthenticator>(
