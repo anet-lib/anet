@@ -183,7 +183,7 @@ public class SqlString
             DbDialect.SQLite => Line($"LIMIT {pageSize} OFFSET {offset}"),
             DbDialect.SQLServer => Line($"OFFSET {offset} ROWS FETCH NEXT {pageSize} ROWS ONLY"),
             DbDialect.PostgreSQL => Line($"LIMIT {pageSize} OFFSET {offset}"),
-            DbDialect.Oracle => Prepend($"SELECT * FROM (SEELCT ROWNUM RN, T.* FROM ({Environment.NewLine}  ")
+            DbDialect.Oracle => Prepend($"SELECT * FROM (SELECT ROWNUM RN, T.* FROM ({Environment.NewLine}  ")
                 .Line($") T WHERE ROWNUM <= {pageNo}*{pageSize}) TT WHERE TT.RN>({pageNo}-1)*{pageSize}"),
             _ => throw new NotSupportedException($"The Page method is not supported in {Dialect}."),
         };
