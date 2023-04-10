@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using Anet.Web.Api;
+using Anet.Web;
 using Anet.Web.Jwt;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +18,7 @@ public static class ServicesExtensions
         void configMvcOptions(MvcOptions mvcOptions)
         {
             mvcOptions.Filters.Add<ModelValidationFilterAttribute>();
-            mvcOptions.Filters.Add<ApiResultFilterAttribute>();
+            mvcOptions.Filters.Add<ApiResponseAttribute>();
             configureMvc?.Invoke(mvcOptions);
         };
 

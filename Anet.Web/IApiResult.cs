@@ -1,7 +1,7 @@
-﻿namespace Anet.Web.Api;
+﻿namespace Anet.Web;
 
 public interface IApiResult
 {
-    public ushort Code { get; set; }
+    public int Code { get; set; }
     public string Message { get; set; }
 }

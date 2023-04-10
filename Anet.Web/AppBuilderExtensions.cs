@@ -1,15 +1,9 @@
-﻿using Anet.Web.Api;
-using Anet.Web.Jwt;
+﻿using Anet.Web.Jwt;
 
 namespace Microsoft.AspNetCore.Builder;
 
 public static class AppBuilderExtensions
 {
-    public static void UseAnetExceptionHandler(this IApplicationBuilder app, params string[] pathPrefixes)
-    {
-        app.UseMiddleware<ExceptionMiddleware>(pathPrefixes?.ToHashSet());
-    }
-
     /// <summary>
     /// Adds the to the <see cref="JwtProviderMiddleware"/> and <see cref="Authentication.AuthenticationMiddleware"/> to the
     /// specified <see cref="IApplicationBuilder"/>.

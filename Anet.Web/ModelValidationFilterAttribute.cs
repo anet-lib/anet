@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Anet.Web.Api;
+namespace Anet.Web;
 
 public class ModelValidationFilterAttribute : ActionFilterAttribute
 {

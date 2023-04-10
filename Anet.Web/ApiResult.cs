@@ -1,12 +1,12 @@
 ﻿using System.Net;
 
-namespace Anet.Web.Api;
+namespace Anet.Web;
 
 public class ApiResult<T> : IApiResult
 {
     public ApiResult() { }
 
-    public virtual ushort Code { get; set; }
+    public virtual int Code { get; set; }
 
     public virtual string Message { get; set; }
 
