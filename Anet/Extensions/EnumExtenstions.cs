@@ -45,4 +45,26 @@ public static class EnumEx
             };
         }
     }
+
+    public static IEnumerable<SelectOption<string>> GetSelectOptionsNameAsValue<TEnum>()
+       where TEnum : struct, Enum
+    {
+        var type = typeof(TEnum);
+        foreach (var name in Enum.GetNames<TEnum>())
+        {
+            var member = type.GetMember(name);
+            var display = member[0].GetCustomAttribute<DisplayAttribute>();
+
+            if (display == null || !display.Visible) continue;
+
+            yield return new SelectOption<string>()
+            {
+                Value = name,
+                Name = name,
+                Label = display.Name ?? name,
+                Order = display.Order,
+                Group = display.Group
+            };
+        }
+    }
 }
