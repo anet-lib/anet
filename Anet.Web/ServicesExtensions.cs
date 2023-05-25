@@ -91,7 +91,11 @@ public static class ServicesExtensions
                     {
                         OnMessageReceived = context =>
                         {
-                            context.Token = context.Request.Cookies[options.FallbackCookieKey];
+                            var token = context.Request.Cookies[options.FallbackCookieKey];
+                            if (!string.IsNullOrEmpty(token))
+                            {
+                                context.Token = token;
+                            }
                             return Task.CompletedTask;
                         }
                     };
