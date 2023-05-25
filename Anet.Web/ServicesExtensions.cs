@@ -44,9 +44,18 @@ public static class ServicesExtensions
     }
 
     public static IServiceCollection AddAnetJwt(
-        this IServiceCollection services, Action<JwtOptions> configure)
+        this IServiceCollection services, 
+        Action<JwtOptions> configure)
     {
         return services.AddAnetJwt<NoopAuthenticator, DefaultRefreshTokenStore>(configure);
+    }
+
+    public static IServiceCollection AddAnetJwt(
+        this IServiceCollection services,
+        Action<JwtOptions> configure,
+        Action<JwtBearerOptions> configureJwtBearer)
+    {
+        return services.AddAnetJwt<NoopAuthenticator, DefaultRefreshTokenStore>(configure, configureJwtBearer);
     }
 
     public static IServiceCollection AddAnetJwt<TAuthenticator, TRefreshTokenStore>(
@@ -91,7 +100,11 @@ public static class ServicesExtensions
                     {
                         OnMessageReceived = context =>
                         {
-                            context.Token = context.Request.Cookies[options.FallbackCookieKey];
+                            var token = context.Request.Cookies[options.FallbackCookieKey];
+                            if (!string.IsNullOrEmpty(token))
+                            {
+                                context.Token = token;
+                            }
                             return Task.CompletedTask;
                         }
                     };
