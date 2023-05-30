@@ -1,6 +1,6 @@
 ﻿<Project>
   <PropertyGroup>
-    <Version>0.7.28</Version>
+    <Version>0.7.29</Version>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <PackageTags>netcore,aspnetcore,common,lib,framework,boilerplate</PackageTags>

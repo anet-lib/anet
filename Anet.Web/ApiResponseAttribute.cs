@@ -8,7 +8,7 @@ public class ApiResponseAttribute : ActionFilterAttribute
 {
     public override void OnActionExecuted(ActionExecutedContext context)
     {
-        if (context.HttpContext.WebSockets.IsWebSocketRequest)
+        if (context.HttpContext.WebSockets.IsWebSocketRequest || context.Result is FileResult)
             return;
 
         var result = new ApiResult();
