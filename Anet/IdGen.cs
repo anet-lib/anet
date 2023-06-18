@@ -9,16 +9,9 @@ namespace Anet;
 /// </summary>
 public partial class IdGen
 {
-    public const byte DefaultMachineIdBits = 6;
-    public const byte DefaultSequenceBits = 12;
-
-    private readonly long _machineId = 0;
-    private readonly byte _machineIdBits = 0;
-    private readonly byte _sequenceBits = 0;
     private readonly long _maxSequence = 0;
-
+    private readonly object _lockObject = new();
     private readonly Stopwatch _stopwatch = Stopwatch.StartNew();
-    private readonly object _lockObject = new object();
 
     private long _sequence = 0;
     private long _lastTimestamp = 0;
@@ -26,41 +19,25 @@ public partial class IdGen
     // 637134336000000000 = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks
     private static readonly long _offsetTicks = DateTime.UtcNow.Ticks - 637134336000000000;
 
-    /// <summary>
-    /// The constructor of <see cref="IdGen"/>.
-    /// </summary>
-    /// <param name="machineId">当前机器码（唯一机会编号）</param>
-    public IdGen(ushort machineId) : this(machineId, DefaultMachineIdBits, DefaultSequenceBits)
-    {
-    }
+    private readonly IdGenOptions _options;
 
     /// <summary>
     /// The constructor of <see cref="IdGen"/>.
     /// </summary>
-    /// <param name="machineId">当前机器码（唯一机会编号）</param>
-    /// <param name="machineIdBits">机器码位数（0-10之间）</param>
-    /// <param name="sequenceBits">
-    /// 序列号位数（0-20之间）
-    /// 注意：
-    /// 1. 并发量越大，此值也要越大，例如：10 可以 1 秒内生成 2^10=1024 个 ID。
-    /// 2. 每台机器此参数务必相同。
-    /// </param>
-    public IdGen(ushort machineId, byte machineIdBits, byte sequenceBits)
+    public IdGen(IdGenOptions options)
     {
-        if (sequenceBits > 20)
-            throw new ArgumentOutOfRangeException(nameof(sequenceBits), "序列号不能超过 20 位。");
+        if (options.SequenceBits > 20)
+            throw new ArgumentOutOfRangeException(nameof(options.SequenceBits), "序列号不能超过 20 位。");
 
-        if (machineIdBits > 10)
-            throw new ArgumentOutOfRangeException(nameof(machineIdBits), "机器码不能超过 10 位。");
+        if (options.MachineIdBits > 10)
+            throw new ArgumentOutOfRangeException(nameof(options.MachineIdBits), "机器码不能超过 10 位。");
 
-        _machineIdBits = machineIdBits;
-        _sequenceBits = sequenceBits;
-        _maxSequence = GetMaxOfBits(_sequenceBits);
+        var maxMachineId = GetMaxOfBits(options.MachineIdBits);
+        if (options.MachineId > maxMachineId)
+            throw new ArgumentOutOfRangeException(nameof(options.MachineId), $"机器码不能大于 {maxMachineId}。");
 
-        var maxMachineId = GetMaxOfBits(machineIdBits);
-        if (machineId > maxMachineId)
-            throw new ArgumentOutOfRangeException(nameof(machineId), $"机器码不能大于 {maxMachineId}。");
-        _machineId = machineId;
+        _options = options;
+        _maxSequence = GetMaxOfBits(options.SequenceBits);
     }
 
     private long GetTimestampNow()
@@ -103,9 +80,9 @@ public partial class IdGen
             //int bitsLength = GetBitsLength(_lastTimestamp);
             //Console.WriteLine($"Timestamp bits: {bitsLength}");
 
-            int timestampShift = _machineIdBits + _sequenceBits;
-            int machineIdShift = _sequenceBits;
-            return (_lastTimestamp << timestampShift) | (_machineId << machineIdShift) | _sequence;
+            int timestampShift = _options.MachineIdBits + _options.SequenceBits;
+            int machineIdShift = _options.SequenceBits;
+            return (_lastTimestamp << timestampShift) | (_options.MachineId << machineIdShift) | _sequence;
         }
     }
 }

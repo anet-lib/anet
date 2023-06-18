@@ -17,7 +17,6 @@ public static class ServicesExtensions
     {
         void configMvcOptions(MvcOptions mvcOptions)
         {
-            mvcOptions.Filters.Add<ModelValidationFilterAttribute>();
             mvcOptions.Filters.Add<ApiResponseAttribute>();
             configureMvc?.Invoke(mvcOptions);
         };

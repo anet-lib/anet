@@ -1,9 +1,9 @@
 ﻿<Project>
   <PropertyGroup>
-    <Version>0.7.29</Version>
+    <Version>0.8.0</Version>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <PackageTags>netcore,aspnetcore,common,lib,framework,boilerplate</PackageTags>
+    <PackageTags>dotnet,aspnet,common,lib,framework,boilerplate</PackageTags>
     <Description>A .NET Common Lib, Framework and Boilerplate.</Description>
     <Authors>liamwang</Authors>
     <PackageProjectUrl>https://github.com/anet-lib/anet</PackageProjectUrl>

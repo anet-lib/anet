@@ -3,29 +3,36 @@ using System.Text.Json;
 
 namespace Anet.Utilities;
 
-public class Json
+public class JsonUtil
 {
-    private static readonly JsonSerializerOptions _defaultOptions = new()
+    private static readonly JsonSerializerOptions _defaultOptions= new()
     {
-        PropertyNameCaseInsensitive = true,
-
         // ref: https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/character-encoding
         Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+
+        PropertyNameCaseInsensitive = true,
     };
 
     private static readonly JsonSerializerOptions _camelCaseOptions = new()
     {
-        PropertyNameCaseInsensitive = true,
+        Encoder = _defaultOptions.Encoder,
+        PropertyNameCaseInsensitive = _defaultOptions.PropertyNameCaseInsensitive,
+
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
     };
 
     private static readonly JsonSerializerOptions _snakeCaseOptions = new()
     {
-        PropertyNameCaseInsensitive = true,
+        Encoder = _defaultOptions.Encoder,
+        PropertyNameCaseInsensitive = _defaultOptions.PropertyNameCaseInsensitive,
+
         PropertyNamingPolicy = new SnakeCaseNamingPolicy(),
-        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
     };
+
+    internal static void SetDefaultSerializerOptions(Action<JsonSerializerOptions> configure)
+    {
+        configure?.Invoke(_defaultOptions);
+    }
 
     public static string Serialize(object value, JsonSerializerOptions options = null)
     {

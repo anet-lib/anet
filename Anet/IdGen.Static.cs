@@ -4,25 +4,15 @@ public partial class IdGen
 {
     private static IdGen _instance;
 
-    /// <summary>
-    /// Use <see cref="IdGen"/> for generating sequence IDs.
-    /// </summary>
-    /// <param name="machineId">当前机器码（唯一机会编号）</param>
-    /// <param name="machineIdBits">机器码位数（0-10之间）</param>
-    /// <param name="sequenceBits">
-    /// 序列号位数（值在0-20之间）
-    /// 注意：
-    /// 1. 并发量越大，此值也要越大，例如：10 可以 1 秒内生成 2^10=1024 个 ID。
-    /// 2. 每台机器此参数务必相同。
-    /// </param>
-    public static void Init(
-        ushort machineId,
-        byte machineIdBits = DefaultMachineIdBits,
-        byte sequenceBits = DefaultSequenceBits)
+    internal static void SetDefaultOptions(Action<IdGenOptions> configure)
     {
         if (_instance != null)
             throw new InvalidOperationException("Can't set machine id twice.");
-        _instance = new IdGen(machineId, machineIdBits, sequenceBits);
+
+        var options = new IdGenOptions();
+        configure?.Invoke(options);
+
+        _instance = new IdGen(options);
     }
 
     /// <summary>

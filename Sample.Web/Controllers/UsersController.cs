@@ -1,5 +1,4 @@
-﻿using Anet.Data;
-using Anet.Models;
+﻿using Anet.Models;
 using Microsoft.AspNetCore.Mvc;
 using Sample.Web.Models.Dtos;
 using Sample.Web.Services;

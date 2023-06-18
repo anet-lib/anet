@@ -1,6 +1,6 @@
 ﻿namespace Anet.Utilities;
 
-public class Radix
+public class RadixUtil
 {
     public const string BASE64 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_";
 

@@ -13,12 +13,12 @@ public class TypedValue<T>
     public T Value { get; set; }
 }
 
-public class ValueModel : TypedValue<string>
+public class TypedValue : TypedValue<string>
 {
-    public ValueModel()
+    public TypedValue()
     {
     }
-    public ValueModel(string value) : base(value)
+    public TypedValue(string value) : base(value)
     {
     }
 }

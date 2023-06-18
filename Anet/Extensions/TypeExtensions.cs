@@ -34,7 +34,7 @@ public static class TypeExtensions
             TypeCode.String or 
             TypeCode.Boolean or 
             TypeCode.DateTime => true,
-            TypeCode.Object => (typeof(TimeSpan) == type) || (typeof(DateTimeOffset) == type),
+            TypeCode.Object => (typeof(TimeSpan) == type) || (typeof(DateTimeOffset) == type) || (typeof(DateOnly) == type) || (typeof(TimeOnly) == type),
             _ => false,
         };
     }

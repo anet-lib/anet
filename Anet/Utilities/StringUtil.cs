@@ -1,6 +1,6 @@
 ﻿namespace Anet.Utilities;
 
-public static class Str
+public static class StringUtil
 {
     /// <summary>
     /// 打乱字符串
@@ -66,7 +66,7 @@ public static class Str
         char seprator = string.Join("", paths).ToCharArray().FirstOrDefault(c => c == '/' || c == '\\');
         if (seprator == default(char))
         {
-            seprator = System.IO.Path.DirectorySeparatorChar;
+            seprator = Path.DirectorySeparatorChar;
         }
         return CombinePath(seprator, paths);
     }

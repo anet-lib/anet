@@ -20,7 +20,7 @@ public class ApiResult : ApiResult<object>
         return new ApiResult { Data = data };
     }
 
-    public static ApiResult Error(string message, HttpStatusCode code)
+    public static ApiResult Error(string message, HttpStatusCode code = HttpStatusCode.BadRequest)
     {
         return new ApiResult { Message = message, Code = (ushort)code };
     }
