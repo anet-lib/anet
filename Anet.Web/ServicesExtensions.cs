@@ -17,7 +17,7 @@ public static class ServicesExtensions
     {
         void configMvcOptions(MvcOptions mvcOptions)
         {
-            mvcOptions.Filters.Add<ApiResponseAttribute>();
+            //mvcOptions.Filters.Add<ApiResponseAttribute>();
             configureMvc?.Invoke(mvcOptions);
         };
 

@@ -38,7 +38,7 @@ public class ApiResponseAttribute : ActionFilterAttribute
         var result = new ApiResult();
         if (context.Exception != null)
         {
-            result.Code = (int)(context.Exception is RequestError err ? err.Code : HttpStatusCode.InternalServerError);
+            result.Code = (int)(context.Exception is Error err ? err.Code : HttpStatusCode.InternalServerError);
             result.Message = context.Exception.Message;
             context.ExceptionHandled = true;
         }

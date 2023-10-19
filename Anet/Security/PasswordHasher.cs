@@ -18,14 +18,15 @@ public class PasswordHasher
     /// Hash the password.
     /// </summary>
     /// <param name="password">The password to hash.</param>
+    /// <param name="algorithm">The hash algorithm to use to derive the key.</param>
     /// <returns>Salted hash result.</returns>
-    public static string Hash(string password)
+    public static string Hash(string password, HashAlgorithmName algorithm)
     {
         using var rng = RandomNumberGenerator.Create();
         var salt = new byte[_salt_size];
         rng.GetBytes(salt);
 
-        byte[] subkey = Pbkdf2(password, salt);
+        byte[] subkey = Pbkdf2(password, salt, algorithm);
 
         var hash = new byte[_salt_size + _subkey_size];
         Buffer.BlockCopy(salt, 0, hash, 0, _salt_size);
@@ -39,8 +40,9 @@ public class PasswordHasher
     /// </summary>
     /// <param name="password">The password to check.</param>
     /// <param name="hash">A hash of the correct password.</param>
+    /// <param name="algorithm">The hash algorithm to use to derive the key.</param>
     /// <returns>True if the password is correct. False otherwise.</returns>
-    public static bool Verify(string password, string hash)
+    public static bool Verify(string password, string hash, HashAlgorithmName algorithm)
     {
         byte[] decoded = Convert.FromBase64String(hash);
         if (decoded.Length != _salt_size + _subkey_size)
@@ -54,17 +56,14 @@ public class PasswordHasher
         byte[] expectedSubkey = new byte[_subkey_size];
         Buffer.BlockCopy(decoded, _salt_size, expectedSubkey, 0, _subkey_size);
 
-        byte[] actualSubkey = Pbkdf2(password, salt);
+        byte[] actualSubkey = Pbkdf2(password, salt, algorithm);
         return ByteArraysEqual(expectedSubkey, actualSubkey);
     }
 
     // Computes the PBKDF2-SHA1 hash of a password.
-    private static byte[] Pbkdf2(string password, byte[] salt)
+    private static byte[] Pbkdf2(string password, byte[] salt, HashAlgorithmName algorithm)
     {
-        using var pbkdf2 = new Rfc2898DeriveBytes(password, salt)
-        {
-            IterationCount = _pbkdf2_iteration
-        };
+        using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, _pbkdf2_iteration, algorithm);
         return pbkdf2.GetBytes(_subkey_size);
     }
 
