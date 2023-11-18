@@ -1,39 +1,12 @@
 ﻿using System.Text;
-using Anet.Web;
 using Anet.Web.Jwt;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
 public static class ServicesExtensions
 {
-    public static IMvcBuilder AddAnetApi(
-        this IServiceCollection services,
-        Action<MvcOptions> configureMvc = null,
-        Action<ApiBehaviorOptions> configureApiBehavior = null,
-        bool withViews = false)
-    {
-        void configMvcOptions(MvcOptions mvcOptions)
-        {
-            //mvcOptions.Filters.Add<ApiResponseAttribute>();
-            configureMvc?.Invoke(mvcOptions);
-        };
-
-        services.Configure<ApiBehaviorOptions>(apiBehaviorOptions =>
-        {
-            apiBehaviorOptions.SuppressModelStateInvalidFilter = true;
-            configureApiBehavior?.Invoke(apiBehaviorOptions);
-        });
-
-        var builder = withViews ?
-            services.AddControllersWithViews(configMvcOptions) :
-            services.AddControllers(configMvcOptions);
-
-        return builder;
-    }
-
     public static IServiceCollection AddAnetJwt<TAuthenticator>(
         this IServiceCollection services,
         Action<JwtOptions> configure)
