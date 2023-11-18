@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Anet.Utilities;
 
 namespace Anet;
 
@@ -32,12 +33,12 @@ public partial class IdGen
         if (options.MachineIdBits > 10)
             throw new ArgumentOutOfRangeException(nameof(options.MachineIdBits), "机器码不能超过 10 位。");
 
-        var maxMachineId = GetMaxOfBits(options.MachineIdBits);
+        var maxMachineId = BitUtil.GetMaxOfBits(options.MachineIdBits);
         if (options.MachineId > maxMachineId)
             throw new ArgumentOutOfRangeException(nameof(options.MachineId), $"机器码不能大于 {maxMachineId}。");
 
         _options = options;
-        _maxSequence = GetMaxOfBits(options.SequenceBits);
+        _maxSequence = BitUtil.GetMaxOfBits(options.SequenceBits);
     }
 
     private long GetTimestampNow()

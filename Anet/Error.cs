@@ -2,14 +2,9 @@
 
 namespace Anet;
 
-public class Error : Exception
+public class Error(string message, HttpStatusCode code = HttpStatusCode.BadRequest) : Exception(message)
 {
-    public Error(string message, HttpStatusCode code = HttpStatusCode.BadRequest) : base(message)
-    {
-        Code = code;
-    }
-
-    public HttpStatusCode Code { get; }
+    public HttpStatusCode Code { get; } = code;
 
     public static void Throw(string message, HttpStatusCode code = HttpStatusCode.BadRequest)
     {

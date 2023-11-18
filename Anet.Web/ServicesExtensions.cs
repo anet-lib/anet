@@ -43,7 +43,7 @@ public static class ServicesExtensions
     }
 
     public static IServiceCollection AddAnetJwt(
-        this IServiceCollection services, 
+        this IServiceCollection services,
         Action<JwtOptions> configure)
     {
         return services.AddAnetJwt<NoopAuthenticator, DefaultRefreshTokenStore>(configure);
@@ -75,11 +75,12 @@ public static class ServicesExtensions
         services.AddTransient<JwtProvider>();
         services.AddTransient<IAuthenticator, TAuthenticator>();
         services.AddTransient<IRefreshTokenStore, TRefreshTokenStore>();
-        services.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        })
+        services
+            .AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
             .AddJwtBearer(jwtBearerOptions =>
             {
                 jwtBearerOptions.TokenValidationParameters = new()

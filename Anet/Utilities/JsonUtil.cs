@@ -26,7 +26,7 @@ public class JsonUtil
         Encoder = _defaultOptions.Encoder,
         PropertyNameCaseInsensitive = _defaultOptions.PropertyNameCaseInsensitive,
 
-        PropertyNamingPolicy = new SnakeCaseNamingPolicy(),
+        PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
     };
 
     internal static void SetDefaultSerializerOptions(Action<JsonSerializerOptions> configure)
@@ -62,12 +62,6 @@ public class JsonUtil
     public static T DeserializeCamelCase<T>(string json)
     {
         return Deserialize<T>(json, _camelCaseOptions);
-    }
-
-
-    public sealed class SnakeCaseNamingPolicy : JsonNamingPolicy
-    {
-        public override string ConvertName(string name) => name.ToSnakeCase();
     }
 }
 

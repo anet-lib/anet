@@ -1,38 +1,41 @@
-﻿namespace System;
+﻿using System.Numerics;
 
+namespace System;
+#pragma warning disable IDE0049 // Simplify Names
 public static class TypeExtensions
 {
+    public static bool IsInteger(this ValueType value)
+    {
+        return value is SByte or Int16 or Int32 or Int64 or Byte or UInt16 or UInt32 or UInt64 or BigInteger;
+    }
+
+    public static bool IsFloat(this ValueType value)
+    {
+        return value is Single or Double or Decimal;
+    }
+
+    public static bool IsNumeric(this ValueType value)
+    {
+        return IsInteger(value) || IsFloat(value);
+    }
+
     /// <summary>
     /// Returns true if the type is one of the built in simple types.
     /// </summary>
     public static bool IsSimpleType(this Type type)
     {
         if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
-            type = type.GetGenericArguments()[0]; // or  Nullable.GetUnderlyingType(type)
+            type = type.GetGenericArguments()[0]; // or Nullable.GetUnderlyingType(type)
 
-        if (type.IsEnum)
-            return true;
-
-        if (type == typeof(Guid))
+        // The primitive types are Boolean, Byte, SByte, Int16, UInt16, Int32, UInt32, Int64, UInt64, IntPtr, UIntPtr, Char, Double, and Single.
+        if (type.IsPrimitive || type.IsEnum || type == typeof(Guid))
             return true;
 
         TypeCode tc = Type.GetTypeCode(type);
         return tc switch
         {
-            TypeCode.Byte or 
-            TypeCode.SByte or 
-            TypeCode.Int16 or 
-            TypeCode.Int32 or 
-            TypeCode.Int64 or 
-            TypeCode.UInt16 or 
-            TypeCode.UInt32 or 
-            TypeCode.UInt64 or 
-            TypeCode.Single or 
-            TypeCode.Double or 
-            TypeCode.Decimal or 
-            TypeCode.Char or 
-            TypeCode.String or 
-            TypeCode.Boolean or 
+            TypeCode.Decimal or
+            TypeCode.String or
             TypeCode.DateTime => true,
             TypeCode.Object => (typeof(TimeSpan) == type) || (typeof(DateTimeOffset) == type) || (typeof(DateOnly) == type) || (typeof(TimeOnly) == type),
             _ => false,
@@ -57,3 +60,4 @@ public static class TypeExtensions
         return enumType ?? type;
     }
 }
+#pragma warning restore IDE0049 // Simplify Names

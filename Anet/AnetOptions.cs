@@ -1,7 +1,4 @@
-﻿using System.Text.Json;
-using Anet.Utilities;
-
-namespace Anet;
+﻿namespace Anet;
 
 public class AnetOptions
 {

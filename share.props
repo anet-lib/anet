@@ -1,7 +1,7 @@
 ﻿<Project>
   <PropertyGroup>
-    <Version>0.8.1</Version>
-    <TargetFramework>net7.0</TargetFramework>
+    <Version>8.0.0</Version>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <PackageTags>dotnet,aspnet,common,lib,framework,boilerplate</PackageTags>
     <Description>A .NET Common Lib, Framework and Boilerplate.</Description>

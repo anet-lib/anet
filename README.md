@@ -1,14 +1,10 @@
 ## 什么是 Anet
 
-Anet 是一个 .NET Core 通用框架，特点是简单易用。它的定义是：
+Anet 是一个 .NET 通用库，适用于 .NET 6 及以上版本。
 
 > A .NET Core Common Lib, Framework and Boilerplate.
 
-它的取名正是来自于这个定义的前面四个字母：ANET。Anet 的宗旨是使 .NET 项目开发变得简单和快速。它适用于面向现代化微服务开发 WebAPI、服务程序和网站。
-
-## 为什么选择 Anet
-
-很多传统的 .NET 开源框架模板（比如 ABP）都比较重，学习成本高，使用起来条条框框，比较麻烦。而 Anet 就简单易用得多，适用于快速上线的产品开发。
+它的取名正是来自于这个定义的前面四个字母：ANET。Anet 的宗旨是使 .NET 项目开发变得简单和快速。
 
 ## Anet 的使用
 

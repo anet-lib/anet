@@ -8,7 +8,7 @@ namespace Anet.Security;
 /// <para>PBKDF2 with HMAC-SHA1, 128-bit salt, 256-bit subkey, 1000 iterations.</para>
 /// <para>Format: { salt, subkey }</para>
 /// </summary>
-public class PasswordHasher
+public static class PasswordHasher
 {
     private const int _salt_size = 128 / 8;          // 128 bits
     private const int _subkey_size = 256 / 8;        // 256 bits
