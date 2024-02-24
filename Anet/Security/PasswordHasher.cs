@@ -14,6 +14,18 @@ public static class PasswordHasher
     private const int _subkey_size = 256 / 8;        // 256 bits
     private const int _pbkdf2_iteration = 1000;      // default for Rfc2898DeriveBytes.
 
+    public static readonly HashAlgorithmName DefaultAlgorithm = HashAlgorithmName.MD5;
+
+    /// <summary>
+    /// Hash the password using <see cref="DefaultAlgorithm"/>.
+    /// </summary>
+    /// <param name="password">The password to hash.</param>
+    /// <returns>Salted hash result.</returns>
+    public static string Hash(string password)
+    {
+        return Hash(password, DefaultAlgorithm);
+    }
+
     /// <summary>
     /// Hash the password.
     /// </summary>
@@ -33,6 +45,17 @@ public static class PasswordHasher
         Buffer.BlockCopy(subkey, 0, hash, _salt_size, _subkey_size);
 
         return Convert.ToBase64String(hash);
+    }
+
+    /// <summary>
+    /// Validates a password given a salt and a hash using <see cref="DefaultAlgorithm"/>.
+    /// </summary>
+    /// <param name="password">The password to check.</param>
+    /// <param name="hash">A hash of the correct password.</param>
+    /// <returns>True if the password is correct. False otherwise.</returns>
+    public static bool Verify(string password, string hash)
+    {
+        return Verify(password, hash, DefaultAlgorithm);
     }
 
     /// <summary>
