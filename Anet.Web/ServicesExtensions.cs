@@ -7,19 +7,11 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class ServicesExtensions
 {
-    public static IServiceCollection AddAnetJwt<TAuthenticator>(
-        this IServiceCollection services,
-        Action<JwtOptions> configure)
-        where TAuthenticator : class, IAuthenticator
-    {
-        return services.AddAnetJwt<TAuthenticator, DefaultRefreshTokenStore>(configure);
-    }
-
     public static IServiceCollection AddAnetJwt(
         this IServiceCollection services,
         Action<JwtOptions> configure)
     {
-        return services.AddAnetJwt<NoopAuthenticator, DefaultRefreshTokenStore>(configure);
+        return services.AddAnetJwt<DefaultRefreshTokenStore>(configure);
     }
 
     public static IServiceCollection AddAnetJwt(
@@ -27,14 +19,13 @@ public static class ServicesExtensions
         Action<JwtOptions> configure,
         Action<JwtBearerOptions> configureJwtBearer)
     {
-        return services.AddAnetJwt<NoopAuthenticator, DefaultRefreshTokenStore>(configure, configureJwtBearer);
+        return services.AddAnetJwt<DefaultRefreshTokenStore>(configure, configureJwtBearer);
     }
 
-    public static IServiceCollection AddAnetJwt<TAuthenticator, TRefreshTokenStore>(
+    public static IServiceCollection AddAnetJwt<TRefreshTokenStore>(
         this IServiceCollection services,
         Action<JwtOptions> configure,
         Action<JwtBearerOptions> configureJwtBearer = null)
-        where TAuthenticator : class, IAuthenticator
         where TRefreshTokenStore : class, IRefreshTokenStore
     {
         var options = new JwtOptions();
@@ -46,7 +37,6 @@ public static class ServicesExtensions
         services.AddSingleton(options);
         services.AddHttpContextAccessor();
         services.AddTransient<JwtProvider>();
-        services.AddTransient<IAuthenticator, TAuthenticator>();
         services.AddTransient<IRefreshTokenStore, TRefreshTokenStore>();
         services
             .AddAuthentication(options =>

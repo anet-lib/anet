@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Anet.Web.Jwt;
 
+[Obsolete("已废弃")]
 internal class JwtProviderMiddleware
 {
     private readonly string _path;
