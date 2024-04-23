@@ -1,6 +1,6 @@
 ﻿<Project>
   <PropertyGroup>
-    <Version>8.0.2</Version>
+    <Version>8.0.3</Version>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <PackageTags>dotnet,aspnet,common,lib,framework,boilerplate</PackageTags>
