@@ -1,15 +1,11 @@
 ﻿namespace Anet.Models;
 
-public class SelectOption : SelectOption<int>
+public class SelectOption : SelectOption<long>
 {
-    public SelectOption()
-        : base()
-    {
-    }
-    public SelectOption(int value, string label)
-        : base(value, label)
-    {
-    }
+    public SelectOption() { }
+    public SelectOption(long value, string label) : base(value, label) { }
+
+    public new List<SelectOption> Children { get; set; }
 }
 
 public class SelectOption<TValue>

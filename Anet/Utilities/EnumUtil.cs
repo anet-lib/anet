@@ -6,15 +6,8 @@ namespace Anet.Utilities;
 
 public class EnumUtil
 {
-    public static IEnumerable<SelectOption<int>> GetSelectOptions<TEnum>(bool includeVisible = false)
-     where TEnum : struct, Enum
-    {
-        return GetSelectOptions<TEnum, int>(includeVisible);
-    }
-
-    public static IEnumerable<SelectOption<TValue>> GetSelectOptions<TEnum, TValue>(bool includeVisible = false)
+    public static IEnumerable<SelectOption> GetSelectOptions<TEnum>(bool includeVisible = false)
         where TEnum : struct, Enum
-        where TValue : IEquatable<TValue>
     {
         var type = typeof(TEnum);
         foreach (var name in Enum.GetNames<TEnum>())
@@ -24,9 +17,9 @@ public class EnumUtil
 
             if (display == null || (!display.Visible && !includeVisible)) continue;
 
-            yield return new SelectOption<TValue>()
+            yield return new SelectOption()
             {
-                Value = (TValue)Enum.Parse(type, name),
+                Value = Convert.ToInt64(Enum.Parse(type, name)),
                 Name = name,
                 Label = display.Name ?? name,
                 Order = display.Order,

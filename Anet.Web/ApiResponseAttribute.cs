@@ -1,8 +1,6 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace Anet.Web;
 
@@ -42,12 +40,7 @@ public class ApiResponseAttribute : ActionFilterAttribute
         {
             result.Code = (int)(context.Exception is Error err ? err.Code : HttpStatusCode.InternalServerError);
             result.Message = context.Exception.Message;
-            context.ExceptionHandled = true;
-            if (result.Code >= 500)
-            {
-                context.ExceptionHandled = false;
-                throw context.Exception;
-            }
+            context.ExceptionHandled = result.Code < 500;
         }
         else if (context.Result is ObjectResult rst)
         {
