@@ -48,6 +48,11 @@ public class ApiResponseAttribute : ActionFilterAttribute
             result.Data = rst.Value;
         }
 
-        context.Result = new JsonResult(result);
+        var jsonResult = new JsonResult(result);
+        if (result.Code != 0)
+        {
+            jsonResult.StatusCode = result.Code;
+        }
+        context.Result = jsonResult;
     }
 }

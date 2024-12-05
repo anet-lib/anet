@@ -16,18 +16,18 @@ public class Error(string message, HttpStatusCode code = HttpStatusCode.BadReque
         if (predicate) throw new Error(message, code);
     }
 
-    public static void ThrowUnauthorized(bool predicate = true)
+    public static void ThrowUnauthorized(bool predicate = true, string message= "Unauthorized")
     {
-        if (predicate) throw new Error("Unauthorized", HttpStatusCode.Unauthorized);
+        if (predicate) throw new Error(message, HttpStatusCode.Unauthorized);
     }
 
-    public static void ThrowForbidden(bool predicate = true)
+    public static void ThrowForbidden(bool predicate = true, string message = "Forbidden")
     {
-        if (predicate) throw new Error("Forbidden", HttpStatusCode.Forbidden);
+        if (predicate) throw new Error(message, HttpStatusCode.Forbidden);
     }
 
-    public static void ThrowNotFound(bool predicate = true)
+    public static void ThrowNotFound(bool predicate = true, string message = "Not Found")
     {
-        if (predicate) throw new Error("Not Found", HttpStatusCode.NotFound);
+        if (predicate) throw new Error(message, HttpStatusCode.NotFound);
     }
 }
